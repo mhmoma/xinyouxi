@@ -145,6 +145,7 @@
       study: document.getElementById("hud-study"),
       name: document.getElementById("vn-name"),
       text: document.getElementById("vn-text"),
+      choices: document.getElementById("vn-choices"),
       hint: vnHint,
       panel: document.getElementById("layer-vn"),
       npcPanel: document.getElementById("npc-panel"),

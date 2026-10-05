@@ -26,21 +26,105 @@
       </div>
     </div>
 
-    <!-- 1. TITLE SCREEN (Cinematic, Artistic & Atmospheric) -->
+    <!-- 1. TITLE SCREEN (Cinematic, Atmospheric Game Landing Page) -->
     <section id="screen-title" class="screen">
-      <div class="title-ambient-glow"></div>
-      <div class="title-brand-block">
-        <div class="title-badge">18+ 沉浸式都市恋爱 SLG</div>
-        <h1 class="title-main">跟离异房东太太的同居生活</h1>
-        <p class="title-sub">年上诱惑之，少妇的味道</p>
+      <!-- Fullscreen Game Artwork Backdrop -->
+      <div class="title-bg-wrapper">
+        <img src="assets/bg/living_day.webp" class="title-bg-img" alt="" />
+        <div class="title-char-silhouette">
+          <img src="assets/char/wanqing/s1.png" class="title-char-img" alt="林晚晴" />
+        </div>
+        <div class="title-scrim-overlay"></div>
+        <div class="title-particles"></div>
       </div>
-      <div class="title-actions">
-        <button type="button" id="btn-start" class="btn btn--primary">开始剧情（序章）</button>
-        <button type="button" id="btn-slg" class="btn btn--secondary">直接进入日常互动</button>
-        <button type="button" id="btn-gallery-open" class="btn btn--ghost">回忆画廊</button>
-        <button type="button" id="btn-continue" class="btn btn--ghost" disabled>继续游戏</button>
+
+      <!-- Top Header Navigation Bar -->
+      <div class="title-top-bar">
+        <div class="title-brand-logo">
+          <span class="title-logo-icon">🌸</span>
+          <span class="title-logo-text">RED LEAF STUDIO</span>
+        </div>
+        <div class="title-tags-group">
+          <span class="title-tag">18+ 沉浸式 SLG</span>
+          <span class="title-tag-sep">·</span>
+          <span class="title-tag">全动态 H 动作链</span>
+          <span class="title-tag-sep">·</span>
+          <span class="title-tag">多分支情感结局</span>
+        </div>
+        <div class="title-top-actions">
+          <button type="button" id="title-audio-toggle" class="title-icon-btn" title="静音/背景音">
+            <span class="icon-speaker">🔊</span>
+          </button>
+        </div>
       </div>
-      <p class="title-version">v1.4.0 · 艺术典藏版</p>
+
+      <!-- Main Game Title & Action Control Panel -->
+      <div class="title-content-wrapper">
+        <div class="title-brand-block">
+          <div class="title-kicker-line">
+            <span class="title-kicker-dot"></span>
+            <span>年上恋慕 · 熟妇风情 · 深度同居交互</span>
+          </div>
+          <h1 class="title-main">跟离异房东太太的<br /><span class="title-main-highlight">同居生活</span></h1>
+          <p class="title-sub">钥匙轻响的落日余晖下，开启一段禁忌而温暖的屋檐温存。</p>
+          
+          <div class="title-features-strip">
+            <div class="title-feature-item">
+              <span class="feat-num">01</span>
+              <span class="feat-txt">真实合租日程推进</span>
+            </div>
+            <div class="title-feature-item">
+              <span class="feat-num">02</span>
+              <span class="feat-txt">iPad 智能监控系统</span>
+            </div>
+            <div class="title-feature-item">
+              <span class="feat-num">03</span>
+              <span class="feat-txt">全姿势肢体亲密统计</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="title-actions-card">
+          <div class="title-menu-header">
+            <span class="title-menu-label">GAME MENU / 游戏菜单</span>
+          </div>
+          
+          <div class="title-actions">
+            <button type="button" id="btn-start" class="title-btn title-btn--primary">
+              <span class="btn-icon">✨</span>
+              <div class="btn-content">
+                <span class="btn-label">开启故事序章</span>
+                <span class="btn-desc">从搬入次卧钥匙开始体验</span>
+              </div>
+            </button>
+            
+            <button type="button" id="btn-slg" class="title-btn title-btn--secondary">
+              <span class="btn-icon">🛋️</span>
+              <div class="btn-content">
+                <span class="btn-label">进入自由日常</span>
+                <span class="btn-desc">探索房间·触发互动与家务</span>
+              </div>
+            </button>
+            
+            <div class="title-btn-row">
+              <button type="button" id="btn-continue" class="title-btn title-btn--glass" disabled>
+                <span class="btn-icon">💾</span>
+                <span class="btn-label">继续游戏</span>
+              </button>
+              
+              <button type="button" id="btn-gallery-open" class="title-btn title-btn--glass">
+                <span class="btn-icon">📸</span>
+                <span class="btn-label">回忆画廊</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="title-footer-meta">
+            <span class="version-label">VERSION 1.4.0 · 典藏全动态版</span>
+            <span class="save-status-label" id="title-save-hint">尚未检测到本地存档</span>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- 2. MAIN IMMERSIVE PLAY SCREEN (All Overlaid on Canvas Stage) -->
@@ -417,6 +501,15 @@
         <button type="button" id="menu-back" class="btn btn--primary">回到游戏</button>
         <button type="button" id="menu-gallery" class="btn btn--secondary">回忆画廊</button>
         <button type="button" id="menu-title" class="btn">回标题</button>
+      </div>
+    </div>
+
+    <!-- TIME TRANSITION OVERLAY (Full Viewport Transition Animation) -->
+    <div id="time-transition-overlay" class="time-transition-overlay hidden">
+      <div class="time-transition-content">
+        <div id="time-transition-icon" class="time-transition-clock">☀</div>
+        <h2 id="time-transition-title" class="time-transition-title">时光流转...</h2>
+        <p id="time-transition-sub" class="time-transition-sub">光影轻摇，时光悄然转过</p>
       </div>
     </div>
 
