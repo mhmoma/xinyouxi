@@ -686,6 +686,8 @@
       eventFlags: { MoveIn_Done: true },
       inventory: [],
       cameraInstalled: false,
+      currentStage: "S0",
+      unlockedStages: ["S0"],
       wanqing: {
         trust: 10,
         lust: 5,
@@ -1197,40 +1199,169 @@
     });
   }
 
+  var STAGES_CONFIG = [
+    {
+      id: "S0",
+      title: "S0·住下次卧，听完规矩",
+      goal: "住下次卧，听完规矩",
+      desc: "刚刚搬进次卧，听完晚晴交代的日常合租规矩，熟悉同居环境。",
+      dayMin: 1,
+      trustMin: 0,
+      lustMin: 0,
+      target: "在快速移动中选择【客厅】或【厨房】找晚晴打招呼"
+    },
+    {
+      id: "S1",
+      title: "S1·三次正常相处",
+      goal: "三次正常相处（吃饭/闲聊/打招呼）",
+      desc: "通过日常打招呼、吃饭与闲聊，打破彼此间的生疏与防备。",
+      dayMin: 1,
+      trustMin: 10,
+      lustMin: 0,
+      target: "与晚晴完成 3 次日常聊天或打招呼（信赖 10 以上）"
+    },
+    {
+      id: "S2",
+      title: "S2·修缮与帮帮忙",
+      goal: "修一次或帮一次忙",
+      desc: "帮晚晴修理电饭煲或家电，让她对你展现心扉，解锁【🌹 成人话题】。",
+      dayMin: 1,
+      trustMin: 20,
+      lustMin: 0,
+      target: "帮做一次家务或送礼（信赖 20 以上）"
+    },
+    {
+      id: "S3",
+      title: "S3·傍晚客厅试探",
+      goal: "傍晚客厅选靠近，不要先回房",
+      desc: "傍晚在客厅看电视时靠近她，从身后抱住并试探揉抚。",
+      dayMin: 1,
+      trustMin: 30,
+      lustMin: 10,
+      target: "傍晚在客厅选择【S3·傍晚客厅试探】（信赖 30，欲望 10）"
+    },
+    {
+      id: "S4",
+      title: "S4·厨房忙碌与洗碗深吹",
+      goal: "她在厨房忙碌时从后面抱/洗碗事件",
+      desc: "在她洗碗时从身后贴抱，解锁厨房深吹极乐。",
+      dayMin: 2,
+      trustMin: 40,
+      lustMin: 20,
+      target: "下午在厨房选择【S4·厨房洗碗与深吹】（信赖 40，欲望 20）"
+    },
+    {
+      id: "S5_night",
+      title: "S5·夜间客厅沙发极乐",
+      goal: "夜·客厅，她找你说过话",
+      desc: "深夜客厅微光中，在沙发旁享受她顺从的吹吐。",
+      dayMin: 2,
+      trustMin: 50,
+      lustMin: 30,
+      target: "夜间在客厅选择【S5·夜间客厅沙发极乐】（信赖 50，欲望 30）"
+    },
+    {
+      id: "S5_nap",
+      title: "S5·周末午睡偷香",
+      goal: "周末午睡，她房门未锁",
+      desc: "周末午后她房门未锁，潜入闺房进行探寻与含吹。",
+      dayMin: 2,
+      trustMin: 60,
+      lustMin: 40,
+      target: "午后去晚晴卧室选择【S5·周末午睡偷香】（信赖 60，欲望 40）"
+    },
+    {
+      id: "S6",
+      title: "S6·狭小洗衣房后入",
+      goal: "洗衣房碰到她，选关门",
+      desc: "在狭小的洗衣房拉上拉门，压在洗衣机上后入。",
+      dayMin: 3,
+      trustMin: 70,
+      lustMin: 50,
+      target: "在洗衣房选择【S6·狭小洗衣房后入】（信赖 70，欲望 50）"
+    },
+    {
+      id: "S7",
+      title: "S7·水汽浴室全裸地砖",
+      goal: "她洗澡，送衣服进门",
+      desc: "趁她洗澡送衣服推门，在水汽氤氲中享受全裸地砖极乐。",
+      dayMin: 3,
+      trustMin: 80,
+      lustMin: 60,
+      target: "在浴室选择【S7·水汽浴室全裸地砖】（信赖 80，欲望 60）"
+    },
+    {
+      id: "S8_day",
+      title: "S8·晴空天台晾衣姿势链",
+      goal: "天台晾衣服",
+      desc: "晴空万里的天台晾衣架旁，进行多姿势连续抽插。",
+      dayMin: 4,
+      trustMin: 85,
+      lustMin: 70,
+      target: "在天台选择【S8·晴空天台晾衣姿势链】（信赖 85，欲望 70）"
+    },
+    {
+      id: "S8_night",
+      title: "S8·星空天台露天狂欢",
+      goal: "夜里天台叫你上去",
+      desc: "夜深人静的天台风口，露天吹吐与美妙后入。",
+      dayMin: 4,
+      trustMin: 90,
+      lustMin: 80,
+      target: "夜间在天台选择【S8·星空天台露天狂欢】（信赖 90，欲望 80）"
+    },
+    {
+      id: "S9",
+      title: "S9·深夜门虚掩·彻底沦陷",
+      goal: "深夜她房门虚掩，选进去",
+      desc: "深夜她房门故意留了一缝，彻底为你沦陷，享受终极同居欢愉。",
+      dayMin: 4,
+      trustMin: 95,
+      lustMin: 85,
+      target: "深夜在晚晴卧室选择【S9·深夜门虚掩·彻底沦陷】（信赖 95，欲望 85）"
+    }
+  ];
+
+  function evaluateStage(s) {
+    if (!s) return "S0";
+    if (!s.unlockedStages) s.unlockedStages = ["S0"];
+    
+    var trust = s.wanqing ? (s.wanqing.trust || 0) : 0;
+    var lust = s.wanqing ? (s.wanqing.lust || 0) : 0;
+    var day = s.dayCount || 1;
+
+    var highestUnlocked = "S0";
+
+    for (var i = 0; i < STAGES_CONFIG.length; i++) {
+      var cfg = STAGES_CONFIG[i];
+      if (trust >= cfg.trustMin && lust >= cfg.lustMin && day >= cfg.dayMin) {
+        highestUnlocked = cfg.id;
+        if (s.unlockedStages.indexOf(cfg.id) < 0) {
+          s.unlockedStages.push(cfg.id);
+        }
+      }
+    }
+
+    s.currentStage = highestUnlocked;
+    return highestUnlocked;
+  }
+
   function getCurrentQuest(s) {
     if (!s) return { title: "无任务", desc: "", target: "" };
-    if (s.dayCount === 1 && s.currentTimeSlot === "Afternoon") {
-      return {
-        title: "新生活开始",
-        desc: "熟悉一下屋子，去客厅或厨房找找林姐，尝试进行第一次交流。",
-        target: "在快速移动中选择【客厅】或【厨房】"
-      };
+    var activeStageId = evaluateStage(s);
+    var cfg = null;
+    for (var i = 0; i < STAGES_CONFIG.length; i++) {
+      if (STAGES_CONFIG[i].id === activeStageId) {
+        cfg = STAGES_CONFIG[i];
+        break;
+      }
     }
-    if (s.wanqing.trust < 30) {
-      return {
-        title: "增进日常信赖",
-        desc: "林姐对你还比较客气和疏离。多去她所在的房间聊天、帮忙【做家务】或送礼，将信赖提升至30以上。",
-        target: "林晚晴信赖达到 30 以上（当前: " + s.wanqing.trust + "/30）"
-      };
-    }
-    if (s.wanqing.trust >= 30 && s.wanqing.trust < 60) {
-      return {
-        title: "悄然萌芽的欲望",
-        desc: "林姐已把你当成熟悉的室友。选择【成人话题】对话，尝试在合适时机进行更深入的交流，并将欲望提升至 20 以上，信赖提升至 60。",
-        target: "信赖达到 60，欲望达到 20 以上（信赖: " + s.wanqing.trust + "/60 · 欲望: " + (s.wanqing.lust || 0) + "/20）"
-      };
-    }
-    if (s.wanqing.trust >= 60 && s.wanqing.trust < 91) {
-      return {
-        title: "跨越界限的亲密",
-        desc: "林姐已对你产生依赖。解锁并选择【直入正题】，可进行轻微肢体接触或进一步的亲密对话。将信赖提升至 91 以上，欲望提升至 50。",
-        target: "信赖达到 91，欲望达到 50 以上（信赖: " + s.wanqing.trust + "/91 · 欲望: " + (s.wanqing.lust || 0) + "/50）"
-      };
-    }
+    if (!cfg) cfg = STAGES_CONFIG[0];
+
     return {
-      title: "沦陷的温柔乡",
-      desc: "林姐已彻底为你沦陷。解锁所有高阶H互动、深夜过夜、浴室情境，尽情享受美妙的同居生活吧。",
-      target: "已完全沦陷（当前信赖: " + s.wanqing.trust + " · 欲望: " + (s.wanqing.lust || 0) + "）"
+      title: cfg.title,
+      desc: cfg.desc,
+      target: cfg.target + " (信赖: " + (s.wanqing.trust || 0) + " · 欲望: " + (s.wanqing.lust || 0) + ")"
     };
   }
 
@@ -1812,8 +1943,10 @@
 
   function CheckMandatoryEvents(s) {
     if (!s) return null;
-    var t = s.wanqing.trust;
-    var l = s.wanqing.lust || 0;
+    evaluateStage(s);
+    var t = s.wanqing ? (s.wanqing.trust || 0) : 0;
+    var l = s.wanqing ? (s.wanqing.lust || 0) : 0;
+    var d = s.dayCount || 1;
     
     if (t >= 30 && !flag(s, "Event_Trust30_Auto")) {
       setFlag(s, "Event_Trust30_Auto", true);
@@ -1821,7 +1954,16 @@
         { speaker: "wanqing", char: "s2", text: "“那个……我们合租也有段日子了。以前我都把你当外人看待，现在觉得，有你在身边其实也挺好的。”" },
         { speaker: "player", text: "“谢谢晚晴姐，我也会继续努力做个好室友的。”" },
         { speaker: "wanqing", char: "e1", text: "“嗯……叫我晚晴就好了。对了，既然熟了，以后你想聊些深一点的【成人话题】……我也不是不能陪你聊聊。”" },
-        { speaker: "narration", text: "（林晚晴对你的态度温和了许多，【成人话题】一级菜单已解锁！）" }
+        { speaker: "narration", text: "（🎉【S3·傍晚客厅试探】已解锁！林晚晴对你的态度温和了许多，傍晚去客厅与她靠近吧！）" }
+      ];
+    }
+
+    if (t >= 40 && l >= 20 && d >= 2 && !flag(s, "Event_StageS4_Auto")) {
+      setFlag(s, "Event_StageS4_Auto", true);
+      return [
+        { speaker: "wanqing", char: "e2", text: "“小陈……你每次在我做饭洗碗的时候看着我，我都觉得身上热烫烫的……”" },
+        { speaker: "player", text: "“因为晚晴系着围裙洗碗的样子，真的很吸引人。”" },
+        { speaker: "narration", text: "（🎉【S4·厨房忙碌与洗碗深吹】已解锁！去厨房尝试在她洗碗时贴近她吧！）" }
       ];
     }
     
@@ -1831,7 +1973,31 @@
         { speaker: "wanqing", char: "e2", text: "“感觉每次和你说话，我的心跳都比平时要快……我是怎么了。你，是不是对我有什么想法？”" },
         { speaker: "player", text: "“晚晴，既然你都这么问了……我确实控制不住被你吸引。”" },
         { speaker: "wanqing", char: "e5", text: "“你、你这孩子太直白了……不过，我不讨厌。以后……有什么亲密的举动，你可以【直入正题】了……”" },
-        { speaker: "narration", text: "（林晚晴娇羞地绞着手指，对你产生深深依赖，【直入正题】亲密接触菜单已解锁！）" }
+        { speaker: "narration", text: "（🎉【S5·周末午睡偷香/沙发极乐】已解锁！林晚晴对你产生深深依赖，午后可去她卧室探寻！）" }
+      ];
+    }
+
+    if (t >= 70 && l >= 50 && d >= 3 && !flag(s, "Event_StageS6_Auto")) {
+      setFlag(s, "Event_StageS6_Auto", true);
+      return [
+        { speaker: "wanqing", char: "e4", text: "“小陈……最近在洗衣房洗衣服的时候，我总是忍不住想起你从后面抱我的样子……”" },
+        { speaker: "narration", text: "（🎉【S6·狭小洗衣房后入】已解锁！去洗衣房顺手关上拉门吧！）" }
+      ];
+    }
+
+    if (t >= 80 && l >= 60 && d >= 3 && !flag(s, "Event_StageS7_Auto")) {
+      setFlag(s, "Event_StageS7_Auto", true);
+      return [
+        { speaker: "wanqing", char: "e5", text: "“以后我洗澡要是忘了拿毛巾……你可以直接推门送进来，我不介意……”" },
+        { speaker: "narration", text: "（🎉【S7·水汽浴室全裸地砖】已解锁！浴室送毛巾开启全裸地砖激情！）" }
+      ];
+    }
+
+    if (t >= 85 && l >= 70 && d >= 4 && !flag(s, "Event_StageS8_Auto")) {
+      setFlag(s, "Event_StageS8_Auto", true);
+      return [
+        { speaker: "wanqing", char: "l5", text: "“天台的风吹着真舒服……无论是白天晒衣服还是夜里看星空，我都想让你陪着我。”" },
+        { speaker: "narration", text: "（🎉【S8·晴空与星空天台狂欢】已解锁！去天台体验多元姿势链！）" }
       ];
     }
     
@@ -1841,7 +2007,7 @@
         { speaker: "wanqing", char: "e4", text: "“我已经……完全没有办法离开你了。无论是白天还是黑夜，脑子里全是你……”" },
         { speaker: "player", text: "“晚晴，那我们就永远不要分开，一直合租下去。”" },
         { speaker: "wanqing", char: "e5", text: "“嗯……今晚，我的房门不锁。你要是敢不来，我可要生气的哦。”" },
-        { speaker: "narration", text: "（林晚晴已对你彻底沦陷！解锁全部深夜过夜、换衣、浴室温存等高阶互动！）" }
+        { speaker: "narration", text: "（🎉【S9·深夜门虚掩·彻底沦陷】终极阶段已解锁！林晚晴已对你彻底沦陷！）" }
       ];
     }
     
