@@ -1,0 +1,6 @@
+{
+  "snack": { "id": "snack", "name": "点心", "price": 200, "trust": 6, "shop": true, "text": "超市里那种普通盒子。" },
+  "wine": { "id": "wine", "name": "便宜红酒", "price": 380, "trust": 4, "lust": 3, "shop": true, "text": "标签旧，能喝。" },
+  "flower": { "id": "flower", "name": "一束花", "price": 120, "trust": 3, "shop": true, "text": "她未必喜欢张扬的。" },
+  "camera": { "id": "camera", "name": "小型摄像头", "price": 800, "shop": true, "equip": "bathroom", "text": "说明书皱着。" }
+}

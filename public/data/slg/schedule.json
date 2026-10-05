@@ -1,0 +1,63 @@
+{
+  "eveningBathChance": 0.22,
+  "wanderWhenPlayerMoves": 0.42,
+  "weekday": {
+    "Morning": [
+      { "location": "Kitchen", "state": "Busy", "w": 40 },
+      { "location": "Entry", "state": "Busy", "w": 16 },
+      { "location": "Bathroom", "state": "Busy", "w": 12 },
+      { "location": "Outside", "state": "Busy", "w": 24 },
+      { "location": "LivingRoom", "state": "Idle", "w": 8 }
+    ],
+    "Afternoon": [
+      { "location": "Outside", "state": "Busy", "w": 62 },
+      { "location": "LivingRoom", "state": "Idle", "w": 14 },
+      { "location": "Kitchen", "state": "Busy", "w": 12 },
+      { "location": "Laundry", "state": "Busy", "w": 12 }
+    ],
+    "Evening": [
+      { "location": "LivingRoom", "state": "Idle", "w": 36 },
+      { "location": "Kitchen", "state": "Busy", "w": 22 },
+      { "location": "Laundry", "state": "Busy", "w": 10 },
+      { "location": "Bathroom", "state": "Idle", "w": 8 },
+      { "location": "Bedroom_NPC", "state": "Idle", "w": 24 }
+    ],
+    "LateNight": [
+      { "location": "Bedroom_NPC", "state": "Sleeping", "w": 78 },
+      { "location": "Kitchen", "state": "Idle", "w": 10 },
+      { "location": "Bathroom", "state": "Busy", "w": 8 },
+      { "location": "LivingRoom", "state": "Idle", "w": 4 }
+    ]
+  },
+  "weekend": {
+    "Morning": [
+      { "location": "LivingRoom", "state": "Busy", "w": 34 },
+      { "location": "Kitchen", "state": "Busy", "w": 22 },
+      { "location": "Laundry", "state": "Busy", "w": 20 },
+      { "location": "Bathroom", "state": "Busy", "w": 10 },
+      { "location": "Entry", "state": "Busy", "w": 8 },
+      { "location": "Bedroom_NPC", "state": "Idle", "w": 6 }
+    ],
+    "Afternoon": [
+      { "location": "LivingRoom", "state": "Idle", "w": 40 },
+      { "location": "Kitchen", "state": "Idle", "w": 14 },
+      { "location": "Laundry", "state": "Busy", "w": 12 },
+      { "location": "Bedroom_NPC", "state": "Idle", "w": 10 },
+      { "location": "Outside", "state": "Busy", "w": 16 },
+      { "location": "Bathroom", "state": "Idle", "w": 8 }
+    ],
+    "Evening": [
+      { "location": "LivingRoom", "state": "Idle", "w": 40 },
+      { "location": "Kitchen", "state": "Busy", "w": 18 },
+      { "location": "Bedroom_NPC", "state": "Idle", "w": 18 },
+      { "location": "Laundry", "state": "Idle", "w": 10 },
+      { "location": "Bathroom", "state": "Idle", "w": 14 }
+    ],
+    "LateNight": [
+      { "location": "Bedroom_NPC", "state": "Sleeping", "w": 80 },
+      { "location": "Kitchen", "state": "Idle", "w": 8 },
+      { "location": "LivingRoom", "state": "Idle", "w": 7 },
+      { "location": "Bathroom", "state": "Bathing", "w": 5 }
+    ]
+  }
+}

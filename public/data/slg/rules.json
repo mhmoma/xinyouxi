@@ -1,0 +1,24 @@
+{
+  "slots": ["Morning", "Afternoon", "Evening", "LateNight"],
+  "slotCn": { "Morning": "上午", "Afternoon": "下午", "Evening": "傍晚", "LateNight": "深夜" },
+  "trustBands": [
+    { "min": 0, "max": 30, "id": "tenant", "label": "房客", "hint": "她把你当房客，客气，不想多来往。" },
+    { "min": 31, "max": 60, "id": "roommate", "label": "室友", "hint": "能帮忙、能闲聊，别靠太近。" },
+    { "min": 61, "max": 90, "id": "depend", "label": "依赖", "hint": "她开始不躲你。肢体接触有门。" },
+    { "min": 91, "max": 100, "id": "fall", "label": "沦陷", "hint": "她不拦了。夜里可以更进一步。" }
+  ],
+  "lustUnlock": { "touch": 0, "further": 40, "hNight": 55 },
+  "suspicionWarn": 80,
+  "suspicionBad": 95,
+  "suspicionDecay": 5,
+  "rent": { "dayMod": 30, "amount": 2000 },
+  "start": {
+    "dayCount": 1,
+    "currentTimeSlot": "Afternoon",
+    "playerGold": 1000,
+    "playerEnergy": 100,
+    "playerAcademic": 50,
+    "playerMood": 50,
+    "playerLocation": "Bedroom_Player"
+  }
+}

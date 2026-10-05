@@ -1,0 +1,430 @@
+{
+  "id": "ch00",
+  "title": "入住",
+  "playerName": "同学",
+  "start": "ch0_street_1",
+  "beats": [
+    {
+      "id": "ch0_street_1",
+      "bg": "street_day",
+      "char": "player_suitcase",
+      "loc": "楼下",
+      "time": "日",
+      "speaker": "narration",
+      "text": "（两点五十分。伏天的大日头把柏油路晒得直泛白气。我拖着那个轮子有点别扭的行李箱，在小区门口窄窄的香樟树阴下换了三次重心。）",
+      "next": "ch0_street_2"
+    },
+    {
+      "id": "ch0_street_2",
+      "bg": "street_day",
+      "char": "player_phone",
+      "speaker": "narration",
+      "text": "（手机屏幕被日光照得发灰。屏幕上只有中介二十分钟前甩来的一条文字语音转译：哥们对不住啊，房东下午临时有急事，今天看不成房了，改天约啊。）",
+      "next": "ch0_street_3"
+    },
+    {
+      "id": "ch0_street_3",
+      "bg": "street_day",
+      "char": "player_phone",
+      "speaker": "narration",
+      "text": "（我捏着发烫的手机，站在热风里愣神。后天学校才开放新生宿舍，身上就背着这一箱子衣服，现在连今晚能躺哪儿都没谱。）",
+      "next": "ch0_street_4"
+    },
+    {
+      "id": "ch0_street_4",
+      "bg": "street_day",
+      "char": "player_call",
+      "speaker": "narration",
+      "text": "（刚翻开团购软件准备找火车站边上的便宜招待所，一个本地的陌生固话突然插了进来。接通的瞬间，那头背景很空，带点回声，伴着很轻的喘气声。）",
+      "next": "ch0_street_5"
+    },
+    {
+      "id": "ch0_street_5",
+      "bg": "street_day",
+      "char": "player_call",
+      "speaker": "wanqing",
+      "text": "喂？是……是来看次卧的{0}同学吗？你现在……还在小区门口吗？",
+      "next": "ch0_street_6"
+    },
+    {
+      "id": "ch0_street_6",
+      "bg": "street_day",
+      "char": "player_call",
+      "speaker": "player",
+      "text": "在的。林姐是吧？我就在三号楼前面那棵大树底下。",
+      "next": "ch0_street_7"
+    },
+    {
+      "id": "ch0_street_7",
+      "bg": "street_day",
+      "char": "player_call",
+      "speaker": "wanqing",
+      "text": "哎呀，真对不住！中介没跟我对好时间，我还以为你早回去了……门禁是井号零三零——不对，是零三零二井号……哎呀，这破门锁老是失灵，你站着别晒了，我拿把伞下楼接你！",
+      "next": "ch0_street_8"
+    },
+    {
+      "id": "ch0_street_8",
+      "bg": "street_day",
+      "char": "player_call",
+      "speaker": "narration",
+      "text": "（电话咔哒一声挂断了。那语气急促得像生怕我拔腿跑了似的，话尾还隐隐带着点不知所措的慌张。）",
+      "next": "ch0_entry_1"
+    },
+    {
+      "id": "ch0_entry_1",
+      "bg": "entry_day",
+      "char": "s1",
+      "loc": "玄关",
+      "time": "入住 · 日",
+      "speaker": "wanqing",
+      "text": "快进来快进来，外头三十七度有了吧？这天儿真是受罪……行李箱直接拎进来就行，轮子脏了也没事，地我刚过了一遍水，本来就打算等会儿再擦的。",
+      "next": "ch0_entry_2"
+    },
+    {
+      "id": "ch0_entry_2",
+      "bg": "entry_day",
+      "speaker": "narration",
+      "text": "（她穿着件家常的棉质围裙，齐耳短发有些湿软地贴在颊边，耳朵上一颗小小的珍珠耳钉随着动作轻轻晃动。她手里还抓着半干的百洁布，两只手通红，像是刚从水池里拔出来。）",
+      "next": "ch0_entry_3"
+    },
+    {
+      "id": "ch0_entry_3",
+      "bg": "entry_day",
+      "speaker": "player",
+      "text": "林姐好，麻烦您大中午特意跑下楼一趟。",
+      "next": "ch0_entry_4"
+    },
+    {
+      "id": "ch0_entry_4",
+      "bg": "entry_day",
+      "char": "s1",
+      "speaker": "wanqing",
+      "text": "嗨，不麻烦不麻烦，怪我自己手机放厨房静音了……拖鞋在这里，穿蓝的吧，刚刷过晒干的。走慢点，瓷砖上还有点滑。",
+      "next": "ch0_entry_5"
+    },
+    {
+      "id": "ch0_entry_5",
+      "bg": "entry_day",
+      "speaker": "narration",
+      "text": "（她说话的时候总是习惯性地微微低着头，视线在我脸上停了半秒，又飞快挪到我的鞋面上，客气得甚至透出几分紧绷。）",
+      "next": "ch0_living_1"
+    },
+    {
+      "id": "ch0_living_1",
+      "bg": "living_day",
+      "char": "s1",
+      "loc": "客厅",
+      "speaker": "wanqing",
+      "text": "屋里没准备什么饮料，水壶里刚烧开放凉的白开水。杯子是新的，我用开水烫过两遍了，你别嫌寡淡，先喝两口润润嗓子。",
+      "next": "ch0_living_2"
+    },
+    {
+      "id": "ch0_living_2",
+      "bg": "living_day",
+      "speaker": "player",
+      "text": "这就挺好，一路过来嗓子正冒烟呢。谢谢姐。",
+      "next": "ch0_living_3"
+    },
+    {
+      "id": "ch0_living_3",
+      "bg": "living_day",
+      "speaker": "narration",
+      "text": "（客厅收拾得极干净，甚至干净得有点空旷冷清。米白色的双人布艺沙发套洗得发白，茶几玻璃下压着几张外卖单，角落的花瓶里插着几支早干透了的尤加利叶。）",
+      "next": "ch0_living_4"
+    },
+    {
+      "id": "ch0_living_4",
+      "bg": "living_day",
+      "char": "s1",
+      "speaker": "wanqing",
+      "text": "我听中介那边提了一句，你是下周新生报到？本地没有亲戚朋友在这边吧？",
+      "next": "ch0_living_5"
+    },
+    {
+      "id": "ch0_living_5",
+      "bg": "living_day",
+      "speaker": "player",
+      "text": "嗯，外省考过来的。想着提早两天过来熟悉熟悉路线，免得开学那天带着行李挤成一团。",
+      "next": "ch0_living_6"
+    },
+    {
+      "id": "ch0_living_6",
+      "bg": "living_day",
+      "char": "s1",
+      "speaker": "wanqing",
+      "text": "挺好的，一个人出远门念书懂事早。……那个，趁你喝水，我把这屋里头的情况先跟你交个底，免得住下来大家别扭。",
+      "next": "ch0_living_7"
+    },
+    {
+      "id": "ch0_living_7",
+      "bg": "living_day",
+      "char": "s1",
+      "speaker": "wanqing",
+      "text": "房租一个月两千，每月一号微信转我就行，备注写房租两个字。水电煤气物业费咱们对半摊，单据来了我会贴在冰箱侧面，到时你按上面的数扫给我。",
+      "next": "ch0_living_8"
+    },
+    {
+      "id": "ch0_living_8",
+      "bg": "living_day",
+      "speaker": "player",
+      "text": "行，这规矩合理，我没意见。",
+      "next": "ch0_living_9"
+    },
+    {
+      "id": "ch0_living_9",
+      "bg": "living_day",
+      "char": "s1",
+      "speaker": "wanqing",
+      "text": "还有就是作息……我在附近商场上班，早班八点多出门，晚班可能得九点多才回。老房子的隔音不比新楼盘，晚上一过十点，走廊和浴室动静就得轻着点。另外……",
+      "next": "ch0_living_10"
+    },
+    {
+      "id": "ch0_living_10",
+      "bg": "living_day",
+      "char": "e1",
+      "speaker": "wanqing",
+      "text": "合同上白纸黑字写着呢，合租最忌讳生人留宿。女孩子……女朋友什么的，是绝对不能带回来过夜的——",
+      "next": "ch0_living_11"
+    },
+    {
+      "id": "ch0_living_11",
+      "bg": "living_day",
+      "char": "a2",
+      "speaker": "wanqing",
+      "text": "哎呀，不是不是！我嘴瓢了……我是说，男同学！你的男同学也不行。",
+      "next": "ch0_living_12"
+    },
+    {
+      "id": "ch0_living_12",
+      "bg": "living_day",
+      "speaker": "narration",
+      "text": "（她话说得太急，舌头打了个结，整张脸腾地涨得通红。话说完，她眼神有些慌乱地往走廊尽头紧闭的那扇主卧门瞟了一眼，下意识地把围裙角攥在掌心里。）",
+      "next": "ch0_living_13"
+    },
+    {
+      "id": "ch0_living_13",
+      "bg": "living_day",
+      "char": "s1",
+      "speaker": "wanqing",
+      "text": "……那个，我没别的意思，你千万别多想。主要是这屋子就咱们两个住，要是半夜总有外人进进出出的，我……我一个女同志，总归不太踏实。",
+      "next": "ch0_living_14"
+    },
+    {
+      "id": "ch0_living_14",
+      "bg": "living_day",
+      "speaker": "player",
+      "text": "我明白的林姐。我平时除了上课也就是去图书馆，不会带人过来瞎闹的。",
+      "next": "ch0_living_15"
+    },
+    {
+      "id": "ch0_living_15",
+      "bg": "living_day",
+      "char": "s1",
+      "speaker": "wanqing",
+      "text": "那就好，那就好……这是大门和次卧的钥匙，挂红色塑料牌的是大门的，齿口有点磨了，开门的时候往里顶一下再转。大门你平时顺手反锁就行。",
+      "next": "ch0_room_1"
+    },
+    {
+      "id": "ch0_room_1",
+      "bg": "player_room_day",
+      "char": "none",
+      "loc": "次卧",
+      "speaker": "narration",
+      "text": "（推开次卧的门，屋里扑面而来一股被夏日暴晒过的洗衣皂清香。屋子虽然不算宽敞，但朝南的大窗户落进大片通透的日光，床单被罩铺得没有一丝褶子。）",
+      "next": "ch0_room_2"
+    },
+    {
+      "id": "ch0_room_2",
+      "bg": "player_room_day",
+      "char": "s1",
+      "speaker": "wanqing",
+      "text": "这床单是我前天刚洗过晒透的，席梦思也是新换的软硬适中。桌子和椅子我都拿湿布擦过了，你看还有什么缺的没？要是缺台灯插排，我储物柜里还有备用的。",
+      "next": "ch0_room_3"
+    },
+    {
+      "id": "ch0_room_3",
+      "bg": "player_room_day",
+      "speaker": "player",
+      "text": "挺宽敞的，被子晒得好软，比我想象的好太多了。",
+      "next": "ch0_room_4"
+    },
+    {
+      "id": "ch0_room_4",
+      "bg": "player_room_day",
+      "char": "s1",
+      "speaker": "wanqing",
+      "text": "那就好。那你先歇歇脚，把箱子里的衣服归置归置。我回厨房把剩下的菜备一下。",
+      "next": "ch0_room_5"
+    },
+    {
+      "id": "ch0_room_5",
+      "bg": "player_room_day",
+      "char": "none",
+      "speaker": "narration",
+      "text": "（她带上门出去了，轻手轻脚的。我拉开床头旁边的大衣柜，里头空空荡荡，只有角落的衣架上隐约落着一枚没带走的男士西装备用扣。我指尖碰了碰那粒硬扣子，没多问，顺手把它推到了角落的最深处。）",
+      "next": "ch0_dinner_1"
+    },
+    {
+      "id": "ch0_dinner_1",
+      "bg": "living_night",
+      "char": "none",
+      "loc": "客厅",
+      "time": "入住 · 傍晚",
+      "speaker": "narration",
+      "text": "（天色暗下来的时候，老旧小区的楼道里飘进家家户户炒菜的葱花油香。走廊传来抽油烟机的轰鸣，伴着锅铲磕碰铁锅的清脆声响。）",
+      "next": "ch0_dinner_2"
+    },
+    {
+      "id": "ch0_dinner_2",
+      "bg": "living_night",
+      "char": "s1",
+      "speaker": "wanqing",
+      "text": "{0}同学，收拾好了吗？天黑了，外面热气还没散，你刚来肯定没开火。我下了两碗挂面，煎了荷包蛋，你要是不嫌简单就出来凑合吃一口。",
+      "next": "ch0_dinner_3"
+    },
+    {
+      "id": "ch0_dinner_3",
+      "bg": "living_night",
+      "char": "s1",
+      "speaker": "player",
+      "text": "（餐桌上摆着两碗热腾腾的清汤挂面，碧绿的葱花上卧着煎得微焦的金黄鸡蛋，碗边还搁着一碟自己腌的脆萝卜。）",
+      "choices": [
+        {
+          "text": "主动去厨房打下手：“我帮您端碗拿筷子吧，白吃多不好意思。”",
+          "next": "ch0_choice_kitchen"
+        },
+        {
+          "text": "老老实实拉开椅子坐下：“谢谢林姐，闻着真香，正饿着呢。”",
+          "next": "ch0_choice_sit"
+        }
+      ]
+    },
+    {
+      "id": "ch0_choice_kitchen",
+      "bg": "kitchen_night",
+      "char": "s1",
+      "loc": "厨房",
+      "speaker": "player",
+      "text": "我来端吧林姐，您做了一下午家务了，坐着歇会儿。",
+      "next": "ch0_kit_2"
+    },
+    {
+      "id": "ch0_kit_2",
+      "bg": "kitchen_night",
+      "char": "e1",
+      "speaker": "wanqing",
+      "text": "哎呀你别进来，厨房地砖有点油，刚溅了油点子容易滑脚……给你筷子，在消毒柜第二层。",
+      "next": "ch0_kit_3"
+    },
+    {
+      "id": "ch0_kit_3",
+      "bg": "kitchen_night",
+      "speaker": "narration",
+      "text": "（狭窄的单人厨房里转不开身，我伸手去接递过来的骨瓷碗，手指不小心碰到了她的指侧。她的指尖带着自来水的微凉，像触电似地微微缩了一下，随即抿嘴笑了笑掩饰过去。）",
+      "next": "ch0_kit_4"
+    },
+    {
+      "id": "ch0_kit_4",
+      "bg": "kitchen_night",
+      "char": "s1",
+      "speaker": "wanqing",
+      "text": "这小孩，手劲还挺大。端当心点，碗边烫。",
+      "next": "ch0_kit_5"
+    },
+    {
+      "id": "ch0_kit_5",
+      "bg": "living_night",
+      "char": "s1",
+      "loc": "客厅",
+      "speaker": "narration",
+      "text": "（两个人隔着餐桌坐下。热面汤冒着白雾，窗外的晚风吹得纱窗沙沙作响，刚刚初来乍到的生疏与拘谨，在一勺热汤咽下肚时悄然淡化了不少。）",
+      "next": "ch0_dinner_merge"
+    },
+    {
+      "id": "ch0_choice_sit",
+      "bg": "living_night",
+      "char": "s1",
+      "loc": "客厅",
+      "speaker": "player",
+      "text": "那我就不客气了林姐。闻着真香，坐了一天车肚子里早空了。",
+      "next": "ch0_sit_2"
+    },
+    {
+      "id": "ch0_sit_2",
+      "bg": "living_night",
+      "char": "s1",
+      "speaker": "wanqing",
+      "text": "不用客气，出门在外的学生，最怕水土不服。荷包蛋我煎得焦了一点，不知你吃不吃得惯。桌上有香油和陈醋，自己加。",
+      "next": "ch0_sit_3"
+    },
+    {
+      "id": "ch0_sit_3",
+      "bg": "living_night",
+      "speaker": "narration",
+      "text": "（她解下围裙搭在椅背上，在我对面端端正正地坐下来。她小口挑着面条，筷子碰到碗沿发出很轻的细碎响声。客厅里没有开电视，安静得能听见墙上挂钟滴答走动的声响。）",
+      "next": "ch0_sit_4"
+    },
+    {
+      "id": "ch0_sit_4",
+      "bg": "living_night",
+      "char": "s1",
+      "speaker": "wanqing",
+      "text": "要是面汤淡了就跟我说，我平时口淡……这屋里平时就我一个人，冷清惯了，多个人动筷子，倒像个过日子的样子。",
+      "next": "ch0_sit_5"
+    },
+    {
+      "id": "ch0_sit_5",
+      "bg": "living_night",
+      "speaker": "narration",
+      "text": "（她说到一半，像是意识到自己话多了，有些不好意思地低下头轻轻喝了口汤。）",
+      "next": "ch0_dinner_merge"
+    },
+    {
+      "id": "ch0_dinner_merge",
+      "bg": "living_night",
+      "char": "s1",
+      "loc": "客厅",
+      "speaker": "wanqing",
+      "text": "吃完碗放水池里就行，我睡前顺手洗掉。你今天赶路累坏了，夜里水温我调到四十二度了，洗个热水澡早点倒时差。",
+      "next": "ch0_dinner_7"
+    },
+    {
+      "id": "ch0_dinner_7",
+      "bg": "living_night",
+      "speaker": "player",
+      "text": "好嘞，林姐你也早点歇着。今天真的太感谢你了。",
+      "next": "ch0_night_1"
+    },
+    {
+      "id": "ch0_night_1",
+      "bg": "player_room_night",
+      "char": "none",
+      "loc": "次卧",
+      "time": "夜",
+      "speaker": "narration",
+      "text": "（十点过半。洗过澡后的次卧格外宁静，换气扇的微风从纱窗缝里挤进来，带走最后一丝闷热。）",
+      "next": "ch0_night_2"
+    },
+    {
+      "id": "ch0_night_2",
+      "bg": "player_room_night",
+      "speaker": "narration",
+      "text": "（隔壁客厅隐约传来电视机综艺节目的罐头笑声，声音压得很低很克制，像是不想吵到我。伴随着偶尔走动的软底拖鞋声，水杯在茶几上轻轻搁落。）",
+      "next": "ch0_night_3"
+    },
+    {
+      "id": "ch0_night_3",
+      "bg": "player_room_night",
+      "speaker": "narration",
+      "text": "（差不多过了半钟头，电视屏幕暗了下去。随着客厅大灯‘啪嗒’一声关灭，走廊彻底陷入了沉寂，只有走廊门缝透进一点月光的银灰。）",
+      "next": "ch0_night_4"
+    },
+    {
+      "id": "ch0_night_4",
+      "bg": "player_room_night",
+      "speaker": "narration",
+      "text": "（钥匙就在我床头柜上放着。三十多岁的林姐，空出来的次卧，还有往后大学四年的日子……从明天太阳升起开始，这间屋子里的指针，就要真正走起来了。）",
+      "next": "end"
+    }
+  ]
+}

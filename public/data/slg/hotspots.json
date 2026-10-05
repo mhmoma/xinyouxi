@@ -1,0 +1,27 @@
+{
+  "Bedroom_Player": [
+    { "id": "sleep", "label": "睡觉", "icon": "🛏", "left": 2, "top": 52, "w": 40, "h": 32 },
+    { "id": "study", "label": "学习", "icon": "📚", "left": 53, "top": 53, "w": 18, "h": 24 },
+    { "id": "phone", "label": "玩手机", "icon": "📱", "left": 10, "top": 56, "w": 11, "h": 12 }
+  ],
+  "LivingRoom": [
+    { "id": "tv", "label": "看电视", "icon": "📺", "left": 49, "top": 36, "w": 24, "h": 28 }
+  ],
+  "Kitchen": [
+    { "id": "snack_eat", "label": "找点吃的", "icon": "🍜", "left": 74, "top": 8, "w": 22, "h": 48 }
+  ],
+  "Bathroom": [
+    { "id": "bath_self", "label": "洗澡", "icon": "🚿", "left": 1, "top": 48, "w": 40, "h": 42 },
+    { "id": "install_cam", "label": "安装摄像头", "icon": "📷", "left": 54, "top": 5, "w": 8, "h": 12 }
+  ],
+  "Laundry": [
+    { "id": "laundry", "label": "收衣服", "icon": "👕", "left": 50, "top": 42, "w": 34, "h": 42 }
+  ],
+  "Entry": [
+    { "id": "shoes", "label": "换鞋", "icon": "👟", "left": 0, "top": 58, "w": 30, "h": 32 }
+  ],
+  "Outside": [
+    { "id": "wander", "label": "转转", "icon": "🚶", "left": 0, "top": 48, "w": 22, "h": 40 },
+    { "id": "work", "label": "便利店兼职", "icon": "🏪", "left": 52, "top": 38, "w": 16, "h": 42 }
+  ]
+}

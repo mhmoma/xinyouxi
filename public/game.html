@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content"
+  />
+  <title>合租的她</title>
+  <link rel="stylesheet" href="style.css?v=11" />
+  <link rel="stylesheet" href="ui-v2.css?v=4" />
+</head>
+<body>
+  <div id="app" class="phone-shell">
+    <div id="boot-loader" class="boot-loader" role="status" aria-live="polite">
+      <div class="boot-loader-panel">
+        <p class="boot-loader-kicker">合租的她</p>
+        <p id="boot-loader-text" class="boot-loader-text">开门中</p>
+        <div class="boot-loader-track" aria-hidden="true"><i id="boot-loader-bar"></i></div>
+      </div>
+    </div>
+
+    <section id="screen-title" class="screen">
+      <div class="title-brand-block">
+        <h1 class="title-main">合租的她</h1>
+        <p class="title-sub">空出来的次卧。<br />白天是房东，晚上只剩你们两个。</p>
+      </div>
+      <div class="title-actions">
+        <button type="button" id="btn-start" class="btn btn--primary" onclick="if(window.openGame){window.openGame();}">开始剧情（序章）</button>
+        <button type="button" id="btn-slg" class="btn btn--secondary" onclick="if(window.openInteractiveSlg){window.openInteractiveSlg();}">直接进入日常互动</button>
+        <button type="button" id="btn-continue" class="btn btn--ghost" disabled>继续</button>
+      </div>
+      <p class="title-version">v0.3.2</p>
+    </section>
+
+    <section id="screen-game" class="screen hidden is-vn">
+      <div id="stage" class="stage">
+        <div id="layer-bg" class="layer-bg" aria-hidden="true"></div>
+        <div id="layer-props" class="layer-props" aria-hidden="true"></div>
+        <div id="layer-char" class="layer-char" aria-hidden="true"></div>
+        <div id="layer-dim" class="layer-dim" aria-hidden="true"></div>
+        <div id="layer-hot" class="layer-hot" aria-hidden="true"></div>
+        <div id="hit-catcher" class="hit-catcher" aria-hidden="true"></div>
+      </div>
+
+      <header id="hud-bar" class="hud-bar">
+        <div class="hud-time">
+          <span id="hud-clock-icon" class="hud-clock" aria-hidden="true">☀</span>
+          <span id="hud-time">第1天 · 周六 · 下午</span>
+        </div>
+        <div class="hud-energy" title="体力">
+          <span class="hud-ico" aria-hidden="true">⚡</span>
+          <div class="hud-bar-track"><i id="hud-energy-fill"></i></div>
+          <span id="hud-energy-num">100/100</span>
+        </div>
+        <div class="hud-gold"><span class="hud-ico">💰</span><span id="hud-gold">¥ 1000</span></div>
+        <div class="hud-study"><span class="hud-ico">📘</span><span id="hud-study">Lv.50</span></div>
+        <button type="button" id="btn-menu" class="hud-gear" aria-label="菜单">⚙</button>
+      </header>
+
+      <aside id="npc-panel" class="npc-panel" aria-label="互动">
+        <div class="npc-head">
+          <img id="npc-face" class="npc-face" alt="" />
+          <div>
+            <p class="npc-name">林晚晴</p>
+            <p id="npc-state" class="npc-state">空闲</p>
+          </div>
+        </div>
+        <div class="npc-heart">
+          <div class="npc-heart-track"><i id="npc-heart-fill"></i></div>
+          <p id="npc-rel">当前关系：房客（疏离）</p>
+        </div>
+        <div id="npc-acts" class="npc-acts"></div>
+      </aside>
+
+      <button type="button" id="btn-map" class="map-fab" aria-label="移动">
+        <span class="map-fab-ico">◎</span>
+        <span>移动 / 地图</span>
+      </button>
+
+      <div id="mini-map" class="mini-map hidden" role="dialog" aria-label="户型">
+        <div class="mini-map-card">
+          <h2>这间屋子</h2>
+          <div id="mini-map-grid" class="mini-map-grid"></div>
+          <button type="button" id="mini-map-close" class="btn btn--ghost">关上</button>
+        </div>
+      </div>
+
+      <footer id="layer-vn" class="vn-panel">
+        <div id="vn-top-bar" class="vn-top-bar">
+          <div id="vn-name" class="vn-name"></div>
+          <button type="button" id="btn-skip-vn" class="btn-skip-vn" onclick="if(window.chapterEnd){window.chapterEnd();}">跳过剧情 · 进入日常互动 ➔</button>
+        </div>
+        <p id="vn-text" class="vn-text"></p>
+        <div id="vn-choices" class="vn-choices"></div>
+        <p id="vn-hint" class="vn-hint">点这里继续</p>
+        <span id="fx-heart" class="fx-heart" hidden>❤ 信赖 +0</span>
+      </footer>
+    </section>
+
+    <div id="slg-sheet" class="slg-sheet hidden" role="dialog" aria-label="二级菜单">
+      <div class="slg-sheet-card">
+        <h2 id="slg-sheet-title">手机</h2>
+        <div id="slg-sheet-body" class="slg-sheet-body"></div>
+      </div>
+    </div>
+
+    <div id="menu-sheet" class="menu-sheet hidden" role="dialog" aria-label="菜单">
+      <div class="menu-card">
+        <h2>系统</h2>
+        <button type="button" id="menu-back" class="btn btn--primary">回到游戏</button>
+        <button type="button" id="menu-title" class="btn">回标题</button>
+      </div>
+    </div>
+  </div>
+  <script src="data/script/ch00.js"></script>
+  <script defer src="js/stage.js?v=5"></script>
+  <script defer src="js/hitmap.js?v=1"></script>
+  <script defer src="js/vn.js?v=6"></script>
+  <script defer src="js/slg.js?v=6"></script>
+  <script defer src="js/app.js?v=11"></script>
+</body>
+</html>
