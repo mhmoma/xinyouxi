@@ -2059,58 +2059,78 @@
     if (mode !== "map") return;
     var from = state.playerLocation;
 
-    // 1. Bathroom Stealing a Peek (偷看) Interception
+    // 1. Bathroom Bathing Interception
     if (id === "Bathroom" && state.wanqing.currentState === "Bathing" && state.wanqing.currentLocation === "Bathroom") {
+      state.playerLocation = id;
+      isNpcPanelRevealed = true;
+      renderNpcPanel();
       playLines([
-        { speaker: "narration", text: "（浴室里传来温热的水声，还有淡淡的沐浴露芬芳。门锁着，里面雾气朦胧。）" },
+        { speaker: "narration", text: "（浴室里水汽缭绕，传来淅沥沥的打温水声与浓郁的柑橘沐浴露芬芳。）" },
         {
           speaker: "player",
-          text: "（她在洗澡……我要怎么办？）",
+          text: "（晚晴正在里面洗澡，门微扣着……我要怎么做？）",
           choices: [
             {
-              text: "🚪 礼貌地敲门打个招呼 (体力 -5)",
+              text: "🚪 隔门礼貌打个招呼 (体力 -5，信赖 +2)",
               trust: 2,
-              say: "“是你在里面洗澡吗？我……我回房间了，晚点再来。”",
+              say: "“晚晴，是我。你慢慢洗，我不急着拿东西。”",
               postLines: [
-                { speaker: "wanqing", char: "e1", text: "“啊……好的，我马上洗完了。你要是用热水，再等我十分钟。”" },
-                { speaker: "narration", text: "（你在门外礼貌地打了个招呼，她的好感上升了。）" }
+                { speaker: "wanqing", char: "e1", text: "“啊……好的！小陈，水温刚好，我马上就洗完了哦。”" },
+                { speaker: "narration", text: "（你在门外体贴地提醒了一声，她轻声回应，语气里满是安心。）" }
               ]
             },
             {
-              text: "🫣 贴着门缝偷看一眼 (需消耗 20 体力，警惕值 +15)",
+              text: "🫣 贴着门缝偷看透光水雾 (需消耗 15 体力，警惕 +10, 欲望 +5)",
               action: function() {
-                if (state.playerEnergy < 20) {
-                  playLines([{ speaker: "narration", text: "（体力不足，还是先回去吧。）" }], enterMap);
+                if (state.playerEnergy < 15) {
+                  playLines([{ speaker: "narration", text: "（体力不足，还是先休息一会儿吧。）" }], enterMap);
                   return;
                 }
-                state.playerEnergy = clamp(state.playerEnergy - 20, 0, 100);
+                state.playerEnergy = clamp(state.playerEnergy - 15, 0, 100);
                 
-                // Light constraint: check if suspicion is too high
                 if (state.wanqing.suspicion >= 80) {
                   state.wanqing.suspicion = clamp(state.wanqing.suspicion + 10, 0, 100);
                   playLines([
-                    { speaker: "narration", text: "（由于你最近举动异常，她防备心极重，浴室门缝被她用毛巾塞得严严实实，什么都看不到！）" },
-                    { speaker: "narration", text: "（你踩到地板上的水发出声响，她似乎有些警觉…… 警惕值增加！）" }
+                    { speaker: "narration", text: "（她防备心极重，浴室门缝被她用毛巾塞得严严实实，踩水声惊动了她…… 警惕值增加！）" }
                   ], enterMap);
                   return;
                 }
                 
-                // Steal peek daily cooldown
-                var peekFlag = "peeked_door_" + state.dayCount;
-                if (flag(state, peekFlag)) {
+                state.wanqing.suspicion = clamp(state.wanqing.suspicion + 10, 0, 100);
+                state.wanqing.lust = clamp(state.wanqing.lust + 5, 0, 100);
+                playVideoEvent("S7_bathroom_full", enterMap);
+              }
+            },
+            {
+              text: "🛁 推门送毛巾进去 (S7·水汽浴室全裸地砖姿势链)",
+              action: function() {
+                if (state.wanqing.trust < 40) {
                   playLines([
-                    { speaker: "narration", text: "（今天已经偷看过一次了，再去的话被发现的风险太高，还是别得寸进尺了。）" }
+                    { speaker: "wanqing", char: "sur1", text: "“呀！你……你干嘛不敲门直接推门进来呀！快出去！”" },
+                    { speaker: "narration", text: "（信赖值不足 40，她害羞地把你赶了出来，需要先提升与她的信赖度！）" }
                   ], enterMap);
                   return;
                 }
-                setFlag(state, peekFlag, true);
-                
-                state.wanqing.suspicion = clamp(state.wanqing.suspicion + 15, 0, 100);
-                state.wanqing.lust = clamp(state.wanqing.lust + 2, 0, 100);
-                
-                // Play different tier video depending on trust
-                var vidId = state.wanqing.trust >= 75 ? "insert_bath_nude" : "insert_bath_dressed";
-                playVideoEvent(vidId, enterMap);
+                playVideoEvent("S7_bathroom_full", enterMap);
+              }
+            },
+            {
+              text: "🚿 直接步入水汽蒸腾的浴室相拥",
+              action: function() {
+                if (state.wanqing.trust < 75 && (state.wanqing.lust || 0) < 50) {
+                  playLines([
+                    { speaker: "wanqing", char: "e2", text: "“你……你怎么进来了……太害羞了，快把眼睛闭上……”" },
+                    { speaker: "narration", text: "（信赖或欲望不足，尚不敢如此放肆。）" }
+                  ], enterMap);
+                  return;
+                }
+                playVideoEvent("S7_bathroom_full", enterMap);
+              }
+            },
+            {
+              text: "🚶 先不打扰她，在浴室门外看看",
+              action: function() {
+                enterMap();
               }
             }
           ]
@@ -2119,14 +2139,49 @@
       return;
     }
 
-    // 2. NPC Bedroom Locked sleeping room flow
+    // 2. NPC Bedroom Sleeping Interception
     if (id === "Bedroom_NPC" && state.wanqing.currentState === "Sleeping") {
-      if (state.wanqing.trust < 91) {
-        playLines([
-          { speaker: "narration", text: "（门锁着。里面安安静静的，晚晴姐大概已经在里面睡下了。还是别打扰她了。）" }
-        ], enterMap);
-        return;
-      }
+      state.playerLocation = id;
+      isNpcPanelRevealed = true;
+      renderNpcPanel();
+      playLines([
+        { speaker: "narration", text: "（卧室里灯光柔和昏暗，晚晴正侧卧在被窝里甜甜熟睡，呼吸轻盈。）" },
+        {
+          speaker: "player",
+          text: "（她已经睡着了……我要怎么做？）",
+          choices: [
+            {
+              text: "🚪 轻轻敲敲门唤她一声 (体力 -5)",
+              trust: 1,
+              say: "“晚晴，盖好被子，别着凉了。”",
+              postLines: [
+                { speaker: "wanqing", char: "e1", text: "“唔……小陈吗？嗯……知道了，晚安哦……”" },
+                { speaker: "narration", text: "（她在梦呓中含糊地答应了一声，把被角往上拉了拉。）" }
+              ]
+            },
+            {
+              text: "🔑 用备用钥匙悄悄溜进床边 (S5_nap·午睡偷香 / S9·彻底沦陷)",
+              action: function() {
+                if (state.wanqing.trust < 50) {
+                  playLines([
+                    { speaker: "narration", text: "（房门被她从里面插上了小栓，信赖值不足 50，无法轻易溜进去。）" }
+                  ], enterMap);
+                  return;
+                }
+                var vid = state.wanqing.trust >= 90 ? "S9_bedroom_obsession" : "S5_nap_bedroom";
+                playVideoEvent(vid, enterMap);
+              }
+            },
+            {
+              text: "🚶 不打扰她休息，轻轻离开",
+              action: function() {
+                enterMap();
+              }
+            }
+          ]
+        }
+      ], enterMap);
+      return;
     }
 
     state.playerLocation = id;
@@ -2187,6 +2242,16 @@
       });
     }
     
+    if (ui.npcPanel) {
+      ui.npcPanel.addEventListener("click", function (ev) {
+        if (mode !== "map") return;
+        if (!npcHere(state)) return;
+        ev.stopPropagation();
+        isNpcPanelRevealed = !isNpcPanelRevealed;
+        renderNpcPanel();
+      });
+    }
+
     // Character sprite click interaction
     var charLayer = document.getElementById("layer-char");
     if (charLayer) {
