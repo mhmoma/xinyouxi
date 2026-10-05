@@ -2240,9 +2240,47 @@
   function findVideoDef(vid) {
     var vList = tables.videos || [];
     for (var i = 0; i < vList.length; i++) {
-      if (vList[i].id === vid) return vList[i];
+      if (vList[i].id === vid || vList[i].stage === vid) return vList[i];
     }
     return vList[0] || null;
+  }
+
+  var StoryStateManager = {
+    getCurrentStage: function () {
+      if (!state) return "S0";
+      return evaluateStage(state);
+    },
+    getUnlockedStages: function () {
+      if (!state) return ["S0"];
+      evaluateStage(state);
+      return state.unlockedStages || ["S0"];
+    },
+    isStageUnlocked: function (stageId) {
+      var unlocked = StoryStateManager.getUnlockedStages();
+      return unlocked.indexOf(stageId) >= 0;
+    }
+  };
+
+  function playStage(stageId, onDone) {
+    stageId = stageId || StoryStateManager.getCurrentStage();
+    var v = findVideoDef(stageId);
+    if (!v) {
+      // Search by stage field in videos table
+      var vList = tables.videos || [];
+      for (var i = 0; i < vList.length; i++) {
+        if (vList[i].stage === stageId) {
+          v = vList[i];
+          break;
+        }
+      }
+    }
+
+    if (!v) {
+      playVideoEvent(stageId, onDone);
+      return;
+    }
+
+    playVideoEvent(v.id, onDone);
   }
 
   function markVideoUnlocked(vid) {
@@ -3035,6 +3073,8 @@
     hasSave: hasSave,
     openGallery: openGallery,
     playVideoEvent: playVideoEvent,
+    playStage: playStage,
+    StoryStateManager: StoryStateManager,
     processTimeSlot: processTimeSlot,
     openSheet: openSheet,
     openTaobaoModal: openTaobaoModal,
