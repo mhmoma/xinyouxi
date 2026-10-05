@@ -408,7 +408,42 @@
       </div>
     </div>
 
-    <!-- 9. SYSTEM MENU MODAL SHEET -->
+    <!-- 10. TIME TRANSITION FADE OVERLAY -->
+    <div id="time-transition-overlay" class="time-transition-overlay hidden" aria-hidden="true">
+      <div class="time-transition-content">
+        <div class="time-transition-clock">
+          <span id="time-transition-icon" class="time-transition-icon">🌙</span>
+        </div>
+        <h3 id="time-transition-title" class="time-transition-title">时光流转...</h3>
+        <p id="time-transition-sub" class="time-transition-sub">手道勤抚，屋舍清香</p>
+      </div>
+    </div>
+
+    <!-- 11. HEARTBEAT COOKING & COCKTAIL MINIGAME MODAL -->
+    <div id="minigame-modal" class="modal-sheet hidden" role="dialog" aria-label="心动料理小游戏">
+      <div class="minigame-shell">
+        <div class="minigame-header">
+          <span class="minigame-title">🍳 心动特调与美艳料理大师</span>
+          <button type="button" id="minigame-close-btn" class="minigame-close-btn">✕</button>
+        </div>
+        <div class="minigame-body">
+          <p class="minigame-desc">为晚晴调配微醺特调或做一盘美味小菜。当移动指针落在金色心动判定区时精准按下！</p>
+          <div class="minigame-track-container">
+            <div id="minigame-target-zone" class="minigame-target-zone"></div>
+            <div id="minigame-pointer" class="minigame-pointer"></div>
+          </div>
+          <div class="minigame-stats-row">
+            <span>回合: <b id="minigame-round-val">1/3</b></span>
+            <span>心动积分: <b id="minigame-score-val">0</b></span>
+          </div>
+          <div class="minigame-actions">
+            <button type="button" id="minigame-hit-btn" class="btn btn--primary btn--large">🎯 精准下料 / 摇酒 (HIT!)</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SYSTEM MENU MODAL SHEET -->
     <div id="menu-sheet" class="menu-sheet hidden" role="dialog" aria-label="菜单">
       <div class="menu-card">
         <h2>系统</h2>

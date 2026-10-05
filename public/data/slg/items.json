@@ -1,6 +1,15 @@
 {
-  "snack": { "id": "snack", "name": "点心", "price": 200, "trust": 6, "shop": true, "text": "超市里那种普通盒子。" },
-  "wine": { "id": "wine", "name": "便宜红酒", "price": 380, "trust": 4, "lust": 3, "shop": true, "text": "标签旧，能喝。" },
-  "flower": { "id": "flower", "name": "一束花", "price": 120, "trust": 3, "shop": true, "text": "她未必喜欢张扬的。" },
-  "camera": { "id": "camera", "name": "小型摄像头", "price": 800, "shop": true, "equip": "bathroom", "text": "说明书皱着。" }
+  "snack": { "id": "snack", "name": "精致甜品小泡芙", "price": 150, "trust": 6, "shop": true, "cat": "gift", "text": "街角老牌手作甜品店的鲜奶小泡芙，香甜可口。" },
+  "perfume": { "id": "perfume", "name": "法国柑橘香水小样", "price": 680, "trust": 12, "lust": 8, "shop": true, "cat": "gift", "text": "甜而不腻的成熟柑橘芬芳，喷在脖颈处散发迷人幽香。" },
+  "wine": { "id": "wine", "name": "冰镇甜白葡萄酒", "price": 450, "trust": 8, "lust": 10, "shop": true, "cat": "gift", "text": "微醺微甜的果香冰镇甜白，非常适合深夜两人小酌。" },
+  "flower": { "id": "flower", "name": "优雅玫瑰花束", "price": 180, "trust": 6, "shop": true, "cat": "gift", "text": "新鲜采摘的红玫瑰花束，散发清雅花香。" },
+  "lingerie_black": { "id": "lingerie_black", "name": "薄纱黑蕾丝吊带睡衣", "price": 1280, "trust": 10, "lust": 22, "shop": true, "cat": "lingerie", "text": "薄如蝉翼的性感黑蕾丝睡裙，展现曼妙动人美感。" },
+  "silk_robe": { "id": "silk_robe", "name": "冰丝真丝长款睡袍", "price": 980, "trust": 12, "lust": 15, "shop": true, "cat": "lingerie", "text": "触感极其顺滑亲肤的香槟色真丝睡袍。" },
+  "cat_ears": { "id": "cat_ears", "name": "绒毛猫耳与铃铛项圈", "price": 320, "trust": 5, "lust": 16, "shop": true, "cat": "lingerie", "text": "俏皮可爱的白色绒毛猫耳饰品与精致小铃铛。" },
+  "oil": { "id": "oil", "name": "玫瑰香薰精油", "price": 520, "trust": 10, "lust": 18, "shop": true, "cat": "gift", "text": "舒缓疲劳与温存肌肤交融的温热香薰精油。" },
+  "high_heels": { "id": "high_heels", "name": "优雅细高跟凉鞋", "price": 880, "trust": 12, "lust": 14, "shop": true, "cat": "lingerie", "text": "凸显美腿线条与修长轮廓的黑漆皮高跟鞋。" },
+  "stockings": { "id": "stockings", "name": "蕾丝连体提花袜", "price": 260, "trust": 5, "lust": 16, "shop": true, "cat": "lingerie", "text": "薄透优雅的提花丝袜，触感细腻。" },
+  "skincare": { "id": "skincare", "name": "贵妇保湿补水套装", "price": 1500, "trust": 22, "lust": 5, "shop": true, "cat": "gift", "text": "晚晴梦寐以求的高级护肤礼盒，能大幅提升信赖感。" },
+  "candle": { "id": "candle", "name": "玫瑰香薰沉木蜡烛", "price": 220, "trust": 8, "lust": 8, "shop": true, "cat": "gift", "text": "营造深夜温馨氛围与浪漫光影的室内蜡烛。" },
+  "camera": { "id": "camera", "name": "微型安防摄像头", "price": 800, "shop": true, "cat": "tech", "equip": "bathroom", "text": "可贴在浴室或客厅等换气扇边上的全天候摄像头。" }
 }

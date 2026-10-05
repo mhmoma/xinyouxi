@@ -1029,22 +1029,15 @@
     }
 
     if (def.special === "sleep") {
-      if (s.currentTimeSlot === "LateNight") {
-        lines.push({ speaker: "narration", text: "（夜深了，我把灯关上。隔音不好的老房子里，偶尔能听到走廊轻柔的拖鞋声……）" });
-        nightProcess(s);
-        lines.push({ speaker: "narration", text: "（一觉醒来。第二天。第" + s.dayCount + "天。）" });
-        var man = mandatoryLines(s);
-        if (man) lines = lines.concat(man);
-        return lines;
-      } else {
-        return [
-          {
-            speaker: "narration",
-            text: "（现在还是白天，躺在松软的床垫上，舒适的微风吹拂着纱窗……）",
-            choices: [
-              {
-                text: "🛌 床上小憩 (恢复 30 体力，跳过当前时段)",
-                action: function() {
+      return [
+        {
+          speaker: "narration",
+          text: "（窗外微风摇曳，躺在松软温热的床上……你要选择如何度过？）",
+          choices: [
+            {
+              text: "🛌 在床上舒舒服服小憩午睡 (恢复 30 体力，跳过当前时段)",
+              action: function() {
+                triggerTimeTransition("🛌 床上小憩", "午后微风，短憩惬意", function() {
                   s.playerEnergy = clamp(s.playerEnergy + 30, 0, 100);
                   s._spentSlot = true;
                   var how = advanceSlotIfNeeded();
@@ -1053,25 +1046,47 @@
                     { speaker: "narration", text: "（你定了个短闹钟，在床上舒舒服服地睡了个午觉。体力恢复了！）" },
                     { speaker: "narration", text: "（一眨眼，时间来到了 " + nextSlotCn + "。）" }
                   ], enterMap);
-                }
-              },
-              {
-                text: "💤 直接深睡到明天清晨 (精力全部恢复，天数 +1)",
-                action: function() {
-                  playLines([
-                    { speaker: "narration", text: "（你决定结束今天的日程，闭上眼睛沉沉睡去……）" }
-                  ], function() {
-                    nightProcess(s);
-                    playLines([
-                      { speaker: "narration", text: "（一觉醒来。新的一天。第" + s.dayCount + "天。）" }
-                    ], enterMap);
-                  });
-                }
+                });
               }
-            ]
-          }
-        ];
-      }
+            },
+            {
+              text: "💤 闭上眼睛沉沉深睡到明天清晨 (精力恢复 100%，天数 +1)",
+              action: function() {
+                triggerTimeTransition("🌙 闭眼深睡", "夜深人静，朝阳再起", function() {
+                  s.playerEnergy = 100;
+                  nightProcess(s);
+                  playLines([
+                    { speaker: "narration", text: "（一觉醒来。阳光洒在枕畔。新的一天，第 " + s.dayCount + " 天！）" }
+                  ], enterMap);
+                });
+              }
+            },
+            {
+              text: "🔑 悄悄溜去隔壁晚晴卧室看看 (需信赖 ≥ 50)",
+              action: function() {
+                if (s.wanqing.trust < 50) {
+                  playLines([
+                    { speaker: "narration", text: "（信赖值不足 50，尚不敢深夜敲门溜进她卧室。）" }
+                  ], enterMap);
+                  return;
+                }
+                var vid = s.wanqing.trust >= 90 ? "S9_bedroom_obsession" : "S5_nap_bedroom";
+                playVideoEvent(vid, enterMap);
+              }
+            },
+            {
+              text: "💭 躺在床头静静遐想温存 (恢复 10 体力，欲望 +2)",
+              action: function() {
+                s.playerEnergy = clamp(s.playerEnergy + 10, 0, 100);
+                s.wanqing.lust = clamp((s.wanqing.lust || 0) + 2, 0, 100);
+                playLines([
+                  { speaker: "narration", text: "（你枕着手臂望着天花板，脑海里全是对走廊那头晚晴的思念与温存遐想……）" }
+                ], enterMap);
+              }
+            }
+          ]
+        }
+      ];
     }
     if (def.special === "phone") {
       openSheet("phone");
@@ -1593,35 +1608,80 @@
           ui.npcActs.appendChild(btn);
         });
       } else if (currentCategory === "chores") {
-        // Render physical house chores and gift giving using original keys
-        var keys = (tables.actions || []).filter(function (a) {
-          return a.panel && a.loc === state.playerLocation && (a.id === "chores" || a.id === "chores_kit" || a.id === "gift" || a.id === "chat_laundry");
+        // 1. Gift giving option (always available if player has gifts in inventory)
+        var hasGifts = giftIds(state).length > 0;
+        var btnGift = document.createElement("button");
+        btnGift.type = "button";
+        btnGift.className = "npc-act";
+        btnGift.disabled = !hasGifts;
+        btnGift.innerHTML = "<span>🎁 赠送礼品</span>" + (hasGifts ? "<span class='cost'>从背包赠送</span>" : "<span class='lock'>🔒 (包里暂无礼品)</span>");
+        btnGift.addEventListener("click", function (ev) {
+          ev.stopPropagation();
+          openSheet("gift");
         });
-        
-        if (keys.length === 0) {
-          var emptyMsg = document.createElement("p");
-          emptyMsg.className = "npc-state-empty";
-          emptyMsg.textContent = "当前没有需要帮忙的家务。";
-          ui.npcActs.appendChild(emptyMsg);
+        ui.npcActs.appendChild(btnGift);
+
+        // 2. Mini-game Cooking option in Kitchen
+        if (state.playerLocation === "Kitchen") {
+          var btnMini = document.createElement("button");
+          btnMini.type = "button";
+          btnMini.className = "npc-act";
+          btnMini.innerHTML = "<span>🍳 亲自下厨特调与做菜 (心动小游戏)</span><span class='cost'>-20体力</span>";
+          btnMini.addEventListener("click", function (ev) {
+            ev.stopPropagation();
+            openMinigameModal();
+          });
+          ui.npcActs.appendChild(btnMini);
         }
 
-        keys.forEach(function (def) {
-          var id = def.id;
-          var ok = needOk(def, state);
-          var low = def.energy && state.playerEnergy < def.energy;
+        // 3. Location Chores list (unrestricted, available anytime)
+        var choresList = [
+          { id: "chores_living", loc: "LivingRoom", label: "🧹 打扫客厅与擦拭茶几", energy: 20, trustGain: 5, goldGain: 50 },
+          { id: "chores_kit", loc: "Kitchen", label: "🍳 洗碗备餐与整理洗菜池", energy: 20, trustGain: 6, goldGain: 60 },
+          { id: "chores_laundry", loc: "Laundry", label: "🧺 帮晚晴晾晒棉麻被单", energy: 20, trustGain: 6, lustGain: 2 },
+          { id: "chores_bath", loc: "Bathroom", label: "🧽 擦拭浴室水槽与瓷砖", energy: 20, trustGain: 6, lustGain: 3 },
+          { id: "chores_bedroom", loc: "Bedroom_NPC", label: "🔧 检修闺房台灯与家电", energy: 25, trustGain: 10, lustGain: 5 },
+          { id: "chores_massage", loc: "LivingRoom", label: "💆 为晚晴舒缓肩颈按摩", energy: 20, trustMin: 50, trustGain: 10, lustGain: 8 }
+        ];
+
+        var roomChores = choresList.filter(function (c) {
+          return c.loc === state.playerLocation || c.loc === "LivingRoom";
+        });
+
+        roomChores.forEach(function (c) {
           var btn = document.createElement("button");
           btn.type = "button";
           btn.className = "npc-act";
-          btn.disabled = !ok || low;
-          var ico = NPC_ICON[id] || "•";
-          var cost = def.energy ? "-" + def.energy + "体力" : "";
-          btn.innerHTML = "<span>" + ico + " " + def.label + "</span>" + (ok ? "<span class=\"cost\">" + cost + "</span>" : "<span class=\"lock\">🔒</span>");
+          var energyLow = state.playerEnergy < c.energy;
+          var trustOk = !c.trustMin || state.wanqing.trust >= c.trustMin;
+
+          btn.disabled = energyLow || !trustOk;
+
+          if (!trustOk) {
+            btn.innerHTML = "<span>" + c.label + "</span><span class='lock'>🔒 (信赖" + c.trustMin + "解锁)</span>";
+          } else {
+            btn.innerHTML = "<span>" + c.label + "</span>" + (energyLow ? "<span class='cost' style='color:#e74c3c'>体力不足</span>" : "<span class='cost'>-" + c.energy + "体力</span>");
+          }
+
           btn.addEventListener("click", function (ev) {
             ev.stopPropagation();
             isNpcPanelRevealed = true;
-            currentCategory = "";
-            doAct(id);
+            state.playerEnergy = clamp(state.playerEnergy - c.energy, 0, 100);
+
+            triggerTimeTransition("🧹 勤劳家务 · 手道勤抚", "屋舍清香，晚晴眼神温柔", function () {
+              if (c.trustGain) state.wanqing.trust = clamp(state.wanqing.trust + c.trustGain, 0, 100);
+              if (c.lustGain) state.wanqing.lust = clamp((state.wanqing.lust || 0) + c.lustGain, 0, 100);
+              if (c.goldGain) state.playerGold += c.goldGain;
+              paintHud();
+              persist();
+              popHeart(c.trustGain || 2, c.lustGain || 0);
+
+              playLines([
+                { speaker: "wanqing", char: "s3", text: "“小陈，辛苦你啦！有你帮着做家务，家里一下子亮堂了许多呢。”" }
+              ], enterMap);
+            });
           });
+
           ui.npcActs.appendChild(btn);
         });
       }
@@ -2614,6 +2674,130 @@
     }
   }
 
+  function triggerTimeTransition(title, subText, callback) {
+    var overlay = document.getElementById("time-transition-overlay");
+    var titleEl = document.getElementById("time-transition-title");
+    var subEl = document.getElementById("time-transition-sub");
+    var iconEl = document.getElementById("time-transition-icon");
+
+    if (!overlay) {
+      if (callback) callback();
+      return;
+    }
+
+    if (titleEl) titleEl.textContent = title || "时光流转...";
+    if (subEl) subEl.textContent = subText || "光影轻摇，时光流逝";
+    if (iconEl) iconEl.textContent = nightish(state ? state.currentTimeSlot : "Evening") ? "🌙" : "☀";
+
+    overlay.classList.remove("hidden");
+    
+    window.setTimeout(function () {
+      if (callback) callback();
+      window.setTimeout(function () {
+        overlay.classList.add("hidden");
+      }, 500);
+    }, 1000);
+  }
+
+  function openMinigameModal(onComplete) {
+    var modal = document.getElementById("minigame-modal");
+    var pointer = document.getElementById("minigame-pointer");
+    var roundVal = document.getElementById("minigame-round-val");
+    var scoreVal = document.getElementById("minigame-score-val");
+    var hitBtn = document.getElementById("minigame-hit-btn");
+    var closeBtn = document.getElementById("minigame-close-btn");
+
+    if (!modal || !pointer || !hitBtn) {
+      if (onComplete) onComplete(200);
+      return;
+    }
+
+    modal.classList.remove("hidden");
+
+    var round = 1;
+    var maxRounds = 3;
+    var totalScore = 0;
+    var pos = 0;
+    var speed = 2.5;
+    var dir = 1;
+    var animId = null;
+
+    if (roundVal) roundVal.textContent = "1/3";
+    if (scoreVal) scoreVal.textContent = "0";
+
+    function updateAnim() {
+      pos += speed * dir;
+      if (pos >= 94) { pos = 94; dir = -1; }
+      if (pos <= 0) { pos = 0; dir = 1; }
+      pointer.style.left = pos + "%";
+      animId = requestAnimationFrame(updateAnim);
+    }
+
+    animId = requestAnimationFrame(updateAnim);
+
+    hitBtn.onclick = function () {
+      cancelAnimationFrame(animId);
+
+      var dist = Math.abs(pos - 52);
+      var gained = 0;
+      if (dist <= 12) {
+        gained = 100;
+        popHeart(3, 2);
+      } else if (dist <= 25) {
+        gained = 60;
+        popHeart(1, 1);
+      } else {
+        gained = 30;
+      }
+
+      totalScore += gained;
+      if (scoreVal) scoreVal.textContent = totalScore;
+
+      round++;
+      if (round <= maxRounds) {
+        if (roundVal) roundVal.textContent = round + "/3";
+        speed += 0.8;
+        window.setTimeout(function () {
+          animId = requestAnimationFrame(updateAnim);
+        }, 350);
+      } else {
+        window.setTimeout(function () {
+          modal.classList.add("hidden");
+          cancelAnimationFrame(animId);
+
+          if (state) {
+            var trustBonus = totalScore >= 240 ? 12 : totalScore >= 160 ? 8 : 5;
+            var lustBonus = totalScore >= 240 ? 10 : totalScore >= 160 ? 5 : 2;
+            var goldBonus = totalScore >= 240 ? 300 : totalScore >= 160 ? 150 : 80;
+
+            state.wanqing.trust = clamp(state.wanqing.trust + trustBonus, 0, 100);
+            state.wanqing.lust = clamp((state.wanqing.lust || 0) + lustBonus, 0, 100);
+            state.playerGold += goldBonus;
+            paintHud();
+            persist();
+
+            triggerTimeTransition("🍳 心动美艳料理出锅！", "香气四溢，温情在屋里蔓延...", function () {
+              var evalText = totalScore >= 240 ?
+                "“哇……这特调和菜肴味道太赞了！小陈，你手艺也太好了吧！”（晚晴笑逐颜开，信赖 +" + trustBonus + "，欲望 +" + lustBonus + "，获得奖赏 ¥" + goldBonus + "）" :
+                "“嗯~ 味道非常不错呢，辛苦你啦小陈！”（晚晴满意地点点头，信赖 +" + trustBonus + "）";
+              
+              playLines([
+                { speaker: "wanqing", char: "s3", text: evalText }
+              ], onComplete || enterMap);
+            });
+          }
+        }, 300);
+      }
+    };
+
+    if (closeBtn) {
+      closeBtn.onclick = function () {
+        cancelAnimationFrame(animId);
+        modal.classList.add("hidden");
+      };
+    }
+  }
+
   function openTaobaoModal() {
     var modal = document.getElementById("taobao-modal");
     var grid = document.getElementById("tb-product-grid");
@@ -2641,60 +2825,57 @@
       };
     }
 
-    var defaultProducts = [
-      { id: "camera", name: "微型高清夜视摄像头", cat: "tech", price: 500, desc: "4K全景超微型透镜，支持手机远程App无感实时监控与夜视功能。", tag: "爆款安防", icon: "📹" },
-      { id: "lingerie", name: "薄如蝉翼黑色蕾丝吊带内衣", cat: "lingerie", price: 300, desc: "法国进口精纺丝绒蕾丝，优雅诱惑，赠送给晚晴增加大量欲望。", tag: "魅惑新品", icon: "👗" },
-      { id: "perfume", name: "法国顶级柑橘温感香水", cat: "gift", price: 200, desc: "晚晴特别钟爱的标志性成熟香气，喷在手腕与锁骨间令人陶醉。", tag: "晚晴最爱", icon: "🌸" },
-      { id: "wine", name: "冰镇甜白葡萄酒", cat: "gift", price: 150, desc: "低度数微醺果酒，深夜小酌能极大放松警惕与紧绷的情绪。", tag: "夜晚小酌", icon: "🍷" },
-      { id: "chocolate", name: "手工浓情纯黑巧克力", cat: "gift", price: 80, desc: "苦甜交织的浓郁口感，女生无法拒绝的美味下午茶甜品。", tag: "精致礼品", icon: "🍫" }
-    ];
-
     function renderGrid() {
       grid.innerHTML = "";
-      var list = defaultProducts;
-      if (currentCat !== "all") {
-        list = defaultProducts.filter(function (p) { return p.cat === currentCat; });
-      }
+      var items = tables.items || {};
+      var keys = Object.keys(items).filter(function (k) {
+        var it = items[k];
+        if (!it.shop) return false;
+        if (currentCat === "all") return true;
+        return (it.cat || "gift") === currentCat;
+      });
 
-      list.forEach(function (p) {
+      keys.forEach(function (k) {
+        var p = items[k];
         var card = document.createElement("div");
-        var hasCam = p.id === "camera" && state && state.cameraInstalled;
+        var hasIt = state && hasItem(state, p.id);
         card.className = "tb-prod-card";
-        
+        var pTag = p.cat === "tech" ? "数码安防" : p.cat === "lingerie" ? "魅惑情趣" : "精致礼品";
+        var pIcon = p.cat === "tech" ? "📹" : p.cat === "lingerie" ? "👗" : "🎁";
+
         var html = "<div class='tb-prod-img-box'>" +
-          "<span class='tb-prod-ico'>" + p.icon + "</span>" +
-          "<span class='tb-prod-tag'>" + p.tag + "</span>" +
+          "<span class='tb-prod-ico'>" + pIcon + "</span>" +
+          "<span class='tb-prod-tag'>" + pTag + "</span>" +
           "</div>" +
           "<div class='tb-prod-info'>" +
           "<div class='tb-prod-title'>" + p.name + "</div>" +
-          "<div class='tb-prod-desc'>" + p.desc + "</div>" +
+          "<div class='tb-prod-desc'>" + p.text + "</div>" +
           "<div class='tb-prod-foot'>" +
           "<span class='tb-prod-price'>¥ <b>" + p.price + "</b></span>" +
-          "<button type='button' class='tb-buy-btn'" + (hasCam ? " disabled" : "") + ">" + (hasCam ? "已安装" : "立即购买") + "</button>" +
+          "<button type='button' class='tb-buy-btn'" + (hasIt ? " disabled" : "") + ">" + (hasIt ? "已拥有" : "立即购买") + "</button>" +
           "</div></div>";
 
         card.innerHTML = html;
         var btn = card.querySelector(".tb-buy-btn");
-        if (btn && !hasCam) {
+        if (btn && !hasIt) {
           btn.onclick = function () {
             if (!state || state.playerGold < p.price) {
-              alert("金币不足！去便利店兼职赚取金币吧。");
+              playLines([{ speaker: "narration", text: "（金币不足！可以去便利店兼职赚钱，或者去下厨料理赚钱。）" }], enterMap);
+              modal.classList.add("hidden");
               return;
             }
             state.playerGold -= p.price;
-            if (p.id === "camera") {
-              if (state.inventory.indexOf("camera") < 0) state.inventory.push("camera");
-            } else {
-              if (state.inventory.indexOf(p.id) < 0) state.inventory.push(p.id);
-            }
+            addItem(state, p.id);
+            if (p.id === "camera") state.cameraInstalled = true;
             persist();
             paintHud();
             if (goldVal) goldVal.textContent = "¥ " + state.playerGold;
             btn.textContent = "购买成功！";
             btn.disabled = true;
+            popHeart(3, 0);
             window.setTimeout(function () {
               renderGrid();
-            }, 800);
+            }, 500);
           };
         }
         grid.appendChild(card);
@@ -3145,6 +3326,8 @@
     openTaobaoModal: openTaobaoModal,
     openCctvModal: openCctvModal,
     openIpadModal: openIpadModal,
+    openMinigameModal: openMinigameModal,
+    triggerTimeTransition: triggerTimeTransition,
     onCharClick: onCharClick,
     hideActionsPanel: hideActionsPanel,
     execAction: function (actionId, arg) {
