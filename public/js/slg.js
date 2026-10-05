@@ -2189,6 +2189,34 @@
     persist();
   }
 
+  function hideSheet() {
+    if (ui.sheet) ui.sheet.classList.add("hidden");
+  }
+
+  function openSheet(title, choices) {
+    if (!ui.sheet) return;
+    if (ui.sheetTitle) ui.sheetTitle.textContent = title || "选择交互";
+    if (ui.sheetBody) {
+      ui.sheetBody.innerHTML = "";
+      if (Array.isArray(choices)) {
+        choices.forEach(function (c) {
+          var btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "slg-sheet-option" + (c.locked ? " is-locked" : "");
+          btn.innerHTML = "<span class='opt-text'>" + c.text + "</span>" +
+            (c.sub ? "<span class='opt-sub'>" + c.sub + "</span>" : "");
+          btn.addEventListener("click", function (ev) {
+            ev.stopPropagation();
+            hideSheet();
+            if (c.action) c.action();
+          });
+          ui.sheetBody.appendChild(btn);
+        });
+      }
+    }
+    ui.sheet.classList.remove("hidden");
+  }
+
   var InteractionManager = {
     triggerInteraction: function (type) {
       if (mode !== "map") return;
@@ -2246,124 +2274,160 @@
     },
 
     handleBathingInteraction: function () {
-      isNpcPanelRevealed = true;
-      renderNpcPanel();
+      var trust = state.wanqing.trust || 0;
+      var lust = state.wanqing.lust || 0;
+      var suspicion = state.wanqing.suspicion || 0;
 
-      playLines([
-        { speaker: "narration", text: "（浴室里水汽缭绕，传来淅沥沥的打温水声与浓郁的柑橘沐浴露芬芳。）" },
+      var choices = [
         {
-          speaker: "player",
-          text: "（晚晴正在里面洗澡，门微扣着……我要怎么做？）",
-          choices: [
-            {
-              text: "🚪 隔门礼貌打个招呼 (体力 -5，信赖 +2)",
-              trust: 2,
-              say: "“晚晴，是我。你慢慢洗，我不急着拿东西。”",
-              postLines: [
-                { speaker: "wanqing", char: "e1", text: "“啊……好的！小陈，水温刚好，我马上就洗完了哦。”" },
-                { speaker: "narration", text: "（你在门外体贴地提醒了一声，她轻声回应，语气里满是安心。）" }
-              ]
-            },
-            {
-              text: "🫣 贴着门缝偷看透光水雾 (需消耗 15 体力，警惕 +10, 欲望 +5)",
-              action: function() {
-                if (state.playerEnergy < 15) {
-                  playLines([{ speaker: "narration", text: "（体力不足，还是先休息一会儿吧。）" }], enterMap);
-                  return;
-                }
-                state.playerEnergy = clamp(state.playerEnergy - 15, 0, 100);
-                
-                if (state.wanqing.suspicion >= 80) {
-                  state.wanqing.suspicion = clamp(state.wanqing.suspicion + 10, 0, 100);
-                  playLines([
-                    { speaker: "narration", text: "（她防备心极重，浴室门缝被她用毛巾塞得严严实实，踩水声惊动了她…… 警惕值增加！）" }
-                  ], enterMap);
-                  return;
-                }
-                
-                state.wanqing.suspicion = clamp(state.wanqing.suspicion + 10, 0, 100);
-                state.wanqing.lust = clamp((state.wanqing.lust || 0) + 5, 0, 100);
-                playVideoEvent("S7_bathroom_full", enterMap);
-              }
-            },
-            {
-              text: "🛁 推门送毛巾进去 (S7·水汽浴室全裸地砖姿势链)",
-              action: function() {
-                if (state.wanqing.trust < 40) {
-                  playLines([
-                    { speaker: "wanqing", char: "sur1", text: "“呀！你……你干嘛不敲门直接推门进来呀！快出去！”" },
-                    { speaker: "narration", text: "（信赖值不足 40，她害羞地把你赶了出来，需要先提升与她的信赖度！）" }
-                  ], enterMap);
-                  return;
-                }
-                playVideoEvent("S7_bathroom_full", enterMap);
-              }
-            },
-            {
-              text: "🚿 直接步入水汽蒸腾的浴室相拥",
-              action: function() {
-                if (state.wanqing.trust < 75 && (state.wanqing.lust || 0) < 50) {
-                  playLines([
-                    { speaker: "wanqing", char: "e2", text: "“你……你怎么进来了……太害羞了，快把眼睛闭上……”" },
-                    { speaker: "narration", text: "（信赖或欲望不足，尚不敢如此放肆。）" }
-                  ], enterMap);
-                  return;
-                }
-                playVideoEvent("S7_bathroom_full", enterMap);
-              }
-            },
-            {
-              text: "🚶 先不打扰她，在浴室门外看看",
-              action: function() {
-                enterMap();
-              }
-            }
-          ]
+          text: "🚪 隔门礼貌打个招呼",
+          sub: "体力 -5，信赖 +2",
+          action: function() {
+            state.playerEnergy = clamp(state.playerEnergy - 5, 0, 100);
+            state.wanqing.trust = clamp(state.wanqing.trust + 2, 0, 100);
+            playLines([
+              { speaker: "player", text: "“晚晴，是我。你慢慢洗，我不急着拿东西。”" },
+              { speaker: "wanqing", char: "e1", text: "“啊……好的！小陈，水温刚好，我马上就洗完了哦。”" },
+              { speaker: "narration", text: "（你在门外体贴地提醒了一声，她轻声回应，语气里满是安心。）" }
+            ], enterMap);
+          }
         }
-      ], enterMap);
+      ];
+
+      if (trust >= 15 || lust >= 10) {
+        choices.push({
+          text: "🫣 贴着门缝偷看透光水雾",
+          sub: "消耗 15 体力，警惕 +10，欲望 +5",
+          action: function() {
+            if (state.playerEnergy < 15) {
+              playLines([{ speaker: "narration", text: "（体力不足，还是先休息一会儿吧。）" }], enterMap);
+              return;
+            }
+            state.playerEnergy = clamp(state.playerEnergy - 15, 0, 100);
+            
+            if (suspicion >= 80) {
+              state.wanqing.suspicion = clamp(state.wanqing.suspicion + 10, 0, 100);
+              playLines([
+                { speaker: "narration", text: "（她防备心极重，浴室门缝被她用毛巾塞得严严实实，踩水声惊动了她…… 警惕值增加！）" }
+              ], enterMap);
+              return;
+            }
+            
+            state.wanqing.suspicion = clamp(state.wanqing.suspicion + 10, 0, 100);
+            state.wanqing.lust = clamp((state.wanqing.lust || 0) + 5, 0, 100);
+            TimeTransitionController.play("🫣 门缝偷窥", "水汽氤氲，娇躯隐现", function() {
+              playVideoEvent("S7_bathroom_full", enterMap);
+            });
+          }
+        });
+      } else {
+        choices.push({
+          text: "🔒 贴着门缝偷看透光水雾",
+          sub: "需与晚晴信赖 ≥ 15",
+          locked: true,
+          action: function() {
+            playLines([
+              { speaker: "narration", text: "（两人刚合租不久，彼此尚不熟悉，做这种越轨举动太唐突了……先提升与她的信赖度吧！）" }
+            ], enterMap);
+          }
+        });
+      }
+
+      if (trust >= 40) {
+        choices.push({
+          text: "🛁 推门送毛巾进去",
+          sub: "S7·水汽浴室全裸地砖姿势链",
+          action: function() {
+            TimeTransitionController.play("🛁 浴室送毛巾", "推开浴室门，水汽湿热", function() {
+              playVideoEvent("S7_bathroom_full", enterMap);
+            });
+          }
+        });
+      } else {
+        choices.push({
+          text: "🔒 推门送毛巾进去",
+          sub: "需与晚晴信赖 ≥ 40",
+          locked: true,
+          action: function() {
+            playLines([
+              { speaker: "wanqing", char: "sur1", text: "“呀！你……你干嘛不敲门直接推门进来呀！快出去！”" },
+              { speaker: "narration", text: "（信赖值不足 40，她害羞地把你赶了出来，需要先提升与她的信赖度！）" }
+            ], enterMap);
+          }
+        });
+      }
+
+      if (trust >= 75 && lust >= 50) {
+        choices.push({
+          text: "🚿 直接步入水汽蒸腾的浴室相拥",
+          sub: "要求信赖 ≥ 75 且 欲望 ≥ 50",
+          action: function() {
+            TimeTransitionController.play("🚿 步入相拥", "水流倾泻，相拥温存", function() {
+              playVideoEvent("S7_bathroom_full", enterMap);
+            });
+          }
+        });
+      } else {
+        choices.push({
+          text: "🔒 直接步入浴室相拥",
+          sub: "需信赖 ≥ 75 & 欲望 ≥ 50",
+          locked: true,
+          action: function() {
+            playLines([
+              { speaker: "wanqing", char: "e2", text: "“你……你怎么进来了……太害羞了，快把眼睛闭上……”" },
+              { speaker: "narration", text: "（信赖或欲望不足，尚不敢如此放肆直接跨入浴室。）" }
+            ], enterMap);
+          }
+        });
+      }
+
+      openSheet("🛁 浴室·水汽隐现互动", choices);
     },
 
     handleSleepingInteraction: function () {
-      isNpcPanelRevealed = true;
-      renderNpcPanel();
+      var trust = state.wanqing.trust || 0;
 
-      playLines([
-        { speaker: "narration", text: "（卧室里灯光柔和昏暗，晚晴正侧卧在被窝里甜甜熟睡，呼吸轻盈。）" },
+      var choices = [
         {
-          speaker: "player",
-          text: "（她已经睡着了……我要怎么做？）",
-          choices: [
-            {
-              text: "🚪 轻轻敲敲门唤她一声 (体力 -5)",
-              trust: 1,
-              say: "“晚晴，盖好被子，别着凉了。”",
-              postLines: [
-                { speaker: "wanqing", char: "e1", text: "“唔……小陈吗？嗯……知道了，晚安哦……”" },
-                { speaker: "narration", text: "（她在梦呓中含糊地答应了一声，把被角往上拉了拉。）" }
-              ]
-            },
-            {
-              text: "🔑 用备用钥匙悄悄溜进床边 (S5_nap·午睡偷香 / S9·彻底沦陷)",
-              action: function() {
-                if (state.wanqing.trust < 50) {
-                  playLines([
-                    { speaker: "narration", text: "（房门被她从里面插上了小栓，信赖值不足 50，无法轻易溜进去。）" }
-                  ], enterMap);
-                  return;
-                }
-                var vid = state.wanqing.trust >= 90 ? "S9_bedroom_obsession" : "S5_nap_bedroom";
-                playVideoEvent(vid, enterMap);
-              }
-            },
-            {
-              text: "🚶 不打扰她休息，轻轻离开",
-              action: function() {
-                enterMap();
-              }
-            }
-          ]
+          text: "🚪 轻轻敲敲门唤她一声",
+          sub: "体力 -5，信赖 +1",
+          action: function() {
+            state.playerEnergy = clamp(state.playerEnergy - 5, 0, 100);
+            state.wanqing.trust = clamp(state.wanqing.trust + 1, 0, 100);
+            playLines([
+              { speaker: "player", text: "“晚晴，盖好被子，别着凉了。”" },
+              { speaker: "wanqing", char: "e1", text: "“唔……小陈吗？嗯……知道了，晚安哦……”" },
+              { speaker: "narration", text: "（她在梦呓中含糊地答应了一声，把被角往上拉了拉。）" }
+            ], enterMap);
+          }
         }
-      ], enterMap);
+      ];
+
+      if (trust >= 50) {
+        choices.push({
+          text: "🔑 用备用钥匙悄悄溜进床边",
+          sub: "S5_nap·午睡偷香 / S9·彻底沦陷",
+          action: function() {
+            TimeTransitionController.play("🔑 溜进闺房", "钥匙微响，溜至床边", function() {
+              var vid = state.wanqing.trust >= 90 ? "S9_bedroom_obsession" : "S5_nap_bedroom";
+              playVideoEvent(vid, enterMap);
+            });
+          }
+        });
+      } else {
+        choices.push({
+          text: "🔒 用备用钥匙悄悄溜进床边",
+          sub: "需与晚晴信赖 ≥ 50",
+          locked: true,
+          action: function() {
+            playLines([
+              { speaker: "narration", text: "（房门被她从里面插上了小栓，信赖值不足 50，无法轻易溜进去。）" }
+            ], enterMap);
+          }
+        });
+      }
+
+      openSheet("🌙 闺房·晚晴甜美熟睡", choices);
     },
 
     handleSleepInteraction: function () {
@@ -2374,26 +2438,29 @@
 
       var choices = [
         {
-          text: "🛌 在床上舒舒服服小憩午睡 (恢复 30 体力，跳过当前时段)",
+          text: "🛌 床上小憩午睡",
+          sub: "恢复 30 体力，跳过当前时段",
           action: function() {
             TimeTransitionController.play("🛌 床上小憩", "午后微风，短憩惬意", function() {
               state.playerEnergy = clamp(state.playerEnergy + 30, 0, 100);
               state._spentSlot = true;
               var how = advanceSlotIfNeeded();
+              applySchedule(state);
               var nextSlotCn = SLOT_CN[state.currentTimeSlot];
               playLines([
-                { speaker: "narration", text: "（你定了个短闹钟，在床上舒舒服服地睡了个午觉。体力恢复了！）" },
+                { speaker: "narration", text: "（你在床上舒舒服服地睡了个午觉。体力恢复了！）" },
                 { speaker: "narration", text: "（一眨眼，时间来到了 " + nextSlotCn + "。）" }
               ], enterMap);
             });
           }
         },
         {
-          text: "💤 闭上眼睛沉沉深睡到明天清晨 (精力恢复 100%，天数 +1)",
+          text: "💤 沉沉深睡到天亮",
+          sub: "精力恢复 100%，天数 +1，进入清晨",
           action: function() {
-            TimeTransitionController.play("🌙 闭眼深睡", "夜深人静，朝阳再起", function() {
-              state.playerEnergy = 100;
+            TimeTransitionController.play("🌙 沉沉深睡", "夜深人静，朝阳再起", function() {
               nightProcess(state);
+              applySchedule(state);
               playLines([
                 { speaker: "narration", text: "（一觉醒来。阳光洒在枕畔。新的一天，第 " + state.dayCount + " 天！）" }
               ], enterMap);
@@ -2402,10 +2469,10 @@
         }
       ];
 
-      // Progressive unlock 1: Daydreaming option unlocks when trust >= 30 or lust >= 15
       if (isDaydreamUnlocked) {
         choices.push({
-          text: "💭 躺在床头静静遐想温存 (恢复 10 体力，欲望 +2)",
+          text: "💭 躺在床头静静遐想温存",
+          sub: "恢复 10 体力，欲望 +2",
           action: function() {
             TimeTransitionController.play("💭 床头遐想", "温存思念，暗香浮动", function() {
               state.playerEnergy = clamp(state.playerEnergy + 10, 0, 100);
@@ -2418,7 +2485,9 @@
         });
       } else {
         choices.push({
-          text: "🔒 躺在床头静静遐想 (需与晚晴信赖 ≥ 30)",
+          text: "🔒 床头遐想 (需与晚晴信赖 ≥ 30)",
+          sub: "好感不足，未曾建立亲密关系",
+          locked: true,
           action: function() {
             playLines([
               { speaker: "narration", text: "（和房东太太刚合租认识不久，彼此尚客套礼貌，未曾有更深的了解……脑海里还不敢有越轨遐想。先多与她交流提升信赖吧！）" }
@@ -2427,10 +2496,10 @@
         });
       }
 
-      // Progressive unlock 2: Sneak into bedroom option unlocks when trust >= 50 & lust >= 20
       if (isSneakUnlocked) {
         choices.push({
-          text: "🔑 悄悄溜去隔壁晚晴卧室看看 (S5_nap·午睡偷香 / S9·彻底沦陷)",
+          text: "🔑 悄悄溜去隔壁晚晴卧室",
+          sub: "S5_nap·午睡偷香 / S9·彻底沦陷",
           action: function() {
             TimeTransitionController.play("🔑 夜色偷溜", "蹑手蹑脚，扣响房门", function() {
               var vid = state.wanqing.trust >= 90 ? "S9_bedroom_obsession" : "S5_nap_bedroom";
@@ -2440,7 +2509,9 @@
         });
       } else {
         choices.push({
-          text: "🔒 悄悄溜去隔壁晚晴卧室 (需信赖 ≥ 50 & 欲望 ≥ 20)",
+          text: "🔒 悄悄溜去隔壁晚晴卧室",
+          sub: "需与晚晴信赖 ≥ 50 & 欲望 ≥ 20",
+          locked: true,
           action: function() {
             playLines([
               { speaker: "narration", text: "（房门被她从里面插上了小栓，信赖与欲望尚不足，深夜私闯失礼冒犯，无法溜进去。）" }
@@ -2449,13 +2520,7 @@
         });
       }
 
-      playLines([
-        {
-          speaker: "narration",
-          text: "（窗外微风摇曳，躺在松软温热的床上……你要选择如何度过？）",
-          choices: choices
-        }
-      ], enterMap);
+      openSheet("🛏️ 次卧·床上度过方式", choices);
     }
   };
 
