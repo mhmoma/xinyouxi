@@ -968,6 +968,8 @@
     s.dayCount += 1;
     s.eveningBath = false;
     s.dailyDone = {};
+    s.dailyInteractions = {};
+    if (InteractionManager) InteractionManager.dailyInteractions = {};
     enterSlot(s, "Morning", true);
     s.playerLocation = "Bedroom_Player";
   }
@@ -2232,6 +2234,37 @@
   }
 
   var InteractionManager = {
+    dailyInteractions: {},
+
+    hasInteractedToday: function (sceneKey) {
+      if (!state) return false;
+      var key = state.dayCount + "_" + sceneKey;
+      if (InteractionManager.dailyInteractions && InteractionManager.dailyInteractions[key]) return true;
+      if (state.dailyInteractions && state.dailyInteractions[key]) return true;
+      return false;
+    },
+
+    recordInteraction: function (sceneKey) {
+      if (!state) return;
+      var key = state.dayCount + "_" + sceneKey;
+      if (!InteractionManager.dailyInteractions) InteractionManager.dailyInteractions = {};
+      InteractionManager.dailyInteractions[key] = true;
+      if (!state.dailyInteractions) state.dailyInteractions = {};
+      state.dailyInteractions[key] = true;
+      persist();
+    },
+
+    checkAndIntercept: function (sceneKey, customMsg) {
+      if (InteractionManager.hasInteractedToday(sceneKey)) {
+        var msg = customMsg || "（你今天已经打扰过她了，还是先去做点别的吧。）";
+        playLines([
+          { speaker: "narration", text: msg }
+        ], enterMap);
+        return true;
+      }
+      return false;
+    },
+
     triggerInteraction: function (type) {
       if (mode !== "map") return;
 
@@ -2271,6 +2304,11 @@
         return;
       }
 
+      var sceneKey = state.playerLocation;
+      if (npcHere(state) && InteractionManager.checkAndIntercept(sceneKey, "（你今天已经打扰过她了，还是先去做点别的吧。）")) {
+        return;
+      }
+
       isNpcPanelRevealed = !isNpcPanelRevealed;
       currentCategory = "";
       renderNpcPanel();
@@ -2288,11 +2326,7 @@
     },
 
     handleBathingInteraction: function () {
-      if (isDailyDone(state, "bathing")) {
-        playLines([
-          { speaker: "wanqing", char: "e1", text: "“小陈，今天已经在浴室陪我聊过天了，我马上就洗好了，你去别处转转吧。”" },
-          { speaker: "narration", text: "（今天已经在浴室与晚晴互动过了，频繁打扰她会让彼此感到尴尬的，去做点别的互动吧！）" }
-        ], enterMap);
+      if (InteractionManager.checkAndIntercept("Bathroom", "（你今天已经打扰过她了，还是先去做点别的吧。）")) {
         return;
       }
 
@@ -2305,6 +2339,7 @@
           text: "🚪 隔门礼貌打个招呼",
           sub: "体力 -5，信赖 +2",
           action: function() {
+            InteractionManager.recordInteraction("Bathroom");
             markDailyDone(state, "bathing");
             state.playerEnergy = clamp(state.playerEnergy - 5, 0, 100);
             state.wanqing.trust = clamp(state.wanqing.trust + 2, 0, 100);
@@ -2326,6 +2361,7 @@
               playLines([{ speaker: "narration", text: "（体力不足，还是先休息一会儿吧。）" }], enterMap);
               return;
             }
+            InteractionManager.recordInteraction("Bathroom");
             markDailyDone(state, "bathing");
             state.playerEnergy = clamp(state.playerEnergy - 15, 0, 100);
             
@@ -2362,6 +2398,7 @@
           text: "🛁 推门送毛巾进去",
           sub: "S7·水汽浴室全裸地砖姿势链",
           action: function() {
+            InteractionManager.recordInteraction("Bathroom");
             markDailyDone(state, "bathing");
             TimeTransitionController.play("🛁 浴室送毛巾", "推开浴室门，水汽湿热", function() {
               playVideoEvent("S7_bathroom_full", enterMap);
@@ -2387,6 +2424,7 @@
           text: "🚿 直接步入水汽蒸腾的浴室相拥",
           sub: "要求信赖 ≥ 75 且 欲望 ≥ 50",
           action: function() {
+            InteractionManager.recordInteraction("Bathroom");
             markDailyDone(state, "bathing");
             TimeTransitionController.play("🚿 步入相拥", "水流倾泻，相拥温存", function() {
               playVideoEvent("S7_bathroom_full", enterMap);
@@ -2411,10 +2449,7 @@
     },
 
     handleSleepingInteraction: function () {
-      if (isDailyDone(state, "sleeping_room")) {
-        playLines([
-          { speaker: "narration", text: "（晚晴在被窝里甜甜睡着，今天已经进来看望过她了，别频频惊扰她的好梦，去别处转转吧。）" }
-        ], enterMap);
+      if (InteractionManager.checkAndIntercept("Bedroom_NPC", "（你今天已经打扰过她了，还是先去做点别的吧。）")) {
         return;
       }
 
@@ -2425,6 +2460,7 @@
           text: "🚪 轻轻敲敲门唤她一声",
           sub: "体力 -5，信赖 +1",
           action: function() {
+            InteractionManager.recordInteraction("Bedroom_NPC");
             markDailyDone(state, "sleeping_room");
             state.playerEnergy = clamp(state.playerEnergy - 5, 0, 100);
             state.wanqing.trust = clamp(state.wanqing.trust + 1, 0, 100);
@@ -2442,6 +2478,7 @@
           text: "🔑 用备用钥匙悄悄溜进床边",
           sub: "S5_nap·午睡偷香 / S9·彻底沦陷",
           action: function() {
+            InteractionManager.recordInteraction("Bedroom_NPC");
             markDailyDone(state, "sleeping_room");
             TimeTransitionController.play("🔑 溜进闺房", "钥匙微响，溜至床边", function() {
               var vid = state.wanqing.trust >= 90 ? "S9_bedroom_obsession" : "S5_nap_bedroom";
