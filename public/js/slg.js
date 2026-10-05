@@ -2520,30 +2520,44 @@
               return;
             }
             markDailyDone(state, "bed_nap");
-            TimeTransitionController.play("🛌 床上小憩", "午后微风，短憩惬意", function() {
-              state.playerEnergy = clamp(state.playerEnergy + 30, 0, 100);
-              state._spentSlot = true;
-              var how = advanceSlotIfNeeded();
-              applySchedule(state);
-              var nextSlotCn = SLOT_CN[state.currentTimeSlot];
-              playLines([
-                { speaker: "narration", text: "（你在床上舒舒服服地睡了个午觉。体力恢复了！）" },
-                { speaker: "narration", text: "（一眨眼，时间来到了 " + nextSlotCn + "。）" }
-              ], enterMap);
-            });
+            transitionManager.playTransition(
+              "🛌 床上小憩",
+              "午后微风，短憩惬意",
+              function updateState() {
+                state.playerEnergy = clamp(state.playerEnergy + 30, 0, 100);
+                state._spentSlot = true;
+                advanceSlotIfNeeded();
+                applySchedule(state);
+                enterMap();
+              },
+              function onComplete() {
+                var nextSlotCn = SLOT_CN[state.currentTimeSlot];
+                playLines([
+                  { speaker: "narration", text: "（你在床上舒舒服服地睡了个午觉。体力恢复了！）" },
+                  { speaker: "narration", text: "（一眨眼，时间来到了 " + nextSlotCn + "。）" }
+                ], enterMap);
+              }
+            );
           }
         },
         {
           text: "💤 沉沉深睡到天亮",
           sub: "精力恢复 100%，天数 +1，进入清晨",
           action: function() {
-            TimeTransitionController.play("🌙 沉沉深睡", "夜深人静，朝阳再起", function() {
-              nightProcess(state);
-              applySchedule(state);
-              playLines([
-                { speaker: "narration", text: "（一觉醒来。阳光洒在枕畔。新的一天，第 " + state.dayCount + " 天！）" }
-              ], enterMap);
-            });
+            transitionManager.playTransition(
+              "🌙 沉沉深睡",
+              "夜深人静，朝阳再起",
+              function updateState() {
+                nightProcess(state);
+                applySchedule(state);
+                enterMap();
+              },
+              function onComplete() {
+                playLines([
+                  { speaker: "narration", text: "（一觉醒来。阳光洒在枕畔。新的一天，第 " + state.dayCount + " 天！）" }
+                ], enterMap);
+              }
+            );
           }
         }
       ];
@@ -2560,13 +2574,21 @@
               return;
             }
             markDailyDone(state, "bed_daydream");
-            TimeTransitionController.play("💭 床头遐想", "温存思念，暗香浮动", function() {
-              state.playerEnergy = clamp(state.playerEnergy + 10, 0, 100);
-              state.wanqing.lust = clamp((state.wanqing.lust || 0) + 2, 0, 100);
-              playLines([
-                { speaker: "narration", text: "（你枕着手臂望着天花板，脑海里全是对走廊那头晚晴温存软语的思念遐想……欲望微动。）" }
-              ], enterMap);
-            });
+            transitionManager.playTransition(
+              "💭 床头遐想",
+              "温存思念，暗香浮动",
+              function updateState() {
+                state.playerEnergy = clamp(state.playerEnergy + 10, 0, 100);
+                state.wanqing.lust = clamp((state.wanqing.lust || 0) + 2, 0, 100);
+                applySchedule(state);
+                enterMap();
+              },
+              function onComplete() {
+                playLines([
+                  { speaker: "narration", text: "（你枕着手臂望着天花板，脑海里全是对走廊那头晚晴温存软语的思念遐想……欲望微动。）" }
+                ], enterMap);
+              }
+            );
           }
         });
       } else {
@@ -3048,11 +3070,11 @@
     }
   }
 
-  var TimeTransitionController = {
+  var transitionManager = {
     isTransitioning: false,
-    play: function (title, subText, callback) {
-      if (TimeTransitionController.isTransitioning) return;
-      TimeTransitionController.isTransitioning = true;
+    playTransition: function (title, subText, updateStateCallback, onCompleteCallback) {
+      if (transitionManager.isTransitioning) return;
+      transitionManager.isTransitioning = true;
 
       var overlay = document.getElementById("time-transition-overlay");
       var titleEl = document.getElementById("time-transition-title");
@@ -3060,8 +3082,9 @@
       var iconEl = document.getElementById("time-transition-icon");
 
       if (!overlay) {
-        TimeTransitionController.isTransitioning = false;
-        if (callback) callback();
+        transitionManager.isTransitioning = false;
+        if (updateStateCallback) updateStateCallback();
+        if (onCompleteCallback) onCompleteCallback();
         return;
       }
 
@@ -3069,7 +3092,7 @@
       if (subEl) subEl.textContent = subText || "光影轻摇，时光沉淀";
       if (iconEl) iconEl.textContent = nightish(state ? state.currentTimeSlot : "Evening") ? "🌙" : "☀";
 
-      // Lock input & make transition container visible
+      // 1. Lock input & make transition container visible
       overlay.classList.remove("hidden");
       overlay.style.display = "flex";
       overlay.style.pointerEvents = "all";
@@ -3080,34 +3103,56 @@
       overlay.style.transition = "opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1)";
       overlay.style.opacity = "1";
 
-      // Hold phase: Execute callback after fade in completes (500ms)
+      // 2. Fade-in completed: Modify game variables & reset NPC state machine while screen is covered
       window.setTimeout(function () {
-        if (callback) {
+        if (updateStateCallback) {
           try {
-            callback();
+            updateStateCallback();
           } catch (e) {
-            console.error(e);
+            console.error("Error during transition updateStateCallback:", e);
           }
         }
 
-        // Keep displayed during transition processing (600ms)
+        if (iconEl && state) {
+          iconEl.textContent = nightish(state.currentTimeSlot) ? "🌙" : "☀";
+        }
+
+        // 3. Hold phase while scene graphics and character state re-render
         window.setTimeout(function () {
-          // Fade out phase
+          // 4. Fade out phase
           overlay.style.opacity = "0";
 
           window.setTimeout(function () {
             overlay.classList.add("hidden");
             overlay.style.display = "";
             overlay.style.pointerEvents = "";
-            TimeTransitionController.isTransitioning = false;
+            transitionManager.isTransitioning = false;
+
+            if (onCompleteCallback) {
+              try {
+                onCompleteCallback();
+              } catch (e) {
+                console.error("Error during transition onCompleteCallback:", e);
+              }
+            }
           }, 420);
-        }, 600);
-      }, 500);
+        }, 500);
+      }, 450);
+    },
+
+    play: function (title, subText, callback) {
+      transitionManager.playTransition(title, subText, callback, null);
     }
   };
 
-  function triggerTimeTransition(title, subText, callback) {
-    TimeTransitionController.play(title, subText, callback);
+  var TimeTransitionController = transitionManager;
+
+  function triggerTimeTransition(title, subText, updateState, onComplete) {
+    if (typeof updateState === "function" && typeof onComplete === "function") {
+      transitionManager.playTransition(title, subText, updateState, onComplete);
+    } else {
+      transitionManager.play(title, subText, updateState);
+    }
   }
 
   function openMinigameModal(onComplete) {
@@ -3722,7 +3767,8 @@
     StoryStateManager: StoryStateManager,
     IntimacyStatsManager: IntimacyStatsManager,
     InteractionManager: InteractionManager,
-    TimeTransitionController: TimeTransitionController,
+    transitionManager: transitionManager,
+    TimeTransitionController: transitionManager,
     processTimeSlot: processTimeSlot,
     openSheet: openSheet,
     openTaobaoModal: openTaobaoModal,
