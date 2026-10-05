@@ -189,36 +189,23 @@
       ],
       intimate: [
         {
-          id: "lr_intimate_close",
-          label: "靠近一点，试着拥着耳语",
+          id: "S3_living_tease",
+          label: "S3·傍晚客厅试探·亲昵贴抱与身抚",
           energy: 15,
-          trustMin: 60,
+          trustMin: 30,
+          lustMin: 10,
           action: function () {
-            var aList = (tables.videos || []).filter(function (v) {
-              return v.tier === "A" && !v.isGalleryVariant;
-            });
-            var pick = aList[Math.floor(Math.random() * aList.length)] || { id: "touch_breast_living" };
-            playVideoEvent(pick.id, enterMap);
+            playVideoEvent("S3_living_tease", enterMap);
           }
         },
         {
-          id: "lr_intimate_hold",
-          label: "在沙发上握住并抚摸她的腿臀",
-          energy: 15,
-          trustMin: 70,
-          lustMin: 20,
-          action: function () {
-            playVideoEvent("touch_skirt_living", enterMap);
-          }
-        },
-        {
-          id: "lr_intimate_kiss",
-          label: "在昏暗荧幕前顺从她并进行吻含",
+          id: "S5_night_sofa",
+          label: "S5·夜间客厅·沙发极乐口交",
           energy: 20,
-          trustMin: 91,
-          lustMin: 45,
+          trustMin: 50,
+          lustMin: 30,
           action: function () {
-            playVideoEvent("blowjob_living", enterMap);
+            playVideoEvent("S5_night_sofa", enterMap);
           }
         }
       ]
@@ -303,32 +290,13 @@
       ],
       intimate: [
         {
-          id: "ki_intimate_breast",
-          label: "从身后环抱住她料理的身躯",
+          id: "S4_kitchen_chores",
+          label: "S4·厨房洗碗·身后抱与深吹",
           energy: 15,
           trustMin: 40,
+          lustMin: 20,
           action: function () {
-            playVideoEvent("touch_kitchen_breast", enterMap);
-          }
-        },
-        {
-          id: "ki_intimate_back",
-          label: "将她贴紧在料理台前深拥揉抚",
-          energy: 15,
-          trustMin: 45,
-          lustMin: 15,
-          action: function () {
-            playVideoEvent("touch_kitchen_back", enterMap);
-          }
-        },
-        {
-          id: "ki_intimate_bj",
-          label: "深夜在冰箱冷藏室的白光前深口",
-          energy: 20,
-          trustMin: 91,
-          lustMin: 50,
-          action: function () {
-            playVideoEvent("blowjob_kitchen", enterMap);
+            playVideoEvent("S4_kitchen_chores", enterMap);
           }
         }
       ]
@@ -402,23 +370,13 @@
       ],
       intimate: [
         {
-          id: "ba_intimate_door",
-          label: "推开虚掩的玻璃门，抚摸浑身湿透的她",
-          energy: 15,
-          trustMin: 80,
-          lustMin: 40,
-          action: function () {
-            playVideoEvent("insert_bath_dressed", enterMap);
-          }
-        },
-        {
-          id: "ba_intimate_shower",
-          label: "踏入滚烫的淋浴间，全裸交融",
+          id: "S7_bathroom_full",
+          label: "S7·水汽浴室·全裸地砖抽插",
           energy: 20,
-          trustMin: 90,
-          lustMin: 70,
+          trustMin: 80,
+          lustMin: 60,
           action: function () {
-            playVideoEvent("insert_bath_nude", enterMap);
+            playVideoEvent("S7_bathroom_full", enterMap);
           }
         }
       ]
@@ -444,7 +402,7 @@
                 postLines: [
                   { speaker: "narration", text: "（她有些慵懒地躺在松软的床垫上，拉了防防调。看着我的眼里，溢出了满满的温柔与依赖。）" },
                   { speaker: "wanqing", text: "“小陈……谢谢你。有你同租，真的是我这段时间最幸运的一件事了。快回去睡吧，晚安。”", char: "s3" },
-                  { speaker: "narration", text: "（她盖好被子，只露出一双温柔明亮的眼睛看着你离开。）" }
+                  { speaker: "narration", text: "（她盖好被子，只露出一双温柔明亮的的眼睛看着你离开。）" }
                 ]
               }
             ]}
@@ -491,33 +449,23 @@
       ],
       intimate: [
         {
-          id: "br_intimate_bj",
-          label: "深夜在枕畔半梦半醒间相迎含口",
+          id: "S5_nap_bedroom",
+          label: "S5·周末午睡·偷香与含吹",
           energy: 15,
-          trustMin: 85,
-          lustMin: 45,
+          trustMin: 60,
+          lustMin: 40,
           action: function () {
-            playVideoEvent("blowjob_sleep", enterMap);
+            playVideoEvent("S5_nap_bedroom", enterMap);
           }
         },
         {
-          id: "br_intimate_kneel",
-          label: "在柔和台灯光下进行床畔俯仰特写",
-          energy: 15,
-          trustMin: 90,
-          lustMin: 65,
-          action: function () {
-            playVideoEvent("bed_kneel", enterMap);
-          }
-        },
-        {
-          id: "br_intimate_bed",
-          label: "在双人床上过夜，枕畔相握抵死温存",
+          id: "S9_bedroom_obsession",
+          label: "S9·深夜虚掩·彻底沦陷之夜",
           energy: 20,
           trustMin: 95,
-          lustMin: 80,
+          lustMin: 85,
           action: function () {
-            playVideoEvent("bed_intimate", enterMap);
+            playVideoEvent("S9_bedroom_obsession", enterMap);
           }
         }
       ]
@@ -578,13 +526,59 @@
       ],
       intimate: [
         {
-          id: "la_intimate_machine",
-          label: "在洗衣机隆隆震动中从身后压上她",
+          id: "S6_laundry_rear",
+          label: "S6·狭小洗衣房·紧贴后入",
           energy: 20,
-          trustMin: 80,
+          trustMin: 70,
           lustMin: 50,
           action: function () {
-            playVideoEvent("insert_laundry", enterMap);
+            playVideoEvent("S6_laundry_rear", enterMap);
+          }
+        }
+      ]
+    },
+    Entry: {
+      daily: [
+        {
+          id: "en_daily_view",
+          label: "在天台风口一起看云卷云舒",
+          energy: 10,
+          dialogue: [
+            { speaker: "player", text: "“林姐，天台视野真开阔。阳光真暖和。”", char: "s1" },
+            { speaker: "wanqing", text: "“是啊小陈，平时屋里关久了，上来吹吹风真舒服。”", char: "s2" }
+          ]
+        }
+      ],
+      adult: [
+        {
+          id: "en_adult_dress",
+          label: "聊聊风把连衣裙吹得贴在腿上",
+          energy: 15,
+          dialogue: [
+            { speaker: "player", text: "“林姐，风把裙子吹紧了……身材真好。”", char: "e1" },
+            { speaker: "wanqing", text: "“你这坏孩子，又在瞎看些什么呢。”", char: "e2" }
+          ]
+        }
+      ],
+      intimate: [
+        {
+          id: "S8_rooftop_day",
+          label: "S8·晴空天台·晾衣姿势链",
+          energy: 20,
+          trustMin: 85,
+          lustMin: 70,
+          action: function () {
+            playVideoEvent("S8_rooftop_day", enterMap);
+          }
+        },
+        {
+          id: "S8_rooftop_night",
+          label: "S8·星空天台·露天深吹与后入",
+          energy: 20,
+          trustMin: 90,
+          lustMin: 80,
+          action: function () {
+            playVideoEvent("S8_rooftop_night", enterMap);
           }
         }
       ]

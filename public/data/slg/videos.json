@@ -1,673 +1,397 @@
 [
   {
-    "id": "touch_breast_living",
+    "id": "S3_living_tease",
+    "stage": "S3",
     "tier": "A",
-    "title": "客厅·贴近揉抚",
-    "desc": "傍晚客厅，闲聊酒后的试探靠近，隔着红上衣的触碰。",
+    "title": "S3·客厅试探·亲昵贴抱",
+    "desc": "傍晚客厅看电视时靠近她，手顺势环过她纤细的腰身与酥胸。",
     "loc": "LivingRoom",
     "slot": "Evening",
     "trustMin": 30,
-    "lustMin": 0,
+    "lustMin": 10,
     "clothes": "dressed",
-    "loop": "video/coxps_00412.webm",
-    "loopSrc": "video/coxps_00412.webm",
-    "finish": "video/coxps_00412_F.webm",
-    "finishSrc": "video/coxps_00412_F.webm",
+    "loop": "ComfyUI_temp_coxps_00570_.webm",
+    "loopSrc": "ComfyUI_temp_coxps_00570_.webm",
+    "finish": "ComfyUI_temp_coxps_00412_.webm",
+    "finishSrc": "ComfyUI_temp_coxps_00412_.webm",
     "char": "e1",
-    "sound": "breath_soft",
-    "lead": "沙发很挤。她身上有淡淡的柑橘香与晚班回来的倦意。你靠过去的时候，她呼吸漏了半拍，没有立刻挪开。",
-    "prompt": "等……等一下，客厅灯还没关呢……",
+    "lead": "客厅灯光昏黄，电视放着连续剧。你紧挨着她坐下，指尖轻轻从小腹向上延伸，她娇躯微震，没有立刻推开。",
+    "prompt": "等……别在客厅这样，万一有人经过……",
     "postLines": [
-      { "speaker": "wanqing", "char": "e1", "text": "……你这小孩，手怎么这么热。先松开，我……我去把饮水机关了。" },
-      { "speaker": "narration", "text": "（她站起来理了理衣角，借着倒水背对着我，耳朵尖红得几乎能滴下血来。）" }
+      { "speaker": "wanqing", "char": "e1", "text": "……你这孩子，手怎么这么烫。快放开，我去倒杯水好不好？" },
+      { "speaker": "narration", "text": "（林晚晴双颊通红地站起来理了理衣角，杯子里的水差点倒溢出来。）" }
     ],
     "subOptions": [
       {
-        "id": "touch_skirt",
-        "label": "手探向裙边",
-        "lustReq": 10,
-        "trustGain": 2,
-        "lustGain": 5,
-        "loopSrc": "video/coxps_00606.webm",
-        "finishSrc": "video/coxps_00606_F.webm",
-        "postText": "你别得寸进尺……裙子弄皱了明天怎么去上班呀。"
+        "id": "S3_front",
+        "label": "正面揉胸",
+        "loopSrc": "ComfyUI_temp_coxps_00412_.webm",
+        "postText": "嗯……轻点捏……"
       },
       {
-        "id": "touch_hip",
-        "label": "扶住腰臀",
-        "lustReq": 15,
-        "trustGain": 3,
-        "lustGain": 6,
-        "loopSrc": "video/bztsc_00127.webm",
-        "finishSrc": "video/bztsc_00127_F.webm",
-        "postText": "腰……腰酸着呢，你别使劲捏。真是的，拿你没办法。"
+        "id": "S3_back",
+        "label": "身后托胸",
+        "loopSrc": "ComfyUI_temp_bztsc_00260_.webm",
+        "postText": "你从后面抱得太紧了……"
+      },
+      {
+        "id": "S3_skirt",
+        "label": "手进裙底",
+        "loopSrc": "ComfyUI_temp_coxps_00606_.webm",
+        "postText": "裙……裙子别乱掀呀……"
+      },
+      {
+        "id": "S3_hip",
+        "label": "掀裙揉臀",
+        "loopSrc": "ComfyUI_temp_bztsc_00127_.webm",
+        "postText": "真是拿你没办法……"
       }
     ]
   },
   {
-    "id": "touch_breast_variation_1",
-    "tier": "A",
-    "title": "客厅·站立微颤",
-    "desc": "客厅窗帘旁，她手里拿着电视遥控器，你从侧面轻轻握上柔软。",
-    "loc": "LivingRoom",
-    "slot": "Evening",
-    "trustMin": 35,
-    "lustMin": 5,
-    "clothes": "dressed",
-    "loop": "video/coxps_00570.webm",
-    "loopSrc": "video/coxps_00570.webm",
-    "finish": "video/coxps_00570_F.webm",
-    "finishSrc": "video/coxps_00570_F.webm",
-    "char": "e2",
-    "lead": "窗外暮色渐合。她站着正想换台，指尖刚按下开关，你的掌心已经从衣侧覆上了她的前襟。",
-    "prompt": "……别在窗户边上，对楼能看见……进屋去……",
-    "postLines": [
-      { "speaker": "wanqing", "char": "e2", "text": "快把窗帘拉上。真是怕了你了，一点规矩都没有……" },
-      { "speaker": "narration", "text": "（她手里的遥控器差点滑落，被我伸手接住，她的呼吸明显乱了节拍。）" }
-    ]
-  },
-  {
-    "id": "touch_skirt_living",
-    "tier": "A",
-    "title": "沙发·探向裙底",
-    "desc": "米色短裙下紧绷的弧度，指尖触碰到温热的丝袜与大腿内侧。",
-    "loc": "LivingRoom",
-    "slot": "Evening",
-    "trustMin": 45,
-    "lustMin": 15,
-    "clothes": "dressed",
-    "loop": "video/coxps_00606.webm",
-    "loopSrc": "video/coxps_00606.webm",
-    "finish": "video/coxps_00606_F.webm",
-    "finishSrc": "video/coxps_00606_F.webm",
-    "char": "e3",
-    "lead": "她在沙发上屈膝坐着看手机，指尖滑过裙摆时，她双腿本能地夹紧了一下，随后又微微卸了力道。",
-    "prompt": "你……手往哪伸呢……裙子不能往上掀……",
-    "postLines": [
-      { "speaker": "wanqing", "char": "e3", "text": "好了……别再摸了，丝袜都要被你指甲刮勾丝了。快坐正，我去洗个苹果。" },
-      { "speaker": "narration", "text": "（她有些慌乱地扯好裙摆起身，脚步微微踉跄了一下才稳住。）" }
-    ]
-  },
-  {
-    "id": "touch_hip_living",
-    "tier": "A",
-    "title": "客厅·环腰托臀",
-    "desc": "环抱住她的腰肢，掌心托起丰腴饱满的弧线。",
-    "loc": "LivingRoom",
-    "slot": "Evening",
-    "trustMin": 50,
+    "id": "S4_kitchen_chores",
+    "stage": "S4",
+    "tier": "B",
+    "title": "S4·厨房洗碗·身后抱与深吹",
+    "desc": "她在厨房忙碌洗碗时，从后面将她抵在料理台上。",
+    "loc": "Kitchen",
+    "slot": "Afternoon",
+    "trustMin": 40,
     "lustMin": 20,
     "clothes": "dressed",
-    "loop": "video/bztsc_00127.webm",
-    "loopSrc": "video/bztsc_00127.webm",
-    "finish": "video/bztsc_00127_F.webm",
-    "finishSrc": "video/bztsc_00127_F.webm",
-    "char": "e4",
-    "lead": "她正弯腰从茶几底下拿抽纸，成熟诱人的曲线毫无防备地展现在眼前。你跨步上前，双臂扣住她的细腰。",
-    "prompt": "唔……！腰要断了……你这小坏蛋，劲怎么这么大……",
-    "postLines": [
-      { "speaker": "wanqing", "char": "e4", "text": "站一天腰本来就酸，被你这么一弄更软了。今晚你负责扫地，听到没有？" },
-      { "speaker": "narration", "text": "（她回头瞪了我一眼，嘴角却噙着浅浅的嗔笑，眼波里流淌着难掩的水汽。）" }
-    ]
-  },
-  {
-    "id": "touch_breast_repeat",
-    "tier": "A",
-    "title": "日常温存·耳畔相贴",
-    "desc": "熟稔后的日常肢体相触，带着默契与心照不宣的体温。",
-    "loc": "LivingRoom",
-    "slot": "Any",
-    "trustMin": 60,
-    "lustMin": 15,
-    "clothes": "dressed",
-    "loop": "video/bztsc_00260.webm",
-    "loopSrc": "video/bztsc_00260.webm",
-    "finish": "video/bztsc_00260_F.webm",
-    "finishSrc": "video/bztsc_00260_F.webm",
-    "char": "s2",
-    "lead": "她把洗好的葡萄放在茶几上，坐下时肩膀轻轻碰了碰你的手臂。你顺势揽住她，她只是微叹了口气，把头靠在你肩头。",
-    "prompt": "今天在柜台站了一整天，骨头都快散架了……借你靠五分钟，别乱动啊。",
-    "postLines": [
-      { "speaker": "wanqing", "char": "s2", "text": "身上全是一股香水和消毒水味，难闻死了。等会儿我冲个澡，你也早点回屋看书。" },
-      { "speaker": "narration", "text": "（她闭着眼靠了一会儿，睫毛在灯光下轻颤。屋里的挂钟滴答作响，像只属于我们两个的秘密。）" }
-    ]
-  },
-  {
-    "id": "touch_kitchen_breast",
-    "tier": "A",
-    "title": "厨房·料理台边",
-    "desc": "在狭窄的厨房水槽旁，从背后贴上洗菜备餐的她。",
-    "loc": "Kitchen",
-    "slot": "Evening",
-    "trustMin": 40,
-    "lustMin": 10,
-    "clothes": "dressed",
-    "loop": "video/fekym_38706.webm",
-    "loopSrc": "video/fekym_38706.webm",
-    "finish": "video/fekym_38709.webm",
-    "finishSrc": "video/fekym_38709.webm",
+    "loop": "ComfyUI_temp_fekym_38706_.webm",
+    "loopSrc": "ComfyUI_temp_fekym_38706_.webm",
+    "finish": "ComfyUI_temp_fekym_00861_F.webm",
+    "finishSrc": "ComfyUI_temp_fekym_00861_F.webm",
     "char": "e2",
-    "lead": "油烟机的低鸣掩盖了走廊的脚步声。她正握着沥水篮，你从背后靠上去，手臂圈住她的腰，掌心覆在她围裙下的柔软上。",
-    "prompt": "你疯了……！灶上还熬着汤呢，等会儿溢出来怎么办……",
+    "lead": "油烟机的微鸣掩盖了脚步声，她正握着洗碗布，你贴着她的后背扣住她的围裙绳结。",
+    "prompt": "灶上还炖着汤呢……你别乱动呀……",
     "postLines": [
-      { "speaker": "wanqing", "char": "e2", "text": "手拿开……水池边全是油渍。要是被邻居看见……下个月房租别想我给你打折。" },
-      { "speaker": "narration", "text": "（她嘴上嗔着，身子却软软地向后靠了我两秒，才有些慌乱地关掉了抽油烟机。）" }
+      { "speaker": "wanqing", "char": "e2", "text": "……你这坏孩子，在厨房也敢这么放肆，万一锅溢出来怎么办。" },
+      { "speaker": "narration", "text": "（她转过身轻轻打了我胸口一下，眼神里满是软化后的娇嗔。）" }
+    ],
+    "subOptions": [
+      {
+        "id": "S4_hug",
+        "label": "贴身抱抚",
+        "loopSrc": "ComfyUI_temp_fekym_38709_.webm",
+        "postText": "低着头呼吸都有些喘了……"
+      },
+      {
+        "id": "S4_desk",
+        "label": "撑台揉胸",
+        "loopSrc": "ComfyUI_temp_fekym_38135_.webm",
+        "postText": "手撑在台面上闭着眼……"
+      },
+      {
+        "id": "S4_bj",
+        "label": "厨房跪吹",
+        "loopSrc": "ComfyUI_temp_fekym_00861_.webm",
+        "postText": "她屈膝跪在瓷砖上……"
+      }
     ]
   },
   {
-    "id": "touch_kitchen_back",
-    "tier": "A",
-    "title": "厨房·台前深拥",
-    "desc": "切菜时的紧贴，刀刃停下，两个人交错的呼吸在抽油烟机声中沉落。",
-    "loc": "Kitchen",
-    "slot": "Evening",
-    "trustMin": 45,
-    "lustMin": 15,
-    "clothes": "dressed",
-    "loop": "video/fekym_38135.webm",
-    "loopSrc": "video/fekym_38135.webm",
-    "finish": "video/fekym_38135_F.webm",
-    "finishSrc": "video/fekym_38135_F.webm",
-    "char": "e5",
-    "lead": "菜刀‘咚咚咚’的声音停住了。你的下巴抵在她颈窝处，温热的气息拂过耳垂，她放下刀，反手扶住了你的小臂。",
-    "prompt": "菜还没切完呢……再胡闹今天晚饭只有白水煮面吃……",
-    "postLines": [
-      { "speaker": "wanqing", "char": "e5", "text": "去把外面的垃圾袋扎紧扔了，别在这碍手碍脚。吃完饭再收拾你。" },
-      { "speaker": "narration", "text": "（她转过身轻轻推了推我的胸口，泛红的脸颊在厨房昏黄的顶灯下格外温柔。）" }
-    ]
-  },
-  {
-    "id": "blowjob_living",
+    "id": "S5_night_sofa",
+    "stage": "S5_night",
     "tier": "B",
-    "title": "客厅深夜·沙发半掩",
-    "desc": "电视屏幕微光下的跪伏，她别扭又顺从地仰头看着你。",
+    "title": "S5·夜间客厅·沙发口交",
+    "desc": "深夜客厅电视光线下，她半推半就地跪在沙发旁为你服务。",
     "loc": "LivingRoom",
-    "slot": "LateNight",
-    "trustMin": 70,
+    "slot": "Night",
+    "trustMin": 50,
     "lustMin": 30,
     "clothes": "half_dressed",
-    "loop": "video/01183.webm",
-    "loopSrc": "video/01183.webm",
-    "finish": "video/01183_F.webm",
-    "finishSrc": "video/01183_F.webm",
+    "loop": "ComfyUI_temp_fekym_01183_.webm",
+    "loopSrc": "ComfyUI_temp_fekym_01183_.webm",
+    "finish": "ComfyUI_temp_fekym_01183_F.webm",
+    "finishSrc": "ComfyUI_temp_fekym_01183_F.webm",
     "char": "l1",
-    "lead": "深夜十一点半，整栋楼都睡了。电视只留着微弱的蓝色荧光，她跪坐在地毯上，双手有些迟疑地撑在你的膝盖两侧。",
-    "prompt": "……就这一次啊。门要是响了，你立刻把毯子拉过来盖上……",
+    "lead": "深夜的客厅静悄悄的，荧光映出她曼妙的轮廓。她有些羞耻地垂着头，双手扶在你膝上。",
+    "prompt": "声音慢一点……隔壁会听见……",
     "postLines": [
-      { "speaker": "wanqing", "char": "l2", "text": "咳……咽不下去，你真是的……我去趟洗手间漱口，沙发垫上的痕迹你记得拿湿巾擦干净。" },
-      { "speaker": "narration", "text": "（她用手背遮着唇角快步走向走廊，走廊小夜灯映着她泛红的侧颈，轻悄的水流声随即在洗手池响起。）" }
+      { "speaker": "wanqing", "char": "l2", "text": "咳……咽不下去，你真是的……我去洗手间漱口。" },
+      { "speaker": "narration", "text": "（她捂着唇快步走向洗手间，走廊小夜灯映着她通红的侧脸。）" }
+    ],
+    "subOptions": [
+      {
+        "id": "S5_hip",
+        "label": "跪趴揉臀",
+        "loopSrc": "ComfyUI_temp_fekym_38035_.webm",
+        "postText": "沙发上俯身柔顺的姿态……"
+      }
     ]
   },
   {
-    "id": "blowjob_kitchen",
+    "id": "S5_nap_bedroom",
+    "stage": "S5_nap",
     "tier": "B",
-    "title": "厨房夜色·台前深吻",
-    "desc": "借着喝水之名的深夜相遇，在静谧厨房里的吞咽。",
-    "loc": "Kitchen",
-    "slot": "LateNight",
-    "trustMin": 75,
-    "lustMin": 35,
-    "clothes": "half_dressed",
-    "loop": "video/00861.webm",
-    "loopSrc": "video/00861.webm",
-    "finish": "video/00861_F.webm",
-    "finishSrc": "video/00861_F.webm",
-    "char": "l2",
-    "lead": "冰箱冷藏室的白光打在地砖上。她手里捧着放凉的温水杯，你握住了她的手腕，杯子落回台面，发出清脆的磕碰声。",
-    "prompt": "唔……别在厨房，明天早上我还要做早饭呢……",
-    "postLines": [
-      { "speaker": "wanqing", "char": "l3", "text": "嘴角都沾上了……明天早上给你煎两个蛋，补一补。赶紧把冰箱门合上，冷气都跑光了。" },
-      { "speaker": "narration", "text": "（她抽了张纸巾擦拭唇角，指尖轻轻在你手背上拍了一下，眼神里带着三分恼意与七分纵容。）" }
-    ]
-  },
-  {
-    "id": "blowjob_standing",
-    "tier": "B",
-    "title": "玄关夜归·站立相迎",
-    "desc": "深夜晚归的疲倦与冲动，在玄关幽暗处靠墙的服从。",
-    "loc": "Entry",
-    "slot": "LateNight",
-    "trustMin": 75,
+    "title": "S5·午睡偷香·未锁之门",
+    "desc": "周末午后她房门未锁，趁她熟睡时潜入床边进行亲昵探寻。",
+    "loc": "Bedroom_NPC",
+    "slot": "Afternoon",
+    "trustMin": 60,
     "lustMin": 40,
     "clothes": "half_dressed",
-    "loop": "video/14557.webm",
-    "loopSrc": "video/14557.webm",
-    "finish": "video/14557_F.webm",
-    "finishSrc": "video/14557_F.webm",
-    "char": "l3",
-    "lead": "门锁刚合上。她身上的高跟鞋刚踢下一只，就被你按在了玄关鞋柜旁。她微仰着脸，任由你抚上她的领口。",
-    "prompt": "大门反锁了吗……邻居半夜要是上楼，声控灯一亮全看得见……",
+    "loop": "ComfyUI_temp_coxps_00438_.webm",
+    "loopSrc": "ComfyUI_temp_coxps_00438_.webm",
+    "finish": "ComfyUI_temp_ehccu_00423_F.webm",
+    "finishSrc": "ComfyUI_temp_ehccu_00423_F.webm",
+    "char": "e3",
+    "lead": "午后的阳光透过薄纱窗帘洒在床头。她侧卧着微熟，轻微的呼吸声让人心痒难耐。",
+    "prompt": "唔……别闹，让姐再睡十分钟……",
     "postLines": [
-      { "speaker": "wanqing", "char": "l4", "text": "鞋还没放整齐呢……快扶我一把，脚踝麻了。今天商场站了一整天，又被你这么折腾……" },
-      { "speaker": "narration", "text": "（她扶着我的肩膀换好拖鞋，把玄关的大灯换成了最暗的地灯，屋里重归寂静。）" }
+      { "speaker": "wanqing", "char": "e3", "text": "你……你什么时候溜进来的，真是胆子越来越大了。" },
+      { "speaker": "narration", "text": "（她醒来醒眼惺忪，看着我有些无奈地揉了揉长发。）" }
+    ],
+    "subOptions": [
+      {
+        "id": "S5_nap_side",
+        "label": "睡着侧脸含吹",
+        "loopSrc": "ComfyUI_temp_ehccu_00423_.webm",
+        "postText": "侧脸温热的包覆感……"
+      },
+      {
+        "id": "S5_nap_front",
+        "label": "睡着正面含吹",
+        "loopSrc": "ComfyUI_temp_ehccu_00424_.webm",
+        "postText": "正面深情的抚吻……"
+      },
+      {
+        "id": "S5_nap_bed",
+        "label": "床上舔抚",
+        "loopSrc": "ComfyUI_temp_ehccu_00282_.webm",
+        "postText": "床上亲密贴抚……"
+      }
     ]
   },
   {
-    "id": "blowjob_bath_dressed",
-    "tier": "B",
-    "title": "浴室半遮·水汽初融",
-    "desc": "水雾迷蒙的洗手台旁，她身上还拢着浴袍，双唇温热而生涩。",
-    "loc": "Bathroom",
-    "slot": "Evening",
-    "trustMin": 80,
-    "lustMin": 45,
-    "clothes": "bathrobe",
-    "loop": "video/32100.webm",
-    "loopSrc": "video/32100.webm",
-    "finish": "video/32100_F.webm",
-    "finishSrc": "video/32100_F.webm",
-    "char": "l4",
-    "lead": "镜子上全是蒙蒙的白雾。她刚吹完半干的头发，身上散发着沐浴乳的甜香。推门而入的你把她堵在了洗手池边。",
-    "prompt": "头发还没吹干呢……别弄在浴袍上，待会儿不好洗……",
-    "postLines": [
-      { "speaker": "wanqing", "char": "l5", "text": "镜子都被热气糊住了。水龙头关一下……出去把外面的吹风机插头拔了。" },
-      { "speaker": "narration", "text": "（水滴顺着她的短发滴在瓷砖上，她抬手擦了擦镜子，镜中的眼眸里泛着湿润的潮红。）" }
-    ]
-  },
-  {
-    "id": "blowjob_bath_nude",
-    "tier": "B",
-    "title": "浴室水雾·彻底坦诚",
-    "desc": "花洒细密的水流下，毫无遮蔽的跪俯与吞吐。",
-    "loc": "Bathroom",
-    "slot": "LateNight",
-    "trustMin": 85,
-    "lustMin": 50,
-    "clothes": "nude",
-    "loop": "video/35510.webm",
-    "loopSrc": "video/35510.webm",
-    "finish": "video/35510_F.webm",
-    "finishSrc": "video/35510_F.webm",
-    "char": "n_l2",
-    "lead": "暖黄的浴霸照亮了整个浴室。温水从她的发顶流淌至双肩，她闭着眼睛，顺从地在水花中俯下身躯。",
-    "prompt": "水声好大……别出声……洗发水别揉进眼睛里了……",
-    "postLines": [
-      { "speaker": "wanqing", "char": "n_l3", "text": "呛到了……你慢一点嘛。帮我把头上的泡沫冲干净，沐浴露在架子第二格。" },
-      { "speaker": "narration", "text": "（温热的水流洗净了彼此的痕迹，浴室里弥漫着肥皂香与久久不散的缠绵温度。）" }
-    ]
-  },
-  {
-    "id": "blowjob_sleep",
-    "tier": "B",
-    "title": "主卧熟睡·半醒含情",
-    "desc": "深夜推开虚掩的门，她在被褥间半梦半醒的轻哼与接纳。",
-    "loc": "Bedroom_NPC",
-    "slot": "LateNight",
-    "trustMin": 85,
-    "lustMin": 45,
-    "clothes": "pajamas",
-    "loop": "video/00423.webm",
-    "loopSrc": "video/00423.webm",
-    "finish": "video/00423_F.webm",
-    "finishSrc": "video/00423_F.webm",
-    "char": "n_l1",
-    "lead": "主卧的门留了一条微不可见的缝隙。空调吐着凉气，被单凌乱地搭在她腰间。你俯身过去，她迷迷糊糊地伸出手，指尖插进了你的发丝。",
-    "prompt": "……几点了呀……你这坏小孩，大半夜不睡觉摸进来……嗯……",
-    "postLines": [
-      { "speaker": "wanqing", "char": "n_l2", "text": "困死我了……别折腾了，回你自己屋里睡，明早八点我还要去商场开例会呢……" },
-      { "speaker": "narration", "text": "（她翻了个身把薄被往上拉了拉，嘴角却带着一抹隐秘的弧度，床头柜上的男士旧发蜡盒不知何时已被她收进了抽屉最底下。）" }
-    ]
-  },
-  {
-    "id": "blowjob_sleep_deep",
-    "tier": "B",
-    "title": "深夜沦陷·枕边温存",
-    "desc": "完全清醒后的纵容，夜深人静时的彻底依附。",
-    "loc": "Bedroom_NPC",
-    "slot": "LateNight",
-    "trustMin": 90,
-    "lustMin": 55,
-    "clothes": "pajamas",
-    "loop": "video/00424.webm",
-    "loopSrc": "video/00424.webm",
-    "finish": "video/00424_F.webm",
-    "finishSrc": "video/00424_F.webm",
-    "char": "n_l2",
-    "lead": "窗外夜深如墨。空调冷气在被角凝成微凉，她坐起身，将垂落的发丝别在耳后，眼眸在昏暗中泛着沉静的温柔。",
-    "prompt": "真拿你没办法……下辈子是不是欠了你的……",
-    "postLines": [
-      { "speaker": "wanqing", "char": "n_l3", "text": "今晚……别回隔壁了。床这么大，就躺在这儿吧，不许乱翻身。" },
-      { "speaker": "narration", "text": "（她伸手拍了拍身侧空出来的枕头，那是她第一次主动挽留我在这张床上过夜。）" }
-    ]
-  },
-  {
-    "id": "insert_laundry",
+    "id": "S6_laundry_rear",
+    "stage": "S6",
     "tier": "C",
-    "title": "阳台洗衣·机箱之后的拥抱",
-    "desc": "周末阳光下隆隆作响的洗衣机，后入的沉溺与遮蔽。",
+    "title": "S6·洗衣房狭小后入",
+    "desc": "在狭窄的洗衣房随手关上拉门，将她按在洗衣机上挺入。",
     "loc": "Laundry",
     "slot": "Afternoon",
-    "trustMin": 80,
+    "trustMin": 70,
     "lustMin": 50,
-    "clothes": "dressed",
-    "loop": "video/00342.webm",
-    "loopSrc": "video/00342.webm",
-    "finish": "video/00342_F.webm",
-    "finishSrc": "video/00342_F.webm",
-    "char": "l4",
-    "lead": "洗衣机正处于脱水模式，沉重的震动在阳台地砖上传递。她正弯腰把洗净的床单往外扯，薄裙被绷得紧贴身躯，你从身后贴合而上。",
-    "prompt": "阳台门没锁！百叶窗……快把百叶窗拉下来呀，对面楼看得到！",
+    "clothes": "half_dressed",
+    "loop": "ComfyUI_temp_ehccu_00342_.webm",
+    "loopSrc": "ComfyUI_temp_ehccu_00342_.webm",
+    "finish": "ComfyUI_temp_ehccu_00342_F.webm",
+    "finishSrc": "ComfyUI_temp_ehccu_00342_F.webm",
+    "char": "l3",
+    "lead": "洗衣机滚筒嗡嗡作响。门锁啪嗒一声落下，狭小的空间里温度骤升。",
+    "prompt": "撞……撞轻点，洗衣机要被你推移位了……",
     "postLines": [
-      { "speaker": "wanqing", "char": "l5", "text": "……衣服都被弄皱了，洗了等于白洗。你扶我一下，腿软得站不住……" },
-      { "speaker": "narration", "text": "（两张床单在阳光下泛着清新的肥皂气味，她倚在甩干筒上喘了很久，顺手递给我一只衣夹。）" }
+      { "speaker": "wanqing", "char": "l4", "text": "腿都站不稳了……快帮我把洗好的衣服晾起来。" },
+      { "speaker": "narration", "text": "（她软软地靠在洗衣机旁，呼吸微促，双手有些脱力。）" }
     ]
   },
   {
-    "id": "insert_bath_dressed",
+    "id": "S7_bathroom_full",
+    "stage": "S7",
     "tier": "C",
-    "title": "浴室热气·衣衫半褪",
-    "desc": "水汽弥漫的浴室，还带着湿润内衣时的第一次放纵。",
+    "title": "S7·水汽浴室·全裸地砖抽插",
+    "desc": "送毛巾推门而入，水汽氤氲中从衣着半褪到全裸地砖的高潮释放。",
     "loc": "Bathroom",
     "slot": "Evening",
-    "trustMin": 85,
+    "trustMin": 80,
     "lustMin": 60,
-    "clothes": "wet_slip",
-    "loop": "video/05950.webm",
-    "loopSrc": "video/05950.webm",
-    "finish": "video/05950_F.webm",
-    "finishSrc": "video/05950_F.webm",
+    "clothes": "naked",
+    "loop": "ComfyUI_temp_fekym_05950_.webm",
+    "loopSrc": "ComfyUI_temp_fekym_05950_.webm",
+    "finish": "ComfyUI_temp_fekym_35695_F.webm",
+    "finishSrc": "ComfyUI_temp_fekym_35695_F.webm",
     "char": "l5",
-    "lead": "磨砂玻璃门外热气蒸腾。她唤你递洗发水，门推开的瞬间，她裹着湿透的吊带内衬，花洒的水流从瓷砖上漫过双脚。",
-    "prompt": "你……你别盯着看呀。不是让你把毛巾放在门口就好了吗……呀！",
+    "lead": "水汽将玻璃门染成朦胧的乳白色。门被推开的一刻，她惊呼了一声却并未遮挡。",
+    "prompt": "进来记得把门关严……水会溅到地毯上的……",
     "postLines": [
-      { "speaker": "wanqing", "char": "l6", "text": "水温都被你调凉了……出去吧，我真的要把身上冲干净了。地滑，小心门槛。" },
-      { "speaker": "narration", "text": "（排水孔咕嘟咕嘟吞吐着泡沫，她扶着花洒支架，湿漉漉的短发贴在锁骨上，眼眸里水光潋滟。）" }
+      { "speaker": "wanqing", "char": "l6", "text": "地板好凉……可你身上好热。真拿你没办法……" },
+      { "speaker": "narration", "text": "（她在大理石地砖上长发披散，水珠顺着白皙的肌肤滑落，眼神里满是沉沦。）" }
+    ],
+    "subOptions": [
+      {
+        "id": "S7_dressed",
+        "label": "衣着未褪",
+        "loopSrc": "ComfyUI_temp_fekym_05950_.webm",
+        "postText": "湿透的衣衫贴在肌肤上……"
+      },
+      {
+        "id": "S7_bj1",
+        "label": "水汽吹吐",
+        "loopSrc": "ComfyUI_temp_fekym_32100_.webm",
+        "postText": "雾气中的温存口交……"
+      },
+      {
+        "id": "S7_bj2",
+        "label": "侧脸吹吐",
+        "loopSrc": "ComfyUI_temp_fekym_35510_.webm",
+        "postText": "专注而深情的眼神……"
+      },
+      {
+        "id": "S7_nude",
+        "label": "全裸地砖",
+        "loopSrc": "ComfyUI_temp_fekym_35695_.webm",
+        "postText": "冰凉地砖与炽热体温的交融……"
+      }
     ]
   },
   {
-    "id": "insert_bath_nude",
+    "id": "S8_rooftop_day",
+    "stage": "S8_day",
     "tier": "C",
-    "title": "浴室全裸·瓷砖之上的抵死",
-    "desc": "彻底褪去体面防线的纯粹交融，温水与肌肤的无间。",
-    "loc": "Bathroom",
-    "slot": "LateNight",
-    "trustMin": 90,
+    "title": "S8·晴空天台·日光下的激情",
+    "desc": "晴空万里的天台晾衣架旁，享受居高临下与阳光洒落的极致体验。",
+    "loc": "Entry",
+    "slot": "Afternoon",
+    "trustMin": 85,
     "lustMin": 70,
-    "clothes": "nude",
-    "loop": "video/35695.webm",
-    "loopSrc": "video/35695.webm",
-    "finish": "video/35695_F.webm",
-    "finishSrc": "video/35695_F.webm",
-    "char": "n_l4",
-    "lead": "没有任何布料的阻隔。淋浴喷头倾泻着滚烫的细流，她双手抵在温热的瓷砖墙壁上，背脊弓成优美的弧线。",
-    "prompt": "小声点……老房子的下水管通着楼下呢，动静大了楼下阿姨要敲管道了……",
+    "clothes": "half_dressed",
+    "loop": "ComfyUI_temp_fekym_19683_.webm",
+    "loopSrc": "ComfyUI_temp_fekym_19683_.webm",
+    "finish": "ComfyUI_temp_fekym_19683_F.webm",
+    "finishSrc": "ComfyUI_temp_fekym_19683_F.webm",
+    "char": "l5",
+    "lead": "风吹动白色的被单，遮挡了对楼的视线。天台的阳光炽热而耀眼。",
+    "prompt": "天这么亮……会被对楼看到……嗯！",
     "postLines": [
-      { "speaker": "wanqing", "char": "n_l5", "text": "真是服了你了……浴巾拿来，头发都湿透了。今晚你负责把浴室地上的水刮干净，听到没有？" },
-      { "speaker": "narration", "text": "（她披着大浴巾快步擦身回屋，留下一室氤氲的水汽与肥皂清香，镜子上的水雾被她用手指画出了一道弯弯的痕迹。）" }
+      { "speaker": "wanqing", "char": "l6", "text": "腿都软了……被单还没晾好呢，都怪你。" },
+      { "speaker": "narration", "text": "（她靠在栏杆旁好一会儿才缓过神来，阳光下的微笑格外动人。）" }
+    ],
+    "subOptions": [
+      {
+        "id": "S8_hug",
+        "label": "天台抱起",
+        "loopSrc": "ComfyUI_temp_fekym_19683_.webm",
+        "postText": "悬空抱起的刺激……"
+      },
+      {
+        "id": "S8_sit",
+        "label": "天台坐着",
+        "loopSrc": "ComfyUI_temp_fekym_19684_.webm",
+        "postText": "天台椅上的温存……"
+      },
+      {
+        "id": "S8_leg",
+        "label": "天台抬腿",
+        "loopSrc": "ComfyUI_temp_fekym_26519_.webm",
+        "postText": "抬起美腿深挺……"
+      },
+      {
+        "id": "S8_ride",
+        "label": "天台骑乘",
+        "loopSrc": "ComfyUI_temp_fekym_19824_.webm",
+        "postText": "摇曳的骑乘姿态……"
+      },
+      {
+        "id": "S8_prone",
+        "label": "天台趴地",
+        "loopSrc": "ComfyUI_temp_fekym_19765_.webm",
+        "postText": "趴在大理石台上的顺从……"
+      }
     ]
   },
   {
-    "id": "bed_kneel",
-    "tier": "D",
-    "title": "主卧幽夜·深情俯仰",
-    "desc": "床榻之畔的跪趴，月光勾勒出她成熟迷人的背脊。",
-    "loc": "Bedroom_NPC",
-    "slot": "LateNight",
+    "id": "S8_rooftop_night",
+    "stage": "S8_night",
+    "tier": "C",
+    "title": "S8·星空天台·露天深吹与后入",
+    "desc": "夜深人静的天台，晚晴主动约你上去，在星空与微风中拥抱。",
+    "loc": "Entry",
+    "slot": "Night",
     "trustMin": 90,
-    "lustMin": 65,
-    "clothes": "underwear",
-    "loop": "video/00282.webm",
-    "loopSrc": "video/00282.webm",
-    "finish": "video/00282_F.webm",
-    "finishSrc": "video/00282_F.webm",
-    "char": "n_l5",
-    "lead": "床头的一盏小台灯光线暖黄。她俯在洁白的床单上，指尖紧紧攥着枕套的一角，回过头时眼底满是依赖与柔情。",
-    "prompt": "慢一点……床板老了，一晃就咯吱咯吱响，隔壁会听见的……",
-    "postLines": [
-      { "speaker": "wanqing", "char": "n_l6", "text": "枕套都被抓皱了……抱我一会儿，别动，就这么靠着。" },
-      { "speaker": "narration", "text": "（她的手环过我的脖颈，呼吸贴在我的耳畔，整间屋子里只剩下彼此的心跳声。）" }
-    ]
-  },
-  {
-    "id": "bed_intimate",
-    "tier": "D",
-    "title": "她的卧榻·双人共寝",
-    "desc": "第一次光明正大在她床上过夜，枕畔低语与肌肤相亲。",
-    "loc": "Bedroom_NPC",
-    "slot": "LateNight",
-    "trustMin": 95,
     "lustMin": 80,
-    "clothes": "nude",
-    "loop": "video/38321.webm",
-    "loopSrc": "video/38321.webm",
-    "finish": "video/38035.webm",
-    "finishSrc": "video/38035.webm",
-    "char": "n_l6",
-    "lead": "双人床上的旧枕套已经换成了崭新的米灰色。她枕在你的臂弯里，空调被覆着两个人起伏的呼吸，房间里只有窗外隐约的夜风声。",
-    "prompt": "我比你大了十多岁呢……真不知道以后你怎么跟别人交代。现在后悔还来得及哦？",
-    "postLines": [
-      { "speaker": "wanqing", "char": "n_s1", "text": "傻瓜。明天周日，不用起早床。睡吧……手放规矩点，不准再乱动了。" },
-      { "speaker": "narration", "text": "（她把额头轻轻靠在我的锁骨边，手掌在被子底下握住了我的手指，那一整夜，次卧的空房再没有被推开过。）" }
-    ]
-  },
-  {
-    "id": "blowjob_rooftop",
-    "tier": "B",
-    "title": "天台微风·夜色含情",
-    "desc": "夜深人静时的天台栏杆旁，星空下的大胆放纵。",
-    "loc": "Outside",
-    "slot": "LateNight",
-    "trustMin": 90,
-    "lustMin": 70,
-    "clothes": "dressed",
-    "loop": "video/21373.webm",
-    "loopSrc": "video/21373.webm",
-    "finish": "video/21431.webm",
-    "finishSrc": "video/21431.webm",
+    "clothes": "naked",
+    "loop": "ComfyUI_temp_fekym_21431_.webm",
+    "loopSrc": "ComfyUI_temp_fekym_21431_.webm",
+    "finish": "ComfyUI_temp_fekym_26930_F.webm",
+    "finishSrc": "ComfyUI_temp_fekym_26930_F.webm",
     "char": "l6",
-    "isGalleryVariant": true,
-    "lead": "顶楼天台风很大，吹乱了她的短发。城市远处的高架桥车水马龙，在这高处，她跪坐在你身前，眼神闪烁如星。",
-    "prompt": "风这么大……要是有人上来收衣服怎么办……你胆子太大了……",
+    "lead": "夜风徐徐，远处的城市霓虹闪烁。她穿着吊带裙站在天台风口，回头对你莞尔一笑。",
+    "prompt": "今晚星空真美……你过来，抱紧我。",
     "postLines": [
-      { "speaker": "wanqing", "char": "l6", "text": "好冷……赶紧下楼，要是被邻居撞见我们就完了……快把外套给我披上。" },
-      { "speaker": "narration", "text": "（她紧紧拉着我的外套缩在怀里，下楼梯时一步一回头，脸颊比天边的晚霞还要红。）" }
+      { "speaker": "wanqing", "char": "l6", "text": "夜风好凉，可你怀里好烫……我们下楼回屋吧。" },
+      { "speaker": "narration", "text": "（她依偎在我的怀里，手紧紧牵着我的指尖，一步步走下天台楼梯。）" }
+    ],
+    "subOptions": [
+      {
+        "id": "S8_n_kneel_dressed",
+        "label": "着衣跪口",
+        "loopSrc": "ComfyUI_temp_fekym_21431_.webm",
+        "postText": "夜风中微颤的含吹……"
+      },
+      {
+        "id": "S8_n_kneel_nude",
+        "label": "全裸跪口",
+        "loopSrc": "ComfyUI_temp_fekym_21373_.webm",
+        "postText": "星光下毫无保留的奉献……"
+      },
+      {
+        "id": "S8_n_rear",
+        "label": "夜色后入",
+        "loopSrc": "ComfyUI_temp_fekym_26930_.webm",
+        "postText": "城市霓虹背景下的挺入……"
+      }
     ]
   },
   {
-    "id": "insert_rooftop_series",
-    "tier": "C",
-    "title": "天台星空·栏杆相拥",
-    "desc": "天台夜色中的缠绵，晚风吹拂衣摆，无所顾忌的心跳。",
-    "loc": "Outside",
-    "slot": "LateNight",
+    "id": "S9_bedroom_obsession",
+    "stage": "S9",
+    "tier": "D",
+    "title": "S9·深夜虚掩·彻底沦陷之夜",
+    "desc": "深夜她房门故意留了一缝，彻底为你沦陷，享受终极的缠绵与欢愉。",
+    "loc": "Bedroom_NPC",
+    "slot": "Night",
     "trustMin": 95,
     "lustMin": 85,
-    "clothes": "half_dressed",
-    "loop": "video/19683.webm",
-    "loopSrc": "video/19683.webm",
-    "finish": "video/26930.webm",
-    "finishSrc": "video/26930.webm",
-    "char": "n_l7",
-    "isGalleryVariant": true,
-    "lead": "水箱后面的死角挡住了夜风。她双手撑在水泥护栏上，远方的霓虹灯影在她眼底跳动。",
-    "prompt": "太疯狂了……要是被楼下看见……啊……！",
+    "clothes": "naked",
+    "loop": "ComfyUI_temp_fekym_38321_.webm",
+    "loopSrc": "ComfyUI_temp_fekym_38321_.webm",
+    "finish": "ComfyUI_temp_fekym_35695_F.webm",
+    "finishSrc": "ComfyUI_temp_fekym_35695_F.webm",
+    "char": "l6",
+    "lead": "房门留着指宽的缝隙，室内流淌着玫瑰香薰的芬芳。她正躺在床上，美目盼兮。",
+    "prompt": "我就知道……你今晚一定会进来的……把门锁上……",
     "postLines": [
-      { "speaker": "wanqing", "char": "n_l7", "text": "……腿都站不稳了，你背我下去。钥匙还在你口袋里吧？" },
-      { "speaker": "narration", "text": "（我背着她沿着黑漆漆的楼道走回六楼，她的脸颊贴在我背上，滚烫而安心。）" }
+      { "speaker": "wanqing", "char": "l6", "text": "我已经……完全没办法离开你了。永远不要搬走，好不好？" },
+      { "speaker": "narration", "text": "（她将头埋在我的胸口，双手紧紧环住我的后背，此生再无离分。）" }
+    ],
+    "subOptions": [
+      {
+        "id": "S9_breast",
+        "label": "胸特写",
+        "loopSrc": "ComfyUI_temp_fekym_38321_.webm",
+        "postText": "娇喘微吐的特写……"
+      },
+      {
+        "id": "S9_lick",
+        "label": "亲抚温柔",
+        "loopSrc": "ComfyUI_temp_ehccu_00282_.webm",
+        "postText": "床上无微不至的爱抚……"
+      }
     ]
   },
   {
-    "id": "variant_ppate",
-    "tier": "A",
-    "title": "画廊变体 · 独享光影",
-    "desc": "独属于画廊的珍藏视角，午后斜阳下的温存记录。",
+    "id": "extra_indoor_bj",
+    "stage": "S4",
+    "tier": "B",
+    "title": "室内·站立含吹",
+    "desc": "室内站立优雅的含吹深吐。",
     "loc": "LivingRoom",
-    "slot": "Afternoon",
-    "trustMin": 60,
-    "lustMin": 20,
-    "clothes": "dressed",
-    "loop": "video/ppate_loop.webm",
-    "loopSrc": "video/ppate_loop.webm",
-    "finish": "video/ppate_F.webm",
-    "finishSrc": "video/ppate_F.webm",
-    "char": "s3",
-    "isGalleryVariant": true,
-    "lead": "午后的阳光正好照在沙发一角。她侧卧着翻看时尚杂志，光晕勾勒出她动人的身形。",
-    "prompt": "别拍……今天没化妆呢，显得脸憔悴……",
-    "postLines": [
-      { "speaker": "wanqing", "char": "s3", "text": "好看吗？都三十多岁的人了，也就你还当个宝。" },
-      { "speaker": "narration", "text": "（她掩嘴轻笑，目光里满是对我注视的欣喜与纵容。）" }
-    ]
-  },
-  {
-    "id": "variant_mgvra",
-    "tier": "A",
-    "title": "画廊变体 · 慵懒姿态",
-    "desc": "卸去防备的自然舒展，居家日常里的亲昵。",
-    "loc": "LivingRoom",
-    "slot": "Evening",
-    "trustMin": 65,
-    "lustMin": 25,
-    "clothes": "dressed",
-    "loop": "video/mgvra_loop.webm",
-    "loopSrc": "video/mgvra_loop.webm",
-    "finish": "video/mgvra_F.webm",
-    "finishSrc": "video/mgvra_F.webm",
-    "char": "e1",
-    "isGalleryVariant": true,
-    "lead": "晚饭后的闲暇时光，她脱掉了外衣，穿着便服蜷在单人沙发里。",
-    "prompt": "怎么又凑过来了？今天不复习功课啦？",
-    "postLines": [
-      { "speaker": "wanqing", "char": "e1", "text": "真拿你没办法。坐过来吧，给你分一半毯子。" },
-      { "speaker": "narration", "text": "（她挪出半边位置，沙发垫上还留着她温热的体香。）" }
-    ]
-  },
-  {
-    "id": "variant_coxps438",
-    "tier": "A",
-    "title": "画廊变体 · 隔衣微颤",
-    "desc": "隔着单薄布料的试探与起伏，细腻的体温传递。",
-    "loc": "LivingRoom",
-    "slot": "Evening",
-    "trustMin": 70,
+    "slot": "Any",
+    "trustMin": 50,
     "lustMin": 30,
     "clothes": "dressed",
-    "loop": "video/coxps_00438.webm",
-    "loopSrc": "video/coxps_00438.webm",
-    "finish": "video/coxps_00438_F.webm",
-    "finishSrc": "video/coxps_00438_F.webm",
-    "char": "e2",
-    "isGalleryVariant": true,
-    "lead": "指尖沿着布料的纹理轻轻滑过，她屏住呼吸，睫毛微微颤抖。",
-    "prompt": "手别停在那个地方……痒……",
-    "postLines": [
-      { "speaker": "wanqing", "char": "e2", "text": "……衣服都被你弄出褶子了，快松手啦。" },
-      { "speaker": "narration", "text": "（她轻轻按住我的手背，却没有真的把它推开。）" }
-    ]
-  },
-  {
-    "id": "variant_tqoej",
-    "tier": "B",
-    "title": "画廊变体 · 幽暗微光",
-    "desc": "夜深人静时的专属低回，只属于两个人的隐秘。",
-    "loc": "LivingRoom",
-    "slot": "LateNight",
-    "trustMin": 80,
-    "lustMin": 40,
-    "clothes": "half_dressed",
-    "loop": "video/tqoej_loop.webm",
-    "loopSrc": "video/tqoej_loop.webm",
-    "finish": "video/tqoej_F.webm",
-    "finishSrc": "video/tqoej_F.webm",
+    "loop": "ComfyUI_temp_fekym_14557_.webm",
+    "loopSrc": "ComfyUI_temp_fekym_14557_.webm",
+    "finish": "ComfyUI_temp_fekym_14557_F.webm",
+    "finishSrc": "ComfyUI_temp_fekym_14557_F.webm",
     "char": "l2",
-    "isGalleryVariant": true,
-    "lead": "只有玄关地灯的一抹微光照亮彼此的轮廓，低语在幽暗中格外清晰。",
-    "prompt": "……小声点，隔壁住户起夜听得到脚步声……",
+    "lead": "室内光线柔和，她微微仰头眼神娇羞。",
+    "prompt": "……唔，真拿你没办法……",
     "postLines": [
-      { "speaker": "wanqing", "char": "l2", "text": "去喝口水吧，嗓子都哑了……" },
-      { "speaker": "narration", "text": "（她递过来一只温度刚好的玻璃杯，眼底满是温柔的羞涩。）" }
-    ]
-  },
-  {
-    "id": "variant_sboad",
-    "tier": "C",
-    "title": "画廊变体 · 私密记录",
-    "desc": "毫无保留的彻底交付，灵魂与身躯的共鸣。",
-    "loc": "Bedroom_NPC",
-    "slot": "LateNight",
-    "trustMin": 90,
-    "lustMin": 60,
-    "clothes": "nude",
-    "loop": "video/sboad_loop.webm",
-    "loopSrc": "video/sboad_loop.webm",
-    "finish": "video/sboad_F.webm",
-    "finishSrc": "video/sboad_F.webm",
-    "char": "n_l5",
-    "isGalleryVariant": true,
-    "lead": "被单下毫无阻隔的相依相偎，汗水打湿了鬓角的发丝。",
-    "prompt": "……我整个人都是你的了，以后可不许丢下我……",
-    "postLines": [
-      { "speaker": "wanqing", "char": "n_s1", "text": "睡吧，明天我早起给你做小馄饨吃。" },
-      { "speaker": "narration", "text": "（她紧紧拥着我，在被窝里沉沉睡去，嘴角泛着幸福的笑意。）" }
-    ]
-  },
-  {
-    "id": "variant_rooftop_27571",
-    "tier": "C",
-    "title": "天台近号 · 栏杆之畔",
-    "desc": "天台栏杆边的夜风沉醉，俯瞰城市灯火时的放纵。",
-    "loc": "Outside",
-    "slot": "LateNight",
-    "trustMin": 92,
-    "lustMin": 75,
-    "clothes": "half_dressed",
-    "loop": "video/27571.webm",
-    "loopSrc": "video/27571.webm",
-    "finish": "video/27571_F.webm",
-    "finishSrc": "video/27571_F.webm",
-    "char": "l5",
-    "isGalleryVariant": true,
-    "lead": "栏杆上的铁锈带着夜的凉意，而她的身躯却如火焰般炽热。",
-    "prompt": "抓紧我……我有点恐高……啊……",
-    "postLines": [
-      { "speaker": "wanqing", "char": "l5", "text": "吓死我了……以后再也不跟你上天台胡闹了！" },
-      { "speaker": "narration", "text": "（她虽嘴上责怪，双手却抓着我的衣襟舍不得松开。）" }
-    ]
-  },
-  {
-    "id": "variant_rooftop_28209",
-    "tier": "C",
-    "title": "天台近号 · 暮色将晚",
-    "desc": "夕阳染红半边天时的天台角隅，动魄惊心的美丽。",
-    "loc": "Outside",
-    "slot": "Evening",
-    "trustMin": 93,
-    "lustMin": 78,
-    "clothes": "dressed",
-    "loop": "video/28209.webm",
-    "loopSrc": "video/28209.webm",
-    "finish": "video/28209_F.webm",
-    "finishSrc": "video/28209_F.webm",
-    "char": "l6",
-    "isGalleryVariant": true,
-    "lead": "暮色将整座城市镀上一层金红。她背对着夕阳，发丝被晚风轻抚。",
-    "prompt": "你看那边的云……好美啊……嗯……慢一点……",
-    "postLines": [
-      { "speaker": "wanqing", "char": "l6", "text": "太阳下山了，天要凉了。我们回家吧。" },
-      { "speaker": "narration", "text": "（那一句‘回家’，听起来就像我们早就是一家人一样自然。）" }
-    ]
-  },
-  {
-    "id": "variant_rooftop_21134",
-    "tier": "C",
-    "title": "天台近号 · 拂晓沉沦",
-    "desc": "黎明破晓前的最后温存，晨光熹微中的交叠。",
-    "loc": "Outside",
-    "slot": "LateNight",
-    "trustMin": 95,
-    "lustMin": 80,
-    "clothes": "half_dressed",
-    "loop": "video/21134.webm",
-    "loopSrc": "video/21134.webm",
-    "finish": "video/21134_F.webm",
-    "finishSrc": "video/21134_F.webm",
-    "char": "n_l7",
-    "isGalleryVariant": true,
-    "lead": "东方刚泛起一抹鱼肚白，整座城市还在睡梦中。清晨微凉的空气与滚烫的交融形成强烈的对比。",
-    "prompt": "天快亮了……楼下早餐摊都已经出摊了……",
-    "postLines": [
-      { "speaker": "wanqing", "char": "n_s1", "text": "等会儿顺路买两根油条和两碗豆浆带回去，我今天想吃咸豆腐脑。" },
-      { "speaker": "narration", "text": "（牵着她的手走下楼道，晨光透过楼梯窗户洒在我们并肩的身影上。）" }
+      { "speaker": "wanqing", "char": "l2", "text": "……感觉嘴唇都酸了。" }
     ]
   }
 ]
