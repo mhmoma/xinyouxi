@@ -111,15 +111,24 @@
         </div>
         <div class="npc-meters-block">
           <div class="npc-meter-row">
-            <span class="npc-meter-lbl">❤ 信赖</span>
+            <div class="npc-meter-header">
+              <span class="npc-meter-lbl">❤ 信赖</span>
+              <span id="npc-heart-val" class="npc-meter-val">0</span>
+            </div>
             <div class="heart-bar-track"><i id="npc-heart-fill" style="width: 10%"></i></div>
           </div>
           <div class="npc-meter-row">
-            <span class="npc-meter-lbl">🔥 欲望</span>
+            <div class="npc-meter-header">
+              <span class="npc-meter-lbl">🔥 欲望</span>
+              <span id="npc-lust-val" class="npc-meter-val">0</span>
+            </div>
             <div class="lust-bar-track"><i id="npc-lust-fill" style="width: 5%"></i></div>
           </div>
           <div class="npc-meter-row">
-            <span class="npc-meter-lbl">🚨 警惕</span>
+            <div class="npc-meter-header">
+              <span class="npc-meter-lbl">🚨 警惕</span>
+              <span id="npc-suspicion-val" class="npc-meter-val">0</span>
+            </div>
             <div class="suspicion-bar-track"><i id="npc-suspicion-fill" style="width: 0%"></i></div>
           </div>
           <p id="npc-rel" class="relationship-details">关系：加载中...</p>

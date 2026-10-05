@@ -252,6 +252,33 @@
   // Fast boot
   readyBoot();
 
+  // --- Responsive Proportional Scaling (Adaptive 1:1 Zoom for Mobile/Web) ---
+  var appContainer = document.getElementById("app");
+  var DESIGN_W = 1280;
+  var DESIGN_H = 720;
+
+  function updateAppScale() {
+    if (!appContainer) return;
+    var vw = window.innerWidth;
+    var vh = window.innerHeight;
+    
+    // Scale factor to fit inside the viewport
+    var scale = Math.min(vw / DESIGN_W, vh / DESIGN_H);
+    
+    // Apply the scale transform centered
+    appContainer.style.transform = "translate(-50%, -50%) scale(" + scale + ")";
+    
+    // Optional: Force scroll to top on some mobile browsers
+    if (vw < vh) {
+        // If portrait, we might want to warn or just keep scaling.
+        // For now, keep scaling as requested.
+    }
+  }
+
+  window.addEventListener("resize", updateAppScale);
+  window.addEventListener("orientationchange", updateAppScale);
+  updateAppScale();
+
   global.openGame = openGame;
   global.chapterEnd = chapterEnd;
   global.startCh0 = startCh0;

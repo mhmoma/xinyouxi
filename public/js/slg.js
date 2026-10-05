@@ -48,7 +48,7 @@
                 text: "“我学过一点指压，要不帮你捏捏小腿？”",
                 trust: 6,
                 lust: 8,
-                char: "e2",
+                char: "e5",
                 say: "“哎呀……你这孩子胡说什么呢。才租住几天呀，就动手动脚的。”",
                 postLines: [
                   { speaker: "narration", text: "（她虽然嘴上推脱，人却顺从地靠在沙发靠背上，有些不好意思地并了并细致的双腿。）" },
@@ -117,15 +117,15 @@
           dialogue: [
             { speaker: "player", text: "“林姐……你一个人住这么大的房子，夜里真的一点都不害怕吗？”", char: "e1" },
             { speaker: "wanqing", text: "“怕啊，怎么不怕。”", char: "e2" },
-            { speaker: "wanqing", text: "“刚离婚那会儿，每天下班回到家，开门面对的都是一片漆黑。连个说话的人都没有。”", char: "e3" },
-            { speaker: "wanqing", text: "“最怕的是生病，躺在床上连烧口热水的力气都没有，只能自己眼巴巴看着天花板。那一刻，真的觉得天都要塌了。”", char: "e3" },
+            { speaker: "wanqing", text: "“刚离婚那会儿，每天下班回到家，开门面对的都是一片漆黑。连个说话的人都没有。”", char: "c1" },
+            { speaker: "wanqing", text: "“最怕的是生病，躺在床上连烧口热水的力气都没有，只能自己眼巴巴看着天花板。那一刻，真的觉得天都要塌了。”", char: "c2" },
             { speaker: "player", text: "“那样的日子听起来真难熬。不过现在，你不用一个人撑着了。”", char: "s1" },
-            { speaker: "wanqing", text: "“是啊……小陈，自从你搬进来之后，屋子里有烟火气了。下班回来亮着的那盏小夜灯，对我真的很重要。”", char: "s3", choices: [
+            { speaker: "wanqing", text: "“是啊……小陈，自从你搬进来之后，屋子里有烟火气了。下班回来亮着的那盏小夜灯，对我真的很重要。”", char: "c3", choices: [
               {
                 text: "“以后有我陪你，你不再是一个人了。”",
                 trust: 12,
                 lust: 8,
-                char: "e3",
+                char: "s3",
                 say: "“你这孩子……海口夸得倒挺大。我都多大年纪了，你才刚进大学。不过……谢谢你。”",
                 postLines: [
                   { speaker: "narration", text: "（虽然这么说着，但她看着我的目光闪烁，眼神里充满了感动与掩饰不住的欢喜。）" },
@@ -568,6 +568,7 @@
           trustMin: 85,
           lustMin: 70,
           action: function () {
+            if (window.Stage) Stage.setChar("l5");
             playVideoEvent("S8_rooftop_day", enterMap);
           }
         },
@@ -578,6 +579,7 @@
           trustMin: 90,
           lustMin: 80,
           action: function () {
+            if (window.Stage) Stage.setChar("n_s1");
             playVideoEvent("S8_rooftop_night", enterMap);
           }
         }
@@ -697,7 +699,8 @@
         stats: { mouth: 0, hand: 0, foot: 0, vaginal: 0, anal: 0, climax: 0 }
       },
       unlockedVideos: [],
-      eveningBath: false
+      eveningBath: false,
+      dailyInteractions: {}
     };
   }
 
@@ -717,31 +720,90 @@
     var sch = tables.schedule || {};
     var npc = s.wanqing;
     var slot = s.currentTimeSlot;
+
+    // 1. Boot sequence
     if (reason === "boot" && s.dayCount === 1 && slot === "Afternoon") {
       npc.currentLocation = "LivingRoom";
       npc.currentState = "Idle";
       return;
     }
+
+    // 2. Plot Overrides (Stage-based overrides can be added here)
+    // If trust is maxed, she might stay in the living room or bedroom more often
+    
+    // 3. Activity Overrides
     if (slot === "Evening" && s.eveningBath) {
       npc.currentLocation = "Bathroom";
       npc.currentState = "Bathing";
       return;
     }
+
+    if (slot === "LateNight") {
+      npc.currentLocation = "Bedroom_NPC";
+      npc.currentState = "Sleeping";
+      return;
+    }
+
+    // 4. Schedule Table Lookup
     var table = isWeekend(s) ? sch.weekend : sch.weekday;
     var rows = table && table[slot];
+
     if (!rows) {
       npc.currentLocation = "LivingRoom";
       npc.currentState = "Idle";
-      return;
-    }
-    if (!Array.isArray(rows)) {
+    } else if (!Array.isArray(rows)) {
       npc.currentLocation = rows.location || "LivingRoom";
       npc.currentState = rows.state || "Idle";
-      return;
+    } else {
+      var pickRow = weightedPick(rows);
+      npc.currentLocation = pickRow.location;
+      npc.currentState = pickRow.state;
     }
-    var pickRow = weightedPick(rows);
-    npc.currentLocation = pickRow.location;
-    npc.currentState = pickRow.state;
+
+    // 5. Final validation: if she is in Bathroom/Bedroom_NPC but state is Idle, make it make sense
+    if (npc.currentLocation === "Bathroom" && npc.currentState === "Idle") {
+        npc.currentState = "Bathing";
+    }
+    if (npc.currentLocation === "Bedroom_NPC" && (npc.currentState === "Idle" || slot === "LateNight")) {
+        npc.currentState = "Sleeping";
+    }
+  }
+
+  function advanceSlotIfNeeded() {
+    if (!state._spentSlot) return false;
+    state._spentSlot = false;
+    var idx = SLOTS.indexOf(state.currentTimeSlot);
+    if (idx < 0) return false;
+    if (idx === SLOTS.length - 1) {
+      nightProcess(state);
+      return "night";
+    } else {
+      enterSlot(state, SLOTS[idx + 1]);
+      return "slot";
+    }
+  }
+
+  function randomizeNpcLocation(s) {
+    if (!s || !s.wanqing) return;
+    
+    // Unified logic: if a slot was spent or randomization is forced, 
+    // we use applySchedule which is based on current time slot and trust level rules
+    applySchedule(s);
+  }
+
+  function syncWorldState(s) {
+    if (!s) return;
+    // 1. Progress time if a slot was spent
+    advanceSlotIfNeeded();
+    // 2. Update NPC position based on new time/state
+    applySchedule(s);
+    // 3. UI/MAP synchronization
+    paintHud();
+    paintStage();
+    renderMiniMap();
+    renderHotspots();
+    // 4. Persistence
+    persist();
   }
 
   function maybeWander(s, playerNow) {
@@ -761,12 +823,42 @@
 
   function portraitFor(s) {
     if (!npcHere(s)) return "none";
-    var stt = s.wanqing.currentState;
-    if (stt === "Sleeping" || stt === "Bathing") return "none";
-    if (stt === "Busy") return "a2";
-    if (s.wanqing.trust >= 91) return "s3";
-    if (s.wanqing.trust >= 60) return "s2";
-    return "s1";
+    var npc = s.wanqing;
+    var stt = npc.currentState;
+    var loc = npc.currentLocation;
+    var trust = npc.trust || 0;
+    var lust = npc.lust || 0;
+    var suspicion = npc.suspicion || 0;
+
+    // 1. High Suspicion Overrides (She's angry)
+    if (suspicion >= 80) return "a1";
+    if (suspicion >= 60) return "a3";
+
+    // 2. State-based Special Overrides
+    if (stt === "Sleeping") return "none"; // Usually handled by specific scenes
+    
+    // 3. Intimate/Naked States (If already unlocked/in bathroom interaction)
+    // Note: Standard map portrait usually stays dressed unless trust is very high
+    if (stt === "Bathing") {
+        if (trust >= 85) return "n_s2"; // Not hiding anymore
+        if (trust >= 60) return "n_e3"; // Blushing, half-hiding
+        return "n_sur1"; // Surprised/hiding
+    }
+
+    // 4. Location-based Nuance
+    if (loc === "Kitchen" && stt === "Busy") {
+        return trust >= 50 ? "s2" : "a4";
+    }
+
+    // 5. Progression-based Daily Sprites
+    if (lust >= 85 && trust >= 90) return "l5"; // Seductive walking/turning
+    if (lust >= 60) return "l1"; // Seductive squint
+    
+    if (trust >= 91) return "s3"; // Relaxed, confident smile
+    if (trust >= 60) return "s2"; // Cheerful, side-pose
+    if (trust >= 30) return "s1"; // Friendly
+    
+    return "normal"; // Default landlord face
   }
 
   function enterSlot(s, slot, rolled) {
@@ -1039,6 +1131,12 @@
     }
 
     if (!def) return fail("没这回事。");
+
+    // Record interaction if it's an NPC panel action
+    if (def.panel && npcHere(s)) {
+      InteractionManager.recordInteraction(s.playerLocation);
+    }
+
     if (def.special !== "sleep" && def.special !== "phone" && def.special !== "gift") {
       err = spend(s, def.energy || 0, def.slots || 0);
       if (err) return fail(err);
@@ -1541,10 +1639,17 @@
     
     var b = bandOf(state.wanqing.trust);
     if (ui.heartFill) ui.heartFill.style.width = clamp(state.wanqing.trust, 0, 100) + "%";
+    var heartVal = document.getElementById("npc-heart-val");
+    if (heartVal) heartVal.textContent = state.wanqing.trust;
+
     if (ui.lustFill) ui.lustFill.style.width = clamp(state.wanqing.lust || 0, 0, 100) + "%";
+    var lustVal = document.getElementById("npc-lust-val");
+    if (lustVal) lustVal.textContent = state.wanqing.lust || 0;
     
     var suspFill = document.getElementById("npc-suspicion-fill");
     if (suspFill) suspFill.style.width = clamp(state.wanqing.suspicion || 0, 0, 100) + "%";
+    var suspVal = document.getElementById("npc-suspicion-val");
+    if (suspVal) suspVal.textContent = state.wanqing.suspicion || 0;
 
     if (ui.npcRel) {
       ui.npcRel.textContent = "关系：" + b.label + " · " + (b.id === "tenant" ? "疏离" : b.id === "roommate" ? "熟稔" : b.id === "depend" ? "亲密" : "沦陷");
@@ -2098,12 +2203,28 @@
     var l = s.wanqing ? (s.wanqing.lust || 0) : 0;
     var d = s.dayCount || 1;
     
+    if (t >= 10 && !flag(s, "Event_Trust10_Auto")) {
+      setFlag(s, "Event_Trust10_Auto", true);
+      return [
+        { speaker: "wanqing", char: "s1", text: "“小陈，以后有什么不适应的直接跟我说。出门记得带钥匙。”" },
+        { speaker: "narration", text: "（🎉【S1·初步相处】已达成！你与林晚晴的关系稍微熟络了一些。）" }
+      ];
+    }
+
+    if (t >= 20 && !flag(s, "Event_Trust20_Auto")) {
+      setFlag(s, "Event_Trust20_Auto", true);
+      return [
+        { speaker: "wanqing", char: "s2", text: "“看你平时挺勤快的，这屋子交给你打理我也放心。对了，有空可以帮我看看厨房的电器，偶尔不太灵光。”" },
+        { speaker: "narration", text: "（🎉【S2·修缮与帮帮忙】已解锁！去尝试在各种场景帮她分担家务吧！）" }
+      ];
+    }
+
     if (t >= 30 && !flag(s, "Event_Trust30_Auto")) {
       setFlag(s, "Event_Trust30_Auto", true);
       return [
-        { speaker: "wanqing", char: "s2", text: "“那个……我们合租也有段日子了。以前我都把你当外人看待，现在觉得，有你在身边其实也挺好的。”" },
+        { speaker: "wanqing", char: "e1", text: "“那个……我们合租也有段日子了。以前我都把你当外人看待，现在觉得，有你在身边其实也挺好的。”" },
         { speaker: "player", text: "“谢谢晚晴姐，我也会继续努力做个好室友的。”" },
-        { speaker: "wanqing", char: "e1", text: "“嗯……叫我晚晴就好了。对了，既然熟了，以后你想聊些深一点的【成人话题】……我也不是不能陪你聊聊。”" },
+        { speaker: "wanqing", char: "e4", text: "“嗯……叫我晚晴就好了。对了，既然熟了，以后你想聊些深一点的【成人话题】……我也不是不能陪你聊聊。”" },
         { speaker: "narration", text: "（🎉【S3·傍晚客厅试探】已解锁！林晚晴对你的态度温和了许多，傍晚去客厅与她靠近吧！）" }
       ];
     }
@@ -2116,14 +2237,22 @@
         { speaker: "narration", text: "（🎉【S4·厨房忙碌与洗碗深吹】已解锁！去厨房尝试在她洗碗时贴近她吧！）" }
       ];
     }
+
+    if (t >= 50 && l >= 30 && d >= 2 && !flag(s, "Event_StageS5_Night_Auto")) {
+      setFlag(s, "Event_StageS5_Night_Auto", true);
+      return [
+        { speaker: "wanqing", char: "e1", text: "“深夜一个人在客厅的时候，总会想起你白天跟我说的那些话……心里乱糟糟的。”" },
+        { speaker: "narration", text: "（🎉【S5·夜间客厅沙发极乐】已解锁！深夜去客厅找找正在发呆的她吧！）" }
+      ];
+    }
     
-    if (t >= 60 && !flag(s, "Event_Trust60_Auto")) {
+    if (t >= 60 && l >= 40 && !flag(s, "Event_Trust60_Auto")) {
       setFlag(s, "Event_Trust60_Auto", true);
       return [
         { speaker: "wanqing", char: "e2", text: "“感觉每次和你说话，我的心跳都比平时要快……我是怎么了。你，是不是对我有什么想法？”" },
         { speaker: "player", text: "“晚晴，既然你都这么问了……我确实控制不住被你吸引。”" },
         { speaker: "wanqing", char: "e5", text: "“你、你这孩子太直白了……不过，我不讨厌。以后……有什么亲密的举动，你可以【直入正题】了……”" },
-        { speaker: "narration", text: "（🎉【S5·周末午睡偷香/沙发极乐】已解锁！林晚晴对你产生深深依赖，午后可去她卧室探寻！）" }
+        { speaker: "narration", text: "（🎉【S5·周末午睡偷香】已解锁！林晚晴对你产生深深依赖，午后可去她卧室探寻！）" }
       ];
     }
 
@@ -2151,10 +2280,10 @@
       ];
     }
     
-    if (t >= 91 && l >= 50 && !flag(s, "Event_沦陷_Auto")) {
+    if (t >= 95 && l >= 85 && !flag(s, "Event_沦陷_Auto")) {
       setFlag(s, "Event_沦陷_Auto", true);
       return [
-        { speaker: "wanqing", char: "e4", text: "“我已经……完全没有办法离开你了。无论是白天还是黑夜，脑子里全是你……”" },
+        { speaker: "wanqing", char: "l6", text: "“我已经……完全没有办法离开你了。无论是白天还是黑夜，脑子里全是你……”" },
         { speaker: "player", text: "“晚晴，那我们就永远不要分开，一直合租下去。”" },
         { speaker: "wanqing", char: "e5", text: "“嗯……今晚，我的房门不锁。你要是敢不来，我可要生气的哦。”" },
         { speaker: "narration", text: "（🎉【S9·深夜门虚掩·彻底沦陷】终极阶段已解锁！林晚晴已对你彻底沦陷！）" }
@@ -2165,6 +2294,31 @@
   }
 
   function enterMap() {
+    if (!state) return;
+
+    // 1. Time transition handling (Global interceptor for slot-spending actions)
+    if (state._spentSlot) {
+      state._spentSlot = false;
+      var currentSlot = state.currentTimeSlot;
+      transitionManager.playTransition(
+        "时光流转...", 
+        "光影轻摇，时光沉淀", 
+        function updateState() {
+          // Force slot advance
+          state._spentSlot = true; 
+          syncWorldState(state);
+          enterMap(); 
+        },
+        function onComplete() {
+          var nextSlotCn = SLOT_CN[state.currentTimeSlot];
+          if (currentSlot !== state.currentTimeSlot) {
+            playLines([{ speaker: "narration", text: "（忙碌之后，一眨眼时间来到了 " + nextSlotCn + "。）" }], enterMap);
+          }
+        }
+      );
+      return;
+    }
+
     if (flag(state, "BadEnd_Rent")) {
       playLines([{ speaker: "narration", text: "（这间次卧到此为止。）" }], function () {});
       persist();
@@ -2365,19 +2519,39 @@
             markDailyDone(state, "bathing");
             state.playerEnergy = clamp(state.playerEnergy - 15, 0, 100);
             
-            if (suspicion >= 80) {
-              state.wanqing.suspicion = clamp(state.wanqing.suspicion + 10, 0, 100);
+            // Catch Logic: If suspicion is already high, or pure bad luck
+            if (suspicion >= 70 || Math.random() < 0.25) {
+              state.wanqing.suspicion = clamp(state.wanqing.suspicion + 20, 0, 100);
               playLines([
-                { speaker: "narration", text: "（她防备心极重，浴室门缝被她用毛巾塞得严严实实，踩水声惊动了她…… 警惕值增加！）" }
+                { speaker: "narration", char: "n_sur1", text: "（你在门缝处窥视，却不小心弄响了门板。浴室里的水声戛然而止……）" },
+                { speaker: "wanqing", char: "ra1", text: "“谁！……小陈？你、你居然在外面偷看？快给我滚回去！”" },
+                { speaker: "narration", text: "（她恼羞成怒地在里面大喊，听起来气坏了。警惕值大幅增加！）" }
               ], enterMap);
               return;
             }
             
-            state.wanqing.suspicion = clamp(state.wanqing.suspicion + 10, 0, 100);
+            // Success Logic: Different sprites for different trust levels
+            var peekChar = trust >= 80 ? "n_s2" : trust >= 50 ? "n_e3" : "n_sur1";
+            var peekText = trust >= 80 ? "（她似乎察觉了你的视线，但只是从容地舒展着曼妙的身躯，任由你打量……）" :
+                           trust >= 50 ? "（水雾氤氲中，她脸红地侧过身去，仿佛在半推半就间默认了你的存在……）" :
+                           "（她正专心地洗着头发，完全没有发现门缝后的那双眼睛……）";
+
             state.wanqing.lust = clamp((state.wanqing.lust || 0) + 5, 0, 100);
-            TimeTransitionController.play("🫣 门缝偷窥", "水汽氤氲，娇躯隐现", function() {
-              playVideoEvent("S7_bathroom_full", enterMap);
-            });
+            transitionManager.playTransition(
+              "🫣 门缝偷窥", 
+              "水汽氤氲，娇躯隐现", 
+              function updateState() {
+                syncWorldState(state);
+                enterMap();
+              },
+              function onComplete() {
+                playLines([
+                  { speaker: "narration", char: peekChar, text: peekText }
+                ], function() {
+                  playVideoEvent("S7_bathroom_full", enterMap);
+                });
+              }
+            );
           }
         });
       } else {
@@ -2400,9 +2574,26 @@
           action: function() {
             InteractionManager.recordInteraction("Bathroom");
             markDailyDone(state, "bathing");
-            TimeTransitionController.play("🛁 浴室送毛巾", "推开浴室门，水汽湿热", function() {
-              playVideoEvent("S7_bathroom_full", enterMap);
-            });
+            transitionManager.playTransition(
+              "🛁 浴室送毛巾", 
+              "推开浴室门，水汽湿热", 
+              function updateState() {
+                syncWorldState(state);
+                enterMap();
+              },
+              function onComplete() {
+                var enterChar = trust >= 80 ? "n_s3" : trust >= 60 ? "n_e2" : "sur1";
+                var enterText = trust >= 80 ? "“（她毫不在意地转过身接过毛巾，任由水珠顺着白皙的胸口滑落……）”" :
+                                trust >= 60 ? "“（她惊呼一声，急忙用双手护住胸口，脸颊红得快要滴出血来……）”" :
+                                "“呀！你……你干嘛直接进来！快出去！”";
+                
+                playLines([
+                  { speaker: "wanqing", char: enterChar, text: enterText }
+                ], function() {
+                  playVideoEvent("S7_bathroom_full", enterMap);
+                });
+              }
+            );
           }
         });
       } else {
@@ -2419,22 +2610,30 @@
         });
       }
 
-      if (trust >= 75 && lust >= 50) {
+      if (trust >= 80 && lust >= 60) {
         choices.push({
           text: "🚿 直接步入水汽蒸腾的浴室相拥",
-          sub: "要求信赖 ≥ 75 且 欲望 ≥ 50",
+          sub: "要求信赖 ≥ 80 且 欲望 ≥ 60",
           action: function() {
             InteractionManager.recordInteraction("Bathroom");
             markDailyDone(state, "bathing");
-            TimeTransitionController.play("🚿 步入相拥", "水流倾泻，相拥温存", function() {
-              playVideoEvent("S7_bathroom_full", enterMap);
-            });
+            transitionManager.playTransition(
+              "🚿 步入相拥", 
+              "水流倾泻，相拥温存", 
+              function updateState() {
+                syncWorldState(state);
+                enterMap();
+              },
+              function onComplete() {
+                playVideoEvent("S7_bathroom_full", enterMap);
+              }
+            );
           }
         });
       } else {
         choices.push({
           text: "🔒 直接步入浴室相拥",
-          sub: "需信赖 ≥ 75 & 欲望 ≥ 50",
+          sub: "需信赖 ≥ 80 & 欲望 ≥ 60",
           locked: true,
           action: function() {
             playLines([
@@ -2464,36 +2663,47 @@
             markDailyDone(state, "sleeping_room");
             state.playerEnergy = clamp(state.playerEnergy - 5, 0, 100);
             state.wanqing.trust = clamp(state.wanqing.trust + 1, 0, 100);
+            
+            var wakeChar = trust >= 80 ? "l1" : trust >= 50 ? "se1" : "sur2";
+            
             playLines([
               { speaker: "player", text: "“晚晴，盖好被子，别着凉了。”" },
-              { speaker: "wanqing", char: "e1", text: "“唔……小陈吗？嗯……知道了，晚安哦……”" },
+              { speaker: "wanqing", char: wakeChar, text: "“唔……小陈吗？嗯……知道了，晚安哦……”" },
               { speaker: "narration", text: "（她在梦呓中含糊地答应了一声，把被角往上拉了拉。）" }
             ], enterMap);
           }
         }
       ];
 
-      if (trust >= 50) {
+      if (trust >= 60) {
         choices.push({
           text: "🔑 用备用钥匙悄悄溜进床边",
           sub: "S5_nap·午睡偷香 / S9·彻底沦陷",
           action: function() {
             InteractionManager.recordInteraction("Bedroom_NPC");
             markDailyDone(state, "sleeping_room");
-            TimeTransitionController.play("🔑 溜进闺房", "钥匙微响，溜至床边", function() {
-              var vid = state.wanqing.trust >= 90 ? "S9_bedroom_obsession" : "S5_nap_bedroom";
-              playVideoEvent(vid, enterMap);
-            });
+            transitionManager.playTransition(
+              "🔑 溜进闺房", 
+              "钥匙微响，溜至床边", 
+              function updateState() {
+                syncWorldState(state);
+                enterMap();
+              },
+              function onComplete() {
+                var vid = state.wanqing.trust >= 95 ? "S9_bedroom_obsession" : "S5_nap_bedroom";
+                playVideoEvent(vid, enterMap);
+              }
+            );
           }
         });
       } else {
         choices.push({
           text: "🔒 用备用钥匙悄悄溜进床边",
-          sub: "需与晚晴信赖 ≥ 50",
+          sub: "需与晚晴信赖 ≥ 60",
           locked: true,
           action: function() {
             playLines([
-              { speaker: "narration", text: "（房门被她从里面插上了小栓，信赖值不足 50，无法轻易溜进去。）" }
+              { speaker: "narration", text: "（房门被她从里面插上了小栓，信赖值不足 60，无法轻易溜进去。）" }
             ], enterMap);
           }
         });
@@ -2503,173 +2713,105 @@
     },
 
     handleSleepInteraction: function () {
-      var trust = state.wanqing.trust || 0;
-      var lust = state.wanqing.lust || 0;
-      var isDaydreamUnlocked = trust >= 30 || lust >= 15;
-      var isSneakUnlocked = trust >= 50 && lust >= 20;
+      if (!state) return;
 
-      var choices = [
-        {
-          text: "🛌 床上小憩午睡",
-          sub: "恢复 30 体力，跳过当前时段",
-          action: function() {
-            if (isDailyDone(state, "bed_nap")) {
-              playLines([
-                { speaker: "narration", text: "（今天已经午睡小憩过了，精神饱满，今天去尝试做点别的互动吧！）" }
-              ], enterMap);
-              return;
-            }
-            markDailyDone(state, "bed_nap");
-            transitionManager.playTransition(
-              "🛌 床上小憩",
-              "午后微风，短憩惬意",
-              function updateState() {
-                state.playerEnergy = clamp(state.playerEnergy + 30, 0, 100);
-                state._spentSlot = true;
-                advanceSlotIfNeeded();
-                applySchedule(state);
-                enterMap();
-              },
-              function onComplete() {
-                var nextSlotCn = SLOT_CN[state.currentTimeSlot];
-                playLines([
-                  { speaker: "narration", text: "（你在床上舒舒服服地睡了个午觉。体力恢复了！）" },
-                  { speaker: "narration", text: "（一眨眼，时间来到了 " + nextSlotCn + "。）" }
-                ], enterMap);
-              }
-            );
-          }
+      // 1. Transition first (locking input)
+      transitionManager.playTransition(
+        "🛏️ 卧床小憩",
+        "暂时放下忙碌，在床铺间感受片刻宁静",
+        function updateState() {
+          // 2. Sync state using unified logic
+          state._spentSlot = true;
+          syncWorldState(state);
+          enterMap();
         },
-        {
-          text: "💤 沉沉深睡到天亮",
-          sub: "精力恢复 100%，天数 +1，进入清晨",
-          action: function() {
-            transitionManager.playTransition(
-              "🌙 沉沉深睡",
-              "夜深人静，朝阳再起",
-              function updateState() {
-                nightProcess(state);
-                applySchedule(state);
-                enterMap();
-              },
-              function onComplete() {
-                playLines([
-                  { speaker: "narration", text: "（一觉醒来。阳光洒在枕畔。新的一天，第 " + state.dayCount + " 天！）" }
-                ], enterMap);
-              }
-            );
-          }
-        }
-      ];
+        function onComplete() {
+          // 5. Show independent floating window options
+          var trust = state.wanqing.trust || 0;
+          var lust = state.wanqing.lust || 0;
+          var isDaydreamUnlocked = trust >= 30 || lust >= 15;
 
-      if (isDaydreamUnlocked) {
-        choices.push({
-          text: "💭 躺在床头静静遐想温存",
-          sub: "恢复 10 体力，欲望 +2",
-          action: function() {
-            if (isDailyDone(state, "bed_daydream")) {
-              playLines([
-                { speaker: "narration", text: "（今天已经躺在床头静静遐想思念过晚晴了，暗香与温存萦绕在心头，明天再来静静遐想吧。）" }
-              ], enterMap);
-              return;
+          var choices = [
+            {
+              text: "🛌 床上小憩",
+              sub: "简单的闭目养神，恢复 20 体力",
+              action: function() {
+                state.playerEnergy = clamp(state.playerEnergy + 20, 0, 100);
+                playLines([{ speaker: "narration", text: "（你闭上眼睛小憩了一会儿，感觉精神好了一些。体力恢复了！）" }], enterMap);
+              }
+            },
+            {
+              text: "💤 深度睡眠",
+              sub: "彻底睡个好觉，进入明早并补满精力",
+              action: function() {
+                transitionManager.playTransition("🌙 沉入深睡", "呼吸渐沉，星移斗转", function() {
+                  nightProcess(state);
+                  syncWorldState(state);
+                  enterMap();
+                }, function() {
+                  playLines([{ speaker: "narration", text: "（一觉醒来。阳光洒在枕畔。新的一天，第 " + state.dayCount + " 天！）" }], enterMap);
+                });
+              }
             }
-            markDailyDone(state, "bed_daydream");
-            transitionManager.playTransition(
-              "💭 床头遐想",
-              "温存思念，暗香浮动",
-              function updateState() {
-                state.playerEnergy = clamp(state.playerEnergy + 10, 0, 100);
-                state.wanqing.lust = clamp((state.wanqing.lust || 0) + 2, 0, 100);
-                applySchedule(state);
-                enterMap();
-              },
-              function onComplete() {
+          ];
+
+          if (isDaydreamUnlocked) {
+            choices.push({
+              text: "💭 遐想温存",
+              sub: "脑海中浮现晚晴的身影，欲望 +3",
+              action: function() {
+                state.wanqing.lust = clamp((state.wanqing.lust || 0) + 3, 0, 100);
                 playLines([
                   { speaker: "narration", text: "（你枕着手臂望着天花板，脑海里全是对走廊那头晚晴温存软语的思念遐想……欲望微动。）" }
                 ], enterMap);
               }
-            );
-          }
-        });
-      } else {
-        choices.push({
-          text: "🔒 床头遐想 (需与晚晴信赖 ≥ 30)",
-          sub: "好感不足，未曾建立亲密关系",
-          locked: true,
-          action: function() {
-            playLines([
-              { speaker: "narration", text: "（和房东太太刚合租认识不久，彼此尚客套礼貌，未曾有更深的了解……脑海里还不敢有越轨遐想。先多与她交流提升信赖吧！）" }
-            ], enterMap);
-          }
-        });
-      }
-
-      if (isSneakUnlocked) {
-        choices.push({
-          text: "🔑 悄悄溜去隔壁晚晴卧室",
-          sub: "S5_nap·午睡偷香 / S9·彻底沦陷",
-          action: function() {
-            TimeTransitionController.play("🔑 夜色偷溜", "蹑手蹑脚，扣响房门", function() {
-              var vid = state.wanqing.trust >= 90 ? "S9_bedroom_obsession" : "S5_nap_bedroom";
-              playVideoEvent(vid, enterMap);
             });
           }
-        });
-      } else {
-        choices.push({
-          text: "🔒 悄悄溜去隔壁晚晴卧室",
-          sub: "需与晚晴信赖 ≥ 50 & 欲望 ≥ 20",
-          locked: true,
-          action: function() {
-            playLines([
-              { speaker: "narration", text: "（房门被她从里面插上了小栓，信赖与欲望尚不足，深夜私闯失礼冒犯，无法溜进去。）" }
-            ], enterMap);
-          }
-        });
-      }
 
-      openSheet("🛏️ 次卧·床上度过方式", choices);
+          openSheet("🛏️ 床上休息中", choices);
+        }
+      );
     }
   };
 
   function goPlace(id) {
     if (mode !== "map") return;
     var from = state.playerLocation;
+    if (from === id) return;
 
-    if (id === "Bathroom" && state.wanqing.currentState === "Bathing" && state.wanqing.currentLocation === "Bathroom") {
-      state.playerLocation = id;
-      InteractionManager.handleBathingInteraction();
-      return;
-    }
+    transitionManager.playTransition(
+      "🏃 前往 " + (LOC_CN[id] || id),
+      "脚步匆匆，穿过走廊廊道",
+      function updateState() {
+        if (id === "Bathroom" && state.wanqing.currentState === "Bathing" && state.wanqing.currentLocation === "Bathroom") {
+          state.playerLocation = id;
+          InteractionManager.handleBathingInteraction();
+          return;
+        }
 
-    if (id === "Bedroom_NPC" && state.wanqing.currentState === "Sleeping") {
-      state.playerLocation = id;
-      InteractionManager.handleSleepingInteraction();
-      return;
-    }
+        if (id === "Bedroom_NPC" && state.wanqing.currentState === "Sleeping") {
+          state.playerLocation = id;
+          InteractionManager.handleSleepingInteraction();
+          return;
+        }
 
-    state.playerLocation = id;
-    isNpcPanelRevealed = false;
-    currentCategory = "";
-    maybeWander(state, id);
-    var bump = onEnterLines(state, from);
-    if (bump) {
-      playLines(bump, enterMap);
-      return;
-    }
-    enterMap();
-  }
-
-  function advanceSlotIfNeeded() {
-    if (!state._spentSlot) return;
-    state._spentSlot = false;
-    var i = SLOTS.indexOf(state.currentTimeSlot);
-    if (i < 0 || i >= SLOTS.length - 1) {
-      nightProcess(state);
-      return "day";
-    }
-    enterSlot(state, SLOTS[i + 1], false);
-    return "slot";
+        state.playerLocation = id;
+        isNpcPanelRevealed = false;
+        currentCategory = "";
+        maybeWander(state, id);
+        
+        // Sync world state (updates NPC, HUD, Map)
+        syncWorldState(state);
+      },
+      function onComplete() {
+        var bump = onEnterLines(state, from);
+        if (bump) {
+          playLines(bump, enterMap);
+          return;
+        }
+        enterMap();
+      }
+    );
   }
 
   function processTimeSlot() {
@@ -2708,6 +2850,10 @@
           var man = mandatoryLines(state);
           if (man) lines = lines.concat(man);
         }
+        
+        // Sync world state behind the curtain (updates NPC position and HUD)
+        syncWorldState(state);
+        
         playLines(lines, enterMap, state.wanqing.trust - t0);
       });
     } else {
@@ -2932,8 +3078,14 @@
           IntimacyStatsManager.recordAction(v);
         }
 
+        // Use post-interaction high sprites if tier is high
+        var finishChar = v.char || "e1";
+        if (v.tier === "C" || v.tier === "D") {
+            finishChar = Math.random() < 0.5 ? "n_h1" : "n_h2";
+        }
+
         var lines = v.postLines || [
-          { speaker: "wanqing", char: v.char || "e1", text: "……好了，别闹了，该歇着了。" }
+          { speaker: "wanqing", char: finishChar, text: "……好了，别闹了，该歇着了。" }
         ];
         playLines(lines, onDone || enterMap, v.tier === "A" ? 4 : 8);
       }, 400);
@@ -3727,6 +3879,7 @@
     setGameClass("is-vn", false);
     setGameClass("is-slg", true);
     state = defaultState();
+    if (InteractionManager) InteractionManager.dailyInteractions = state.dailyInteractions || {};
     applySchedule(state, "boot");
     playLines(
       [
@@ -3742,6 +3895,7 @@
     if (!s) return false;
     state = s;
     if (!state.wanqing) return false;
+    if (InteractionManager) InteractionManager.dailyInteractions = state.dailyInteractions || {};
     setGameClass("is-vn", false);
     setGameClass("is-slg", true);
     enterMap();
