@@ -1,6 +1,7 @@
 {
   "eveningBathChance": 0.22,
-  "wanderWhenPlayerMoves": 0.42,
+  "wanderWhenPlayerMoves": 0.25,
+  "autoWanderIdle": 0.1,
   "weekday": {
     "Morning": [
       { "location": "Kitchen", "state": "Busy", "w": 40 },

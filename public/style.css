@@ -33,6 +33,17 @@ html, body {
   font-family: "Plus Jakarta Sans", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
   overflow: hidden;
   -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+input, textarea, [contenteditable="true"] {
+  user-select: text !important;
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+  -ms-user-select: text !important;
 }
 
 /* Premium Outer Device Framing & Viewport Isolation - Unified Proportional Scaling */
@@ -796,14 +807,39 @@ html, body {
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.9);
   text-align: center;
 }
-.menu-card h2, .slg-sheet-card h2 {
-  margin: 0 0 20px;
-  font-family: "Noto Serif SC", serif;
-  font-size: 18px;
-  letter-spacing: 0.1em;
-  color: var(--paper);
-  text-align: center;
+.slg-sheet-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 12px;
 }
+.slg-sheet-card h2 {
+  margin: 0 !important;
+  font-family: "Noto Serif SC", serif;
+  font-size: 17px;
+  color: var(--gold);
+}
+.slg-sheet-close {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+  line-height: 1;
+  transition: all 0.2s;
+}
+.slg-sheet-close:hover {
+  background: rgba(255, 0, 0, 0.2);
+  border-color: #ff4757;
+}
+
 .menu-card .btn, .slg-sheet-body .btn {
   margin-bottom: 10px;
   background: rgba(255, 255, 255, 0.04);
@@ -874,4 +910,122 @@ html, body {
   font-size: 11px;
   opacity: 0.75;
   margin-top: 3px;
+}
+
+/* --- Gallery UI Styles --- */
+.gallery-sheet {
+  position: absolute;
+  inset: 0;
+  z-index: 200;
+  background: rgba(3, 4, 6, 0.9);
+  backdrop-filter: blur(20px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.gallery-card {
+  width: min(900px, 95%);
+  max-height: 90vh;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-top: 3px solid var(--gold);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.8);
+  overflow: hidden;
+}
+.gallery-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.gallery-header h2 {
+  margin: 0;
+  font-family: "Noto Serif SC", serif;
+  font-size: 18px;
+  color: var(--gold);
+  letter-spacing: 0.1em;
+}
+.gallery-tabs {
+  padding: 12px 24px;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.gallery-tab {
+  padding: 6px 14px;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: var(--paper-dim);
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.gallery-tab.is-active {
+  background: var(--rust);
+  border-color: var(--rust);
+  color: #fff;
+}
+.gallery-grid {
+  flex: 1;
+  padding: 24px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+  overflow-y: auto;
+}
+.gallery-item {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+  position: relative;
+}
+.gallery-item.is-unlocked {
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(255, 107, 139, 0.2);
+}
+.gallery-item-badge {
+  font-size: 10px;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.gallery-item-title {
+  font-family: "Noto Serif SC", serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--paper);
+  margin-bottom: 6px;
+}
+.gallery-item-desc {
+  font-size: 11px;
+  color: var(--paper-dim);
+  line-height: 1.5;
+  margin-bottom: 16px;
+  flex: 1;
+}
+.gallery-item-btn {
+  background: var(--rust);
+  border: none;
+  color: #fff;
+  padding: 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.gallery-item-btn:disabled {
+  background: #333;
+  color: #666;
+  cursor: not-allowed;
 }

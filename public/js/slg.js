@@ -185,6 +185,45 @@
               }
             ]}
           ]
+        },
+        {
+          id: "lr_adult_thighs",
+          label: "直截了当地称赞她旗袍下的开叉",
+          energy: 15,
+          trustMin: 45,
+          lustMin: 35,
+          dialogue: [
+            { speaker: "player", text: "“林姐，你这身旗袍开得太高了……我坐在旁边，几乎能看到你大腿根那圈白嫩的软肉。”", char: "e5" },
+            { speaker: "wanqing", text: "“呀！你、你往哪看呢……我是看今天天气热，才把开衩处稍微……稍微拉了拉。”", char: "e2" },
+            { speaker: "wanqing", text: "“我都快四十岁了，皮肤哪有你说的那样。你这小坏蛋，真是口无遮拦。”", char: "e4" },
+            { speaker: "player", text: "“可是真的很好看，我根本没办法把视线移开。那种成熟女性的紧致和饱满，比任何东西都诱人。”", char: "l1" },
+            { speaker: "wanqing", text: "“……你、你还要说。我、我心跳都快被你说停了。你真的……真的觉得好看吗？”", char: "e5", choices: [
+              {
+                text: "“我不仅觉得好看，还想亲手确认一下它的触感。”",
+                trust: -5,
+                lust: 25,
+                char: "l5",
+                say: "“……你、你太放肆了。我都还没准备好……呜，别摸那里……”",
+                postLines: [
+                  { speaker: "narration", text: "（她虽然嘴上拒绝，但身体却由于极度的羞耻和兴奋而微微战栗，并拢的双腿不由自主地松开了一丝缝隙。）" },
+                  { speaker: "wanqing", text: "“手……手别再往里面伸了……万一有人进来看到，我、我就真的没脸见人了。你这个冤家……”", char: "l5" },
+                  { speaker: "narration", text: "（她微弱地低吟着，双手无力地搭在你的肩头，眼神里已经完全失去了抵抗，只有浓得化不开的欲望。）" }
+                ]
+              },
+              {
+                text: "“只要是晚晴姐，无论哪里都是最迷人的。”",
+                trust: 15,
+                lust: 15,
+                char: "s3",
+                say: "“你这张嘴呀……真是要把我迷得神魂颠倒才甘心。过来，让姐姐抱抱。”",
+                postLines: [
+                  { speaker: "narration", text: "（她温柔地舒展开双臂，将你的头轻轻按在她的胸口。你能闻到她身上那种熟透了的、让人沉醉的成熟芬芳。）" },
+                  { speaker: "wanqing", text: "“小陈……有你在，我真的觉得这间沉寂了太久的房子，终于又活过来了。只要你喜欢，姐姐什么都愿意给你。”", char: "s3" },
+                  { speaker: "narration", text: "（她深情地吻了吻你的额头，那种毫无保留的信赖，让空气都变得粘稠而甜美。）" }
+                ]
+              }
+            ]}
+          ]
         }
       ],
       intimate: [
@@ -362,6 +401,20 @@
                   { speaker: "narration", text: "（门板上传来她有些慌乱的轻拍声，以及扑通扑通的急促娇喘，水声在瞬间被她拧大，试图掩盖脸上的滚烫。）" },
                   { speaker: "wanqing", text: "“坏孩子……你再不走，姐姐明天就不给你做早饭了。快回去……脸都给你说红了。”", char: "e5" },
                   { speaker: "narration", text: "（她虽然羞不可耐地驱赶着，但声音里却带着令人销魂的颤音，欲望值几乎攀升到了顶点。）" }
+                ]
+              },
+              {
+                text: "“林姐，我能进来帮你擦擦背吗？反正门都没关紧。”",
+                trust: -10,
+                lust: 35,
+                trustMin: 30,
+                lustMin: 40,
+                char: "l5",
+                say: "“……你、你敢！你要是敢进来，我、我就……呜……”",
+                postLines: [
+                  { speaker: "narration", text: "（门后的水声骤然停歇，随后传来她急促而短促的呼吸，磨砂玻璃后面那个曼妙的轮廓似乎由于脱力而贴在了门板上。）" },
+                  { speaker: "wanqing", text: "“别、别在这种时候说这种胡话……我、我身上全是泡沫，羞死人了……你这个满脑子坏思想的臭弟弟……”", char: "l6" },
+                  { speaker: "narration", text: "（她虽然语气强硬，但声音里的颤抖和那一丝若有若无的期待，说明她的防线已经摇摇欲坠。）" }
                 ]
               }
             ]}
@@ -794,9 +847,12 @@
   function syncWorldState(s) {
     if (!s) return;
     // 1. Progress time if a slot was spent
-    advanceSlotIfNeeded();
-    // 2. Update NPC position based on new time/state
-    applySchedule(s);
+    var timeChanged = advanceSlotIfNeeded();
+    // 2. Update NPC position ONLY if time changed
+    // Internal wandering logic is handled separately by maybeWander
+    if (timeChanged) {
+      applySchedule(s);
+    }
     // 3. UI/MAP synchronization
     paintHud();
     paintStage();
@@ -840,8 +896,8 @@
     // 3. Intimate/Naked States (If already unlocked/in bathroom interaction)
     // Note: Standard map portrait usually stays dressed unless trust is very high
     if (stt === "Bathing") {
-        if (trust >= 85) return "n_s2"; // Not hiding anymore
-        if (trust >= 60) return "n_e3"; // Blushing, half-hiding
+        if (trust >= 70) return "n_s2"; // Not hiding anymore
+        if (trust >= 40) return "n_e3"; // Blushing, half-hiding
         return "n_sur1"; // Surprised/hiding
     }
 
@@ -1319,6 +1375,11 @@
     return !!(s && s.eventFlags && s.eventFlags.MoveIn_Done && !s.eventFlags.BadEnd_Rent);
   }
 
+  function isPrologueDone() {
+    var s = readSave();
+    return !!(s && s.eventFlags && s.eventFlags.Prologue_Completed);
+  }
+
   function paintStage() {
     if (!window.Stage || !state) return;
     Stage.applyBeat({
@@ -1692,13 +1753,13 @@
       });
       ui.npcActs.appendChild(btnDaily);
 
-      // 2. Adult Topics (unlocked at trust >= 30)
+      // 2. Adult Topics (unlocked at trust >= 15)
       var btnAdult = document.createElement("button");
       btnAdult.type = "button";
-      var adultUnlocked = state.wanqing.trust >= 30;
+      var adultUnlocked = state.wanqing.trust >= 15;
       btnAdult.className = "npc-act-category" + (adultUnlocked ? "" : " is-locked");
       btnAdult.disabled = !adultUnlocked;
-      btnAdult.innerHTML = "<span>🌹 成人话题</span>" + (adultUnlocked ? "<span class='category-arrow'>➔</span>" : "<span class='lock'>🔒 (信赖30解锁)</span>");
+      btnAdult.innerHTML = "<span>🌹 成人话题</span>" + (adultUnlocked ? "<span class='category-arrow'>➔</span>" : "<span class='lock'>🔒 (信赖15解锁)</span>");
       btnAdult.addEventListener("click", function (ev) {
         ev.stopPropagation();
         currentCategory = "adult";
@@ -1706,13 +1767,13 @@
       });
       ui.npcActs.appendChild(btnAdult);
 
-      // 3. Intimate Advances (unlocked at trust >= 60)
+      // 3. Intimate Advances (unlocked at trust >= 30)
       var btnIntimate = document.createElement("button");
       btnIntimate.type = "button";
-      var intimateUnlocked = state.wanqing.trust >= 60;
+      var intimateUnlocked = state.wanqing.trust >= 30;
       btnIntimate.className = "npc-act-category" + (intimateUnlocked ? "" : " is-locked");
       btnIntimate.disabled = !intimateUnlocked;
-      btnIntimate.innerHTML = "<span>🔥 直入正题</span>" + (intimateUnlocked ? "<span class='category-arrow'>➔</span>" : "<span class='lock'>🔒 (信赖60解锁)</span>");
+      btnIntimate.innerHTML = "<span>🔥 直入正题</span>" + (intimateUnlocked ? "<span class='category-arrow'>➔</span>" : "<span class='lock'>🔒 (信赖30解锁)</span>");
       btnIntimate.addEventListener("click", function (ev) {
         ev.stopPropagation();
         currentCategory = "intimate";
@@ -2715,62 +2776,59 @@
     handleSleepInteraction: function () {
       if (!state) return;
 
-      // 1. Transition first (locking input)
-      transitionManager.playTransition(
-        "🛏️ 卧床小憩",
-        "暂时放下忙碌，在床铺间感受片刻宁静",
-        function updateState() {
-          // 2. Sync state using unified logic
-          state._spentSlot = true;
-          syncWorldState(state);
-          enterMap();
-        },
-        function onComplete() {
-          // 5. Show independent floating window options
-          var trust = state.wanqing.trust || 0;
-          var lust = state.wanqing.lust || 0;
-          var isDaydreamUnlocked = trust >= 30 || lust >= 15;
+      var trust = state.wanqing.trust || 0;
+      var lust = state.wanqing.lust || 0;
+      var isDaydreamUnlocked = trust >= 30 || lust >= 15;
 
-          var choices = [
-            {
-              text: "🛌 床上小憩",
-              sub: "简单的闭目养神，恢复 20 体力",
-              action: function() {
+      var choices = [
+        {
+          text: "🛌 床上小憩",
+          sub: "简单的闭目养神，恢复 20 体力",
+          action: function() {
+            transitionManager.playTransition(
+              "🛏️ 卧床小憩",
+              "暂时放下忙碌，在床铺间感受片刻宁静",
+              function updateState() {
                 state.playerEnergy = clamp(state.playerEnergy + 20, 0, 100);
+                state._spentSlot = true;
+                syncWorldState(state);
+                enterMap();
+              },
+              function onComplete() {
                 playLines([{ speaker: "narration", text: "（你闭上眼睛小憩了一会儿，感觉精神好了一些。体力恢复了！）" }], enterMap);
               }
-            },
-            {
-              text: "💤 深度睡眠",
-              sub: "彻底睡个好觉，进入明早并补满精力",
-              action: function() {
-                transitionManager.playTransition("🌙 沉入深睡", "呼吸渐沉，星移斗转", function() {
-                  nightProcess(state);
-                  syncWorldState(state);
-                  enterMap();
-                }, function() {
-                  playLines([{ speaker: "narration", text: "（一觉醒来。阳光洒在枕畔。新的一天，第 " + state.dayCount + " 天！）" }], enterMap);
-                });
-              }
-            }
-          ];
-
-          if (isDaydreamUnlocked) {
-            choices.push({
-              text: "💭 遐想温存",
-              sub: "脑海中浮现晚晴的身影，欲望 +3",
-              action: function() {
-                state.wanqing.lust = clamp((state.wanqing.lust || 0) + 3, 0, 100);
-                playLines([
-                  { speaker: "narration", text: "（你枕着手臂望着天花板，脑海里全是对走廊那头晚晴温存软语的思念遐想……欲望微动。）" }
-                ], enterMap);
-              }
+            );
+          }
+        },
+        {
+          text: "💤 深度睡眠",
+          sub: "彻底睡个好觉，进入明早并补满精力",
+          action: function() {
+            transitionManager.playTransition("🌙 沉入深睡", "呼吸渐沉，星移斗转", function() {
+              nightProcess(state);
+              syncWorldState(state);
+              enterMap();
+            }, function() {
+              playLines([{ speaker: "narration", text: "（一觉醒来。阳光洒在枕畔。新的一天，第 " + state.dayCount + " 天！）" }], enterMap);
             });
           }
-
-          openSheet("🛏️ 床上休息中", choices);
         }
-      );
+      ];
+
+      if (isDaydreamUnlocked) {
+        choices.push({
+          text: "💭 遐想温存",
+          sub: "脑海中浮现晚晴的身影，欲望 +3",
+          action: function() {
+            state.wanqing.lust = clamp((state.wanqing.lust || 0) + 3, 0, 100);
+            playLines([
+              { speaker: "narration", text: "（你枕着手臂望着天花板，脑海里全是对走廊那头晚晴温存软语的思念遐想……欲望微动。）" }
+            ], enterMap);
+          }
+        });
+      }
+
+      openSheet("🛏️ 床上休息中", choices);
     }
   };
 
@@ -2779,39 +2837,34 @@
     var from = state.playerLocation;
     if (from === id) return;
 
-    transitionManager.playTransition(
-      "🏃 前往 " + (LOC_CN[id] || id),
-      "脚步匆匆，穿过走廊廊道",
-      function updateState() {
-        if (id === "Bathroom" && state.wanqing.currentState === "Bathing" && state.wanqing.currentLocation === "Bathroom") {
-          state.playerLocation = id;
-          InteractionManager.handleBathingInteraction();
-          return;
-        }
+    // Movement within a time slot should be fast/instant to avoid NPC wandering logic frustrations
+    // Removing transitionManager.playTransition for simple movements
+    if (id === "Bathroom" && state.wanqing.currentState === "Bathing" && state.wanqing.currentLocation === "Bathroom") {
+      state.playerLocation = id;
+      InteractionManager.handleBathingInteraction();
+      return;
+    }
 
-        if (id === "Bedroom_NPC" && state.wanqing.currentState === "Sleeping") {
-          state.playerLocation = id;
-          InteractionManager.handleSleepingInteraction();
-          return;
-        }
+    if (id === "Bedroom_NPC" && state.wanqing.currentState === "Sleeping") {
+      state.playerLocation = id;
+      InteractionManager.handleSleepingInteraction();
+      return;
+    }
 
-        state.playerLocation = id;
-        isNpcPanelRevealed = false;
-        currentCategory = "";
-        maybeWander(state, id);
-        
-        // Sync world state (updates NPC, HUD, Map)
-        syncWorldState(state);
-      },
-      function onComplete() {
-        var bump = onEnterLines(state, from);
-        if (bump) {
-          playLines(bump, enterMap);
-          return;
-        }
-        enterMap();
-      }
-    );
+    state.playerLocation = id;
+    isNpcPanelRevealed = false;
+    currentCategory = "";
+    maybeWander(state, id);
+    
+    // Sync world state (updates NPC, HUD, Map)
+    syncWorldState(state);
+
+    var bump = onEnterLines(state, from);
+    if (bump) {
+      playLines(bump, enterMap);
+      return;
+    }
+    enterMap();
   }
 
   function processTimeSlot() {
@@ -2903,6 +2956,12 @@
       });
     }
 
+    if (ui.sheetClose && ui.sheet) {
+      ui.sheetClose.addEventListener("click", function () {
+        hideSheet();
+      });
+    }
+
     var btnMenuGallery = document.getElementById("menu-gallery");
     if (btnMenuGallery) {
       btnMenuGallery.addEventListener("click", function () {
@@ -2964,8 +3023,17 @@
     if (!state.unlockedVideos) state.unlockedVideos = [];
     if (state.unlockedVideos.indexOf(vid) < 0) {
       state.unlockedVideos.push(vid);
-      persist();
     }
+    // Global permanent unlock
+    var globalGallery = [];
+    try {
+      globalGallery = JSON.parse(localStorage.getItem("dzmm_gallery_global") || "[]");
+    } catch(e) {}
+    if (globalGallery.indexOf(vid) < 0) {
+      globalGallery.push(vid);
+      localStorage.setItem("dzmm_gallery_global", JSON.stringify(globalGallery));
+    }
+    persist();
   }
 
   function playVideoEvent(vid, onDone) {
@@ -3155,11 +3223,15 @@
 
     galleryGrid.innerHTML = "";
     var unlocked = (state && state.unlockedVideos) || [];
+    var globalUnlocked = [];
+    try {
+      globalUnlocked = JSON.parse(localStorage.getItem("dzmm_gallery_global") || "[]");
+    } catch(e) {}
 
     list.forEach(function (v) {
       var item = document.createElement("div");
       // If opened from title screen or test mode, let user replay to test and inspect media
-      var isUnlocked = !state || unlocked.indexOf(v.id) >= 0 || v.tier === "A" || v.isGalleryVariant;
+      var isUnlocked = !state || unlocked.indexOf(v.id) >= 0 || globalUnlocked.indexOf(v.id) >= 0 || v.tier === "A" || v.isGalleryVariant;
       item.className = "gallery-item" + (isUnlocked ? " is-unlocked" : "");
 
       var badge = document.createElement("span");
@@ -3351,6 +3423,7 @@
       if (dist <= 12) {
         gained = 100;
         popHeart(3, 2);
+        if (window.playSynth) window.playSynth("hit");
       } else if (dist <= 25) {
         gained = 60;
         popHeart(1, 1);
@@ -3407,6 +3480,7 @@
   }
 
   function openTaobaoModal() {
+    if (window.playSynth) window.playSynth("taobao");
     var modal = document.getElementById("taobao-modal");
     var grid = document.getElementById("tb-product-grid");
     var goldVal = document.getElementById("tb-gold-val");
@@ -3466,8 +3540,9 @@
         card.innerHTML = html;
         var btn = card.querySelector(".tb-buy-btn");
         if (btn && !hasIt) {
-          btn.onclick = function () {
-            if (!state || state.playerGold < p.price) {
+            btn.onclick = function () {
+              if (window.playSynth) window.playSynth("taobao");
+              if (!state || state.playerGold < p.price) {
               playLines([{ speaker: "narration", text: "（金币不足！可以去便利店兼职赚钱，或者去下厨料理赚钱。）" }], enterMap);
               modal.classList.add("hidden");
               return;
@@ -3495,18 +3570,21 @@
 
   function openCctvModal() {
     var modal = document.getElementById("cctv-modal");
+    var list = document.getElementById("cctv-channels-list");
     var feedLayer = document.getElementById("cctv-feed-layer");
     var clockEl = document.getElementById("cctv-clock");
     var closeBtn = document.getElementById("cctv-close-btn");
     var camTag = document.getElementById("cctv-cam-tag");
     var nvBtn = document.getElementById("btn-cctv-nv");
     var snapBtn = document.getElementById("btn-cctv-snap");
+    var peekZone = document.getElementById("cctv-peek-zone");
 
-    if (!modal || !feedLayer) return;
+    if (!modal || !feedLayer || !list) return;
     modal.classList.remove("hidden");
 
-    var currentCam = "cam01";
+    var currentCam = state ? state.playerLocation : "LivingRoom";
     var isNightVision = false;
+    var camState = { zoom: 1, x: 0, y: 0 };
 
     function updateClock() {
       if (!clockEl) return;
@@ -3514,23 +3592,106 @@
       var pad = function (n) { return n < 10 ? "0" + n : n; };
       clockEl.textContent = "LIVE ● " + now.getFullYear() + "-" + pad(now.getMonth() + 1) + "-" + pad(now.getDate()) + " " + pad(now.getHours()) + ":" + pad(now.getMinutes()) + ":" + pad(now.getSeconds()) + " REC";
     }
+    var clockTimer = setInterval(updateClock, 1000);
     updateClock();
 
-    var btns = modal.querySelectorAll(".cctv-ch-btn");
-    btns.forEach(function (btn) {
-      btn.onclick = function () {
-        btns.forEach(function (b) { b.classList.remove("is-active"); });
-        btn.classList.add("is-active");
-        currentCam = btn.getAttribute("data-cam") || "cam01";
-        renderFeed();
+    function renderChannels() {
+      list.innerHTML = "";
+      PLACE_ORDER.forEach(function (loc, idx) {
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "cctv-ch-btn" + (currentCam === loc ? " is-active" : "");
+        var isNpc = state && state.wanqing.currentLocation === loc;
+        btn.innerHTML = "CAM-" + (idx + 1).toString().padStart(2, "0") + " " + (LOC_CN[loc] || loc) + (isNpc ? " 🟢" : "");
+        btn.onclick = function () {
+          currentCam = loc;
+          renderChannels();
+          renderFeed();
+        };
+        list.appendChild(btn);
+      });
+    }
+
+    function applyCamTransform() {
+      feedLayer.style.transform = "scale(" + camState.zoom + ") translate(" + camState.x + "px, " + camState.y + "px)";
+    }
+
+    function renderFeed() {
+      feedLayer.innerHTML = "";
+      if (peekZone) peekZone.innerHTML = "";
+      
+      var bg = bgFor(currentCam, state ? state.currentTimeSlot : "Afternoon");
+      feedLayer.style.backgroundImage = "url(assets/bg/" + bg + ".webp)";
+      if (camTag) camTag.textContent = "CAM-" + (PLACE_ORDER.indexOf(currentCam) + 1).toString().padStart(2, "0") + " " + (LOC_CN[currentCam] || currentCam);
+
+      var isNpcHere = state && state.wanqing.currentLocation === currentCam && currentCam !== "Outside";
+      
+      if (isNpcHere) {
+        var charImg = portraitFor(state);
+        if (charImg !== "none") {
+          var img = document.createElement("img");
+          img.src = "assets/char/wanqing/" + charImg + ".png";
+          img.className = "cctv-feed-npc";
+          feedLayer.appendChild(img);
+
+          // Add Peek Button if Conditions met
+          if (peekZone && state.wanqing.lust >= 20) {
+            var pBtn = document.createElement("button");
+            pBtn.className = "btn-peek";
+            pBtn.textContent = "🔍 秘密偷看 (欲望 +5)";
+            pBtn.onclick = function() {
+              if (window.playSynth) window.playSynth("confirm");
+              modal.classList.add("hidden");
+              clearInterval(clockTimer);
+              state.wanqing.lust = clamp(state.wanqing.lust + 5, 0, 100);
+              popHeart(0, 5);
+              
+              // Trigger a relevant video based on location
+              var eventId = "";
+              if (currentCam === "Bathroom") eventId = "S7_bathroom_full";
+              else if (currentCam === "LivingRoom") eventId = "S5_night_sofa";
+              else if (currentCam === "Kitchen") eventId = "S4_kitchen_chores";
+              else if (currentCam === "Bedroom_NPC") eventId = "S5_nap_bedroom";
+              
+              if (eventId) playVideoEvent(eventId, enterMap);
+              else playLines([{speaker:"narration", text:"（她正在" + (LOC_CN[currentCam]||"房间") + "里静静地待着，这一幕让你心跳加速。）"}], enterMap);
+            };
+            peekZone.appendChild(pBtn);
+          }
+        }
+      }
+
+      // If bathroom cam and no camera installed
+      if (currentCam === "Bathroom" && (!state || !state.cameraInstalled)) {
+        feedLayer.innerHTML = "<div class='cctv-no-signal' style='background:#000;width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#666;font-size:12px;text-align:center;'><div>⚠️ 无信号<br/>请先在商城购买微型摄像头</div></div>";
+      }
+    }
+
+    // Bind Remote Controls
+    var bindRemote = function(id, dx, dy, dz) {
+      var b = document.getElementById(id);
+      if (!b) return;
+      b.onclick = function() {
+        if (dz) camState.zoom = clamp(camState.zoom + dz, 1, 3);
+        camState.x += dx * 20;
+        camState.y += dy * 20;
+        if (id === "cctv-reset") { camState = { zoom: 1, x: 0, y: 0 }; }
+        applyCamTransform();
       };
-    });
+    };
+    bindRemote("cctv-up", 0, 1, 0);
+    bindRemote("cctv-down", 0, -1, 0);
+    bindRemote("cctv-left", 1, 0, 0);
+    bindRemote("cctv-right", -1, 0, 0);
+    bindRemote("cctv-reset", 0, 0, 0);
+    bindRemote("cctv-zoom-in", 0, 0, 0.2);
+    bindRemote("cctv-zoom-out", 0, 0, -0.2);
 
     if (nvBtn) {
       nvBtn.onclick = function () {
         isNightVision = !isNightVision;
         nvBtn.textContent = isNightVision ? "🟢 夜视仪 ON" : "🟢 夜视仪 OFF";
-        feedLayer.classList.toggle("is-nv", isNightVision);
+        feedLayer.parentElement.classList.toggle("cctv-screen-nv", isNightVision);
       };
     }
 
@@ -3539,86 +3700,33 @@
         feedLayer.style.opacity = "0.2";
         window.setTimeout(function () {
           feedLayer.style.opacity = "1";
-          alert("📸 监控画面已生成超高清快照存入相册！");
+          if (window.playSynth) window.playSynth("hit");
+          alert("📸 监控快照已保存到加密相册。");
         }, 150);
       };
     }
 
     if (closeBtn) {
       closeBtn.onclick = function () {
+        clearInterval(clockTimer);
         modal.classList.add("hidden");
       };
     }
 
-    function renderFeed() {
-      feedLayer.innerHTML = "";
-      if (currentCam === "cam01") {
-        if (camTag) camTag.textContent = "CAM-01 浴室 Bathroom";
-        if (!state || !state.cameraInstalled) {
-          feedLayer.innerHTML = "<div class='cctv-no-signal'>" +
-            "<div class='cctv-noise-screen'></div>" +
-            "<div class='cctv-signal-box'>" +
-            "<h3>⚠️ 无信号 / NO SIGNAL</h3>" +
-            "<p>未检测到摄像头硬件。请先在【淘宝网购】购买微型摄像头并在浴室进行安装。</p>" +
-            "</div></div>";
-        } else {
-          var isBathing = state.wanqing.currentState === "Bathing";
-          if (isBathing) {
-            feedLayer.innerHTML = "<div class='cctv-live-box'>" +
-              "<img class='cctv-live-img' src='assets/char/wanqing/n_c1.png' alt='洗澡监控' />" +
-              "<div class='cctv-live-overlay'>" +
-              "<p class='cctv-live-desc'>【LIVE 1080P】浴室水汽氤氲，林晚晴正在花洒下冲洗着柔嫩的肌肤……</p>" +
-              "<button type='button' id='btn-cctv-peek-act' class='btn btn--primary'>🔍 放大焦距特写观赏 (欲望 +8)</button>" +
-              "</div></div>";
-            
-            var peekBtn = feedLayer.querySelector("#btn-cctv-peek-act");
-            if (peekBtn) {
-              peekBtn.onclick = function () {
-                state.wanqing.lust = clamp(state.wanqing.lust + 8, 0, 100);
-                ensureStats(state);
-                state.wanqing.stats.hand = (state.wanqing.stats.hand || 0) + 1;
-                persist();
-                renderNpcPanel();
-                popHeart(0, 8);
-                peekBtn.textContent = "已特写观赏！欲望大幅增长！";
-                peekBtn.disabled = true;
-              };
-            }
-          } else {
-            feedLayer.innerHTML = "<div class='cctv-live-box'>" +
-              "<img class='cctv-live-img' src='assets/bg/bath.webp' alt='浴室空场' />" +
-              "<div class='cctv-live-overlay'>" +
-              "<p class='cctv-live-desc'>【LIVE 1080P】浴室当前无人使用，通风扇与镜面安安静静。</p>" +
-              "</div></div>";
-          }
-        }
-      } else if (currentCam === "cam02") {
-        if (camTag) camTag.textContent = "CAM-02 客厅 Living Room";
-        feedLayer.innerHTML = "<div class='cctv-live-box'>" +
-          "<img class='cctv-live-img' src='assets/bg/living_day.webp' alt='客厅监控' />" +
-          "<div class='cctv-live-overlay'>" +
-          "<p class='cctv-live-desc'>【LIVE 1080P】客厅实时监控。光线柔和，沙发上放着抱枕。</p>" +
-          "</div></div>";
-      } else if (currentCam === "cam03") {
-        if (camTag) camTag.textContent = "CAM-03 卧室 Bedroom";
-        feedLayer.innerHTML = "<div class='cctv-live-box'>" +
-          "<img class='cctv-live-img' src='assets/bg/her_room_day.webp' alt='卧室监控' />" +
-          "<div class='cctv-live-overlay'>" +
-          "<p class='cctv-live-desc'>【LIVE 1080P】主卧门掩着，弥漫着淡淡的柑橘清香。</p>" +
-          "</div></div>";
-      }
-    }
-
+    renderChannels();
     renderFeed();
   }
 
   function openIpadModal() {
+    if (window.playSynth) window.playSynth("ipad");
     var modal = document.getElementById("ipad-modal");
     var homeBar = document.getElementById("ipad-home-bar");
     var ipadTime = document.getElementById("ipad-time");
+    var focusPill = modal ? modal.querySelector(".ipad-status-pill b") : null;
     if (!modal) return;
 
     modal.classList.remove("hidden");
+    if (focusPill) focusPill.textContent = "Home";
 
     if (ipadTime) {
       var d = new Date();
@@ -3631,17 +3739,30 @@
       wechat: document.getElementById("ipad-wechat-view"),
       weibo: document.getElementById("ipad-weibo-view"),
       notes: document.getElementById("ipad-notes-view"),
-      stats: document.getElementById("ipad-stats-view")
+      stats: document.getElementById("ipad-stats-view"),
+      breakout: document.getElementById("ipad-breakout-view")
     };
 
     function showView(name) {
       Object.keys(views).forEach(function (k) {
         if (views[k]) views[k].classList.add("hidden");
       });
-      if (views[name]) views[name].classList.remove("hidden");
+      if (views[name]) {
+        views[name].classList.remove("hidden");
+      }
+      if (focusPill) focusPill.textContent = name.charAt(0).toUpperCase() + name.slice(1);
     }
 
     showView("home");
+
+    // Home Button (The circular hardware button)
+    var homeBtn = document.getElementById("ipad-home-button");
+    if (homeBtn) {
+      homeBtn.onclick = function() {
+        if (window.playSynth) window.playSynth("ipad");
+        showView("home");
+      };
+    }
 
     var appWechat = document.getElementById("ipad-app-wechat");
     var appWeibo = document.getElementById("ipad-app-weibo");
@@ -3694,15 +3815,290 @@
       };
     }
 
-    var wcBack = document.getElementById("wechat-back-btn");
-    var wbBack = document.getElementById("weibo-back-btn");
-    var ntBack = document.getElementById("notes-back-btn");
-    var stBack = document.getElementById("stats-back-btn");
+    var appBreakout = document.getElementById("ipad-app-breakout");
+    if (appBreakout) {
+      appBreakout.onclick = function() {
+        showView("breakout");
+        initBreakoutGame();
+      };
+    }
 
-    if (wcBack) wcBack.onclick = function () { showView("home"); };
-    if (wbBack) wbBack.onclick = function () { showView("home"); };
-    if (ntBack) ntBack.onclick = function () { showView("home"); };
-    if (stBack) stBack.onclick = function () { showView("home"); };
+    // --- Daily Mood / Diary ---
+    var ntTabNotes = document.getElementById("nt-tab-notes");
+    var ntTabMood = document.getElementById("nt-tab-mood");
+    var ntBodyNotes = document.getElementById("nt-body-notes");
+    var ntBodyMood = document.getElementById("nt-body-mood");
+
+    if (ntTabNotes && ntTabMood) {
+      ntTabNotes.onclick = function() {
+        ntTabNotes.classList.add("is-active");
+        ntTabMood.classList.remove("is-active");
+        if (ntBodyNotes) ntBodyNotes.classList.remove("hidden");
+        if (ntBodyMood) ntBodyMood.classList.add("hidden");
+        renderNotes();
+      };
+      ntTabMood.onclick = function() {
+        ntTabMood.classList.add("is-active");
+        ntTabNotes.classList.remove("is-active");
+        if (ntBodyMood) ntBodyMood.classList.remove("hidden");
+        if (ntBodyNotes) ntBodyNotes.classList.add("hidden");
+        renderMoodDiary();
+      };
+    }
+
+    function renderMoodDiary() {
+      var moodContent = document.getElementById("mood-diary-content");
+      if (!moodContent || !state) return;
+
+      var trust = state.wanqing.trust;
+      var lust = state.wanqing.lust;
+      var dateStr = "2026年10月" + (state.dayCount + 4) + "日 (星期" + DOW_CN[dow(state)] + ")";
+      
+      var monologue = "";
+      if (trust < 30) {
+        monologue = "今天那个新搬进来的小陈……总觉得他看我的眼神有点怪。希望不是我想多了吧，毕竟一个人租房确实有点压力，能多个分担房租的人也是好的。只要他安分守己就行。";
+      } else if (trust < 60) {
+        monologue = "小陈这孩子，其实挺细心的。今天他主动帮我分担了不少家务，看着他在厨房忙碌的背影，这屋子里好像真的多了些暖意。离婚后的那种冷清，似乎淡了一些。";
+      } else if (trust < 90) {
+        monologue = "我已经很久没有这种心跳加速的感觉了。今天和小陈聊天，发现他真的很懂我。有时候对上他的视线，我竟然会忍不住想躲闪……晚晴，你都在想些什么呢，他可比你小那么多。";
+      } else {
+        monologue = "我可能真的彻底沦陷了。现在的每一分钟，我都希望能和他待在一起。即使只是在客厅静静坐着，只要闻到他身上的气息，我就觉得心安。这种禁忌的关系……我真的能一直沉溺下去吗？";
+      }
+
+      if (lust > 50) {
+        monologue += "\n\n而且，最近身体总是感觉热热的，尤其是看到他在浴室进出的轮廓……我怎么会变得这么不知廉耻，竟然会产生那种羞人的渴望。";
+      }
+
+      moodContent.innerHTML = "<span class='diary-date'>" + dateStr + " · 晴</span>" +
+                             "<div class='diary-text'>" + monologue + "</div>";
+    }
+
+    // --- Super Breakout: Pixel-Style & Insane Mode ---
+    function initBreakoutGame() {
+      var canvas = document.getElementById("breakout-canvas");
+      var scoreEl = document.getElementById("breakout-score");
+      var startOverlay = document.querySelector(".breakout-overlay");
+      var startBtn = document.getElementById("btn-breakout-start");
+      if (!canvas) return;
+
+      var ctx = canvas.getContext("2d");
+      // Use parent size for responsiveness
+      var cw = canvas.width = canvas.parentElement.clientWidth;
+      var ch = canvas.height = canvas.parentElement.clientHeight;
+
+      var balls = [];
+      var paddle = { h: 8, w: 80, x: (cw - 80) / 2, vx: 0, maxSpeed: 10, accel: 1.5, friction: 0.82 };
+      var bricks = [];
+      var powerups = [];
+      var score = 0;
+      var running = false;
+      var leftPressed = false;
+      var rightPressed = false;
+
+      // Layout: High Density Pixels (Text-sized bricks)
+      var colCount = 80; // Doubled density
+      var bw = (cw - 10) / colCount;
+      var bh = 6; // Fixed height similar to a line of text
+      var rowCount = Math.floor((ch * 0.55) / bh); 
+
+      function createLevel() {
+        bricks = [];
+        for (var r = 0; r < rowCount; r++) {
+          bricks[r] = [];
+          for (var c = 0; c < colCount; c++) {
+            var type = 0;
+            // Denser pattern: Checkerboard or solid body
+            if (r > 2 && r < rowCount - 2 && c > 2 && c < colCount - 2) {
+              type = 1;
+              // Add some "unbreakable" dots for texture
+              if ((r + c) % 17 === 0 && r > 5) type = 2;
+            }
+
+            bricks[r][c] = { 
+              x: c * bw + 5, 
+              y: r * bh + 10, 
+              status: type,
+              color: type === 2 ? "#333" : "hsl(" + (r * 4 + c * 2) + ", 70%, 50%)"
+            };
+          }
+        }
+      }
+
+      function spawnBall(x, y, isFire) {
+        balls.push({
+          x: x || cw / 2,
+          y: y || ch - 80,
+          dx: (Math.random() - 0.5) * 4,
+          dy: -2.5, // Even slower
+          radius: 4,
+          isFire: !!isFire,
+          color: isFire ? "#ff4757" : "#fff"
+        });
+      }
+
+      function draw() {
+        if (!running) return;
+        ctx.clearRect(0, 0, cw, ch);
+
+        // Draw Bricks
+        for (var r = 0; r < rowCount; r++) {
+          for (var c = 0; c < colCount; c++) {
+            var b = bricks[r][c];
+            if (b.status > 0) {
+              ctx.fillStyle = b.color;
+              ctx.fillRect(b.x, b.y, bw - 0.5, bh - 0.5);
+            }
+          }
+        }
+
+        // Update Paddle with Smoothing (Momentum)
+        if (rightPressed) paddle.vx += paddle.accel;
+        if (leftPressed) paddle.vx -= paddle.accel;
+        paddle.vx *= paddle.friction;
+        if (paddle.vx > paddle.maxSpeed) paddle.vx = paddle.maxSpeed;
+        if (paddle.vx < -paddle.maxSpeed) paddle.vx = -paddle.maxSpeed;
+        
+        paddle.x += paddle.vx;
+        if (paddle.x < 0) { paddle.x = 0; paddle.vx = 0; }
+        if (paddle.x > cw - paddle.w) { paddle.x = cw - paddle.w; paddle.vx = 0; }
+
+        // Draw Paddle (Moved lower)
+        ctx.beginPath();
+        var pY = ch - 40; 
+        ctx.roundRect(paddle.x, pY, paddle.w, paddle.h, 2);
+        ctx.fillStyle = "#00f0ff";
+        ctx.fill();
+        ctx.closePath();
+
+        // Update Powerups
+        for (var i = powerups.length - 1; i >= 0; i--) {
+          var p = powerups[i];
+          p.y += 4;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 8, 0, Math.PI * 2);
+          ctx.fillStyle = p.type === "multi" ? "#fff" : "#ff4757";
+          ctx.fill();
+          ctx.closePath();
+
+          // Catch powerup
+          if (p.y > pY - 10 && p.y < pY + 10 && p.x > paddle.x && p.x < paddle.x + paddle.w) {
+            if (p.type === "multi") {
+              var main = balls[0] || {x: cw/2, y:ch-100};
+              spawnBall(main.x, main.y);
+              spawnBall(main.x, main.y);
+            } else if (p.type === "fire") {
+              balls.forEach(function(b) { b.isFire = true; b.color = "#ff4757"; });
+            }
+            powerups.splice(i, 1);
+            if (window.playSynth) window.playSynth("hit");
+          } else if (p.y > ch) {
+            powerups.splice(i, 1);
+          }
+        }
+
+        // Update Balls
+        for (var i = balls.length - 1; i >= 0; i--) {
+          var b = balls[i];
+          
+          // Brick Collision
+          var hitSomething = false;
+          for (var r = 0; r < rowCount; r++) {
+            for (var c = 0; c < colCount; c++) {
+              var br = bricks[r][c];
+              if (br.status > 0) {
+                if (b.x > br.x && b.x < br.x + bw && b.y > br.y && b.y < br.y + bh) {
+                  if (br.status === 1) {
+                    br.status = 0;
+                    score += 10;
+                    if (scoreEl) scoreEl.textContent = score;
+                    if (Math.random() < 0.08) powerups.push({ x: br.x, y: br.y, type: Math.random() < 0.7 ? "multi" : "fire" });
+                    if (window.playSynth) window.playSynth("hit");
+                  }
+                  if (!b.isFire || br.status === 2) {
+                    b.dy = -b.dy;
+                  }
+                  hitSomething = true;
+                  break;
+                }
+              }
+            }
+            if (hitSomething) break;
+          }
+
+          // Wall Collision
+          if (b.x + b.dx > cw - b.radius || b.x + b.dx < b.radius) b.dx = -b.dx;
+          if (b.y + b.dy < b.radius) b.dy = -b.dy;
+          
+          // Paddle Collision
+          if (b.y + b.dy > pY - b.radius && b.y + b.dy < pY + paddle.h) {
+            if (b.x > paddle.x && b.x < paddle.x + paddle.w) {
+              b.dy = -Math.abs(b.dy);
+              b.dx = 8 * ((b.x - (paddle.x + paddle.w / 2)) / paddle.w); // Reduced from 12
+            }
+          }
+
+          // Death
+          if (b.y > ch) {
+            balls.splice(i, 1);
+            if (balls.length === 0) {
+              running = false;
+              startOverlay.classList.remove("hidden");
+            }
+            continue;
+          }
+
+          b.x += b.dx;
+          b.y += b.dy;
+
+          ctx.beginPath();
+          ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
+          ctx.fillStyle = b.color;
+          ctx.fill();
+          ctx.closePath();
+        }
+
+        requestAnimationFrame(draw);
+      }
+
+      startBtn.onclick = function() {
+        createLevel();
+        balls = [];
+        powerups = [];
+        spawnBall();
+        score = 0;
+        if (scoreEl) scoreEl.textContent = "0";
+        running = true;
+        startOverlay.classList.add("hidden");
+        draw();
+      };
+
+      // Controls
+      var bl = document.getElementById("btn-breakout-left");
+      var br = document.getElementById("btn-breakout-right");
+      if (bl) {
+        bl.onmousedown = bl.ontouchstart = function(e) { e.preventDefault(); leftPressed = true; };
+        bl.onmouseup = bl.ontouchend = function() { leftPressed = false; };
+      }
+      if (br) {
+        br.onmousedown = br.ontouchstart = function(e) { e.preventDefault(); rightPressed = true; };
+        br.onmouseup = br.ontouchend = function() { rightPressed = false; };
+      }
+      
+      // Keyboard Support (Event Listeners)
+      var handleKD = function(e) {
+        if (e.key === "ArrowLeft") { leftPressed = true; e.preventDefault(); }
+        if (e.key === "ArrowRight") { rightPressed = true; e.preventDefault(); }
+      };
+      var handleKU = function(e) {
+        if (e.key === "ArrowLeft") leftPressed = false;
+        if (e.key === "ArrowRight") rightPressed = false;
+      };
+      window.addEventListener("keydown", handleKD);
+      window.addEventListener("keyup", handleKU);
+
+      // Clean up listeners when iPad closes or Home button pressed
+      // (Simplified for this exercise, but good practice)
+    }
 
     if (homeBar) {
       homeBar.onclick = function () {
@@ -3879,8 +4275,11 @@
     setGameClass("is-vn", false);
     setGameClass("is-slg", true);
     state = defaultState();
+    // Mark prologue as completed to unlock free-roam in title screen
+    setFlag(state, "Prologue_Completed", true);
     if (InteractionManager) InteractionManager.dailyInteractions = state.dailyInteractions || {};
     applySchedule(state, "boot");
+    persist();
     playLines(
       [
         { speaker: "narration", text: "（合租生活正式开始。钥匙静静躺在口袋里，带着崭新的期盼。）" },
@@ -3915,6 +4314,7 @@
     bootAfterMoveIn: bootAfterMoveIn,
     continueFromSave: continueFromSave,
     hasSave: hasSave,
+    isPrologueDone: isPrologueDone,
     openGallery: openGallery,
     playVideoEvent: playVideoEvent,
     playStage: playStage,
@@ -3939,6 +4339,16 @@
     },
     getState: function () {
       return state;
+    },
+    heartbeat: function() {
+      if (mode !== "map" || !state) return;
+      // Background wander logic
+      var p = (tables.schedule && tables.schedule.autoWanderIdle) || 0.05;
+      if (Math.random() < p) {
+        maybeWander(state, state.playerLocation);
+        renderMiniMap();
+        renderHotspots();
+      }
     }
   };
 })(window);

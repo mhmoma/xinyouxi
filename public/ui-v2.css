@@ -54,6 +54,38 @@
 }
 
 /* Glassmorphic Floating HUD Badges */
+/* ==========================================
+   FEEDBACK ANIMATIONS & RIPPLE EFFECT
+   ========================================== */
+@keyframes feedback-pulse {
+  0% { transform: scale(1); }
+  25% { transform: scale(0.92) rotate(-1deg); }
+  50% { transform: scale(1.08) rotate(1deg); }
+  75% { transform: scale(0.96) rotate(-0.5deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+.feedback-animate {
+  animation: feedback-pulse 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  transform: scale(0);
+  animation: ripple-animation 0.6s linear;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+@keyframes ripple-animation {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
 .hud-time, .hud-energy, .hud-gold, .hud-study {
   pointer-events: auto;
   background: rgba(10, 14, 22, 0.82);
@@ -1010,21 +1042,29 @@
 }
 .tb-logo {
   font-size: 16px;
-  font-weight: 900;
+  font-weight: 400;
   letter-spacing: 0.05em;
   white-space: nowrap;
 }
+.tb-logo b { font-weight: 900; }
 .tb-search-bar {
   flex: 1;
   background: #ffffff;
-  border-radius: 20px;
-  padding: 6px 12px;
+  border-radius: 4px;
+  padding: 4px 10px;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
+  font-size: 12px;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+}
+.tb-search-input {
+  border: none;
+  background: transparent;
+  outline: none;
+  width: 100%;
   font-size: 11px;
-  color: #999999;
-  box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+  color: #333;
 }
 .tb-gold-badge {
   background: rgba(0, 0, 0, 0.2);
@@ -1137,87 +1177,153 @@
 
 /* B) CCTV MONITOR MODAL */
 .cctv-shell {
-  width: min(780px, 95%);
-  background: #080c14;
-  border: 2px solid #1a2332;
+  width: min(900px, 95%);
+  background: #111;
+  border: 4px solid #333;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 0 40px rgba(0,0,0,0.9), inset 0 0 20px rgba(0,255,180,0.05);
+  box-shadow: 0 0 60px rgba(0,0,0,0.9), inset 0 0 30px rgba(0,255,180,0.05);
   display: flex;
   flex-direction: column;
-  color: #a0aec0;
+  color: #eee;
   font-family: "Plus Jakarta Sans", monospace;
 }
 .cctv-top-bar {
-  background: #0d131f;
-  padding: 10px 16px;
+  background: #1a1a1a;
+  padding: 8px 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid #1a2332;
-  font-size: 12px;
+  border-bottom: 1px solid #333;
 }
+.cctv-status-lights {
+  display: flex;
+  gap: 6px;
+}
+.cctv-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  box-shadow: 0 0 5px rgba(0,0,0,0.5);
+}
+.cctv-dot.is-red { background: #ff4757; }
+.cctv-dot.is-green { background: #2ed573; animation: clockBlink 2s infinite; }
+.cctv-dot.is-yellow { background: #ffa502; }
+
 .cctv-title {
   font-weight: 700;
-  color: #00f0ff;
-  letter-spacing: 0.05em;
+  color: #ccc;
+  font-size: 11px;
+  letter-spacing: 1px;
 }
 .cctv-clock {
   color: #ff3b30;
-  font-weight: 700;
-  animation: clockBlink 1.5s infinite;
-}
-@keyframes clockBlink {
-  0% { opacity: 1; }
-  50% { opacity: 0.4; }
-  100% { opacity: 1; }
-}
-.cctv-close-btn {
-  background: transparent;
-  border: none;
-  color: #888;
-  font-size: 16px;
-  cursor: pointer;
+  font-weight: 800;
+  font-size: 11px;
 }
 
 .cctv-body {
   display: flex;
-  height: 380px;
+  height: 480px;
+  background: #000;
 }
-.cctv-channels {
-  width: 200px;
-  background: #080b12;
-  border-right: 1px solid #1a2332;
-  padding: 12px;
+.cctv-sidebar {
+  width: 220px;
+  background: #1a1a1a;
+  border-right: 2px solid #333;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+}
+.cctv-channels-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 .cctv-ch-btn {
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 6px;
-  color: #ccc;
+  background: #222;
+  border: 1px solid #333;
+  border-radius: 4px;
+  color: #aaa;
   padding: 8px 10px;
   font-size: 11px;
   text-align: left;
   cursor: pointer;
+  transition: all 0.2s;
 }
+.cctv-ch-btn:hover { background: #282828; color: #fff; }
 .cctv-ch-btn.is-active {
-  background: rgba(0,240,255,0.12);
+  background: #004444;
   border-color: #00f0ff;
   color: #00f0ff;
   font-weight: 700;
+  box-shadow: inset 0 0 10px rgba(0,240,255,0.2);
 }
+
+.cctv-remote-panel {
+  padding: 12px;
+  background: #151515;
+  border-top: 1px solid #333;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.remote-label {
+  font-size: 9px;
+  color: #666;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+.remote-pad {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.remote-mid {
+  display: flex;
+  gap: 4px;
+}
+.remote-btn {
+  width: 32px;
+  height: 32px;
+  background: #222;
+  border: 1px solid #444;
+  color: #eee;
+  border-radius: 4px;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  transition: all 0.1s;
+}
+.remote-btn:active { background: #444; transform: scale(0.95); }
+.remote-zoom {
+  display: flex;
+  gap: 6px;
+  width: 100%;
+}
+.remote-zoom .remote-btn {
+  flex: 1;
+  font-size: 9px;
+  font-weight: 700;
+  height: 28px;
+}
+
 .cctv-controls {
-  margin-top: auto;
+  padding: 10px;
   display: flex;
   flex-direction: column;
   gap: 6px;
+  background: #111;
 }
 .cctv-ctrl-btn {
-  background: #121927;
-  border: 1px solid #233044;
+  background: #222;
+  border: 1px solid #444;
   color: #fff;
   padding: 6px;
   border-radius: 4px;
@@ -1228,150 +1334,376 @@
 .cctv-monitor-screen {
   flex: 1;
   position: relative;
-  background: #000;
+  background: #050505;
   overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+}
+.cctv-feed-viewport {
+  width: 100%;
+  height: 100%;
+  position: relative;
 }
 .cctv-feed-layer {
   width: 100%;
   height: 100%;
+  background-size: cover;
+  background-position: center;
+  transition: transform 0.1s ease-out;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-size: cover;
-  background-position: center;
 }
+.cctv-feed-npc {
+  max-height: 80%;
+  filter: sepia(0.2) contrast(1.1) brightness(0.9);
+}
+
 .cctv-scanline {
   position: absolute;
   inset: 0;
-  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-  background-size: 100% 3px, 6px 100%;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.2) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+  background-size: 100% 4px, 4px 100%;
   pointer-events: none;
+  z-index: 5;
 }
+.cctv-vignette {
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 100px rgba(0,0,0,0.8);
+  pointer-events: none;
+  z-index: 4;
+}
+
 .cctv-hud-overlay {
   position: absolute;
-  top: 10px;
-  left: 10px;
-  right: 10px;
+  top: 15px;
+  left: 15px;
+  right: 15px;
+  bottom: 15px;
   display: flex;
   justify-content: space-between;
+  align-items: flex-start;
+  pointer-events: none;
+  z-index: 10;
+}
+.cctv-hud-left {
   font-size: 10px;
   color: #00ff88;
   text-shadow: 0 0 4px #00ff88;
-  pointer-events: none;
+  font-weight: 700;
 }
-.cctv-screen-nv {
-  filter: sepia(1) hue-rotate(80deg) saturate(3) contrast(1.2);
+.cctv-hud-right {
+  pointer-events: auto;
+}
+.btn-peek {
+  background: rgba(255, 0, 84, 0.8);
+  border: 1px solid #ff0054;
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 0 15px rgba(255,0,84,0.5);
+  animation: pulsePeek 1s infinite alternate;
+}
+@keyframes pulsePeek {
+  from { transform: scale(1); box-shadow: 0 0 10px rgba(255,0,84,0.4); }
+  to { transform: scale(1.05); box-shadow: 0 0 20px rgba(255,0,84,0.8); }
 }
 
-/* C) APPLE IPAD MODAL */
+.cctv-screen-nv {
+  filter: sepia(1) hue-rotate(80deg) saturate(3) contrast(1.2) !important;
+}
+
+/* C) CLASSIC APPLE IPAD MODAL */
 .ipad-shell {
-  width: min(760px, 95%);
-  height: min(520px, 85vh);
-  background: #1c1c1e;
-  border: 12px solid #2c2c2e;
-  border-radius: 32px;
-  box-shadow: 0 25px 60px rgba(0,0,0,0.9);
+  width: min(840px, 95%);
+  height: min(600px, 90vh);
+  background: #1a1a1a; /* Metal frame color */
+  border-radius: 40px;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.9);
   position: relative;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  padding: 30px; /* Bezel */
+  box-sizing: border-box;
 }
-.ipad-notch {
+
+.ipad-bezel-top {
   position: absolute;
-  top: 6px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #000;
-  z-index: 10;
+  top: 0; left: 0; right: 0;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+.ipad-camera {
+  width: 6px;
+  height: 6px;
+  background: #222;
+  border-radius: 50%;
+  box-shadow: inset 0 0 2px rgba(255,255,255,0.2);
+}
+
+.ipad-screen {
+  flex: 1;
+  background: #000;
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.ipad-bezel-bottom {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ipad-home-button {
+  width: 20px;
+  height: 20px;
+  background: transparent;
+  border: 1.5px solid #444;
+  border-radius: 50%;
+  cursor: pointer;
+  position: relative;
+  transition: background 0.1s;
+}
+.ipad-home-button:active { background: rgba(255,255,255,0.05); }
+.ipad-home-button::after {
+  content: "";
+  position: absolute;
+  inset: 5px;
+  border: 1px solid #444;
+  border-radius: 4px;
+}
+
 .ipad-status-bar {
-  height: 24px;
-  padding: 4px 16px;
+  height: 22px;
+  padding: 0 12px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 10px;
-  color: #ffffff;
-  font-weight: 600;
-  background: rgba(0,0,0,0.3);
-  z-index: 5;
+  font-size: 9px;
+  color: #fff;
+  background: rgba(0,0,0,0.4);
+  z-index: 50;
+  backdrop-filter: blur(10px);
 }
+
 .ipad-screen-body {
   flex: 1;
   position: relative;
-  overflow: hidden;
   background: #000;
 }
+
 .ipad-view {
   position: absolute;
   inset: 0;
   display: flex;
   flex-direction: column;
-  background: #121212;
+  background: #000;
   color: #fff;
+  z-index: 10;
+  animation: appOpen 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
+@keyframes appOpen {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
 #ipad-home-screen {
   background: linear-gradient(135deg, #1c2e4a 0%, #0b1326 100%);
-  padding: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  padding: 20px;
+  z-index: 5;
 }
+
 .ipad-apps-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 24px;
+  gap: 16px;
+  padding-top: 10px;
 }
 .ipad-app-icon {
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.15);
-  border-radius: 18px;
-  width: 72px;
-  height: 72px;
+  background: rgba(255,255,255,0.1);
+  border: none;
+  border-radius: 12px;
+  width: 54px;
+  height: 54px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: transform 0.2s;
-  backdrop-filter: blur(10px);
+  margin: 0 auto;
 }
-.ipad-app-icon:hover {
-  transform: scale(1.1);
-}
-.app-ico {
-  font-size: 28px;
-  margin-bottom: 2px;
-}
-.app-name {
-  font-size: 10px;
-  color: #fff;
-  font-weight: 600;
-}
+.ipad-app-icon:hover { transform: scale(1.05); background: rgba(255,255,255,0.15); }
+.app-ico { font-size: 24px; }
+.app-name { font-size: 8px; color: #fff; margin-top: 4px; opacity: 0.8; }
 
-.ipad-back-btn {
-  background: rgba(255,255,255,0.1);
-  border: none;
-  color: #0a84ff;
-  font-size: 11px;
-  font-weight: 600;
-  padding: 4px 10px;
-  border-radius: 12px;
-  cursor: pointer;
+.ipad-dock-area {
+  position: absolute;
+  bottom: 12px;
+  left: 0; right: 0;
+  display: flex;
+  justify-content: center;
 }
-.wechat-header, .weibo-header, .notes-header, .stats-header {
+.ipad-dock-inner {
+  background: rgba(255,255,255,0.2);
+  backdrop-filter: blur(20px);
+  padding: 8px 16px;
+  border-radius: 18px;
+  display: flex;
+  gap: 12px;
+}
+.dock-app { font-size: 24px; cursor: pointer; }
+
+.ipad-status-pill {
+  background: rgba(255,255,255,0.15);
+  padding: 1px 8px;
+  border-radius: 10px;
+  font-size: 8px;
+}
+.notes-header {
   padding: 10px 16px;
   background: #1c1c1e;
   border-bottom: 1px solid #2c2c2e;
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+.notes-sub-tabs {
+  display: flex;
+  gap: 8px;
+}
+.nt-sub-tab {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #8e8e93;
+  padding: 4px 12px;
+  border-radius: 8px;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.nt-sub-tab.is-active {
+  background: #ffcc00;
+  color: #000;
+  font-weight: 700;
+  border-color: #ffcc00;
+}
+.mood-diary-content {
+  padding: 20px;
+  background: #fdf6e3;
+  color: #586e75;
+  border-radius: 12px;
+  font-family: "Noto Serif SC", serif;
+  line-height: 1.8;
+  font-size: 14px;
+  min-height: 200px;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+  position: relative;
+}
+.mood-diary-content::before {
+  content: "";
+  position: absolute;
+  top: 0; bottom: 0; left: 30px;
+  width: 1px;
+  background: rgba(255, 0, 0, 0.2);
+}
+.diary-date {
+  font-weight: 900;
+  color: #b58900;
+  margin-bottom: 12px;
+  display: block;
+}
+.diary-text {
+  text-indent: 2em;
+}
+
+/* BREAKOUT GAME */
+.breakout-game-container {
+  flex: 1;
+  position: relative;
+  background: #000;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: inset 0 0 50px rgba(0, 255, 150, 0.1);
+}
+#breakout-canvas {
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, #0a0a1a 0%, #000 100%);
+  display: block;
+}
+.breakout-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.9);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(5px);
+}
+.breakout-overlay.hidden { display: none; }
+.breakout-start-msg {
+  text-align: center;
+  color: #fff;
+  padding: 30px;
+  border: 1px solid rgba(0, 255, 150, 0.3);
+  border-radius: 20px;
+  background: rgba(0,0,0,0.5);
+}
+.breakout-start-msg h3 { 
+  color: #00f0ff; 
+  margin-bottom: 10px; 
+  font-size: 24px;
+  text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+}
+.breakout-start-msg p { font-size: 13px; color: #8e8e93; margin-bottom: 25px; }
+
+.breakout-controls {
+  position: absolute;
+  bottom: 25px;
+  left: 30px;
+  right: 30px;
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none;
+}
+.breakout-controls .btn-ctrl {
+  width: 80px;
+  height: 80px;
+  background: rgba(255,255,255,0.05);
+  border: 2px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.5);
+  border-radius: 50%;
+  font-size: 32px;
+  pointer-events: auto;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  display: grid;
+  place-items: center;
+  transition: all 0.2s;
+}
+.breakout-controls .btn-ctrl:active {
+  background: rgba(0, 255, 150, 0.2);
+  border-color: #00ff96;
+  color: #fff;
+  transform: scale(0.9);
+}
+.breakout-stats {
+  font-size: 14px;
+  color: #00ff96;
+  font-weight: 800;
+  text-shadow: 0 0 5px rgba(0, 255, 150, 0.5);
 }
 .wechat-title, .weibo-title, .notes-title, .stats-title {
   font-size: 13px;

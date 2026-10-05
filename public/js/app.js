@@ -19,6 +19,157 @@
   var btnSkipVn = document.getElementById("btn-skip-vn");
   var mode = "title";
 
+  // --- Audio System ---
+  var audioContext = null;
+  function getAudioContext() {
+    if (!audioContext) {
+      audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    return audioContext;
+  }
+
+  function playSynth(type) {
+    if (audio.muted) return;
+    var ctx = getAudioContext();
+    if (ctx.state === "suspended") ctx.resume();
+
+    var osc = ctx.createOscillator();
+    var gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    var now = ctx.currentTime;
+
+    if (type === "ipad") {
+      // Rising chime
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(440, now);
+      osc.frequency.exponentialRampToValueAtTime(880, now + 0.5);
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(0.2, now + 0.1);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+      osc.start(now);
+      osc.stop(now + 0.5);
+    } else if (type === "taobao") {
+      // Coin/Cash register
+      osc.type = "triangle";
+      osc.frequency.setValueAtTime(987.77, now); // B5
+      osc.frequency.setValueAtTime(1318.51, now + 0.05); // E6
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(0.2, now + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+      osc.start(now);
+      osc.stop(now + 0.3);
+    } else if (type === "hit") {
+      // Success ping
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(1500, now);
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(0.3, now + 0.05);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+      osc.start(now);
+      osc.stop(now + 0.2);
+    }
+  }
+  global.playSynth = playSynth;
+
+  var audio = {
+    bgm: new Audio("assets/audio/bgm_ambient.wav"),
+    sfx: {
+      click: new Audio("assets/audio/click.wav"),
+      confirm: new Audio("assets/audio/confirm.wav"),
+      hover: new Audio("assets/audio/hover.wav")
+    },
+    muted: false
+  };
+  audio.bgm.loop = true;
+  audio.bgm.volume = 0.3;
+
+  function playSfx(name) {
+    if (audio.muted) return;
+    try {
+      var s = audio.sfx[name];
+      if (s) {
+        var clone = s.cloneNode();
+        clone.volume = 0.5;
+        clone.play().catch(function() {});
+      }
+    } catch(e) {}
+  }
+
+  function toggleAudio() {
+    audio.muted = !audio.muted;
+    if (audio.muted) {
+      audio.bgm.pause();
+    } else {
+      audio.bgm.play().catch(function() {});
+    }
+    var toggleBtn = document.getElementById("title-audio-toggle");
+    if (toggleBtn) {
+      toggleBtn.querySelector("span").textContent = audio.muted ? "🔇" : "🔊";
+    }
+  }
+
+  // --- Feedback & Ripple System ---
+  function createRipple(event) {
+    var app = document.getElementById("app");
+    if (!app) return;
+    
+    var ripple = document.createElement("span");
+    ripple.classList.add("ripple");
+    app.appendChild(ripple);
+    
+    // Calculate position relative to #app
+    var rect = app.getBoundingClientRect();
+    var x = (event.clientX - rect.left) / (rect.width / app.offsetWidth);
+    var y = (event.clientY - rect.top) / (rect.height / app.offsetHeight);
+    
+    ripple.style.left = x + "px";
+    ripple.style.top = y + "px";
+    
+    ripple.addEventListener("animationend", function() {
+      ripple.remove();
+    });
+  }
+
+  function applyFeedback(el) {
+    el.classList.remove("feedback-animate");
+    void el.offsetWidth; // Trigger reflow
+    el.classList.add("feedback-animate");
+  }
+
+  document.addEventListener("mousedown", function(e) {
+    createRipple(e);
+  });
+
+  // Auto-bind SFX to all buttons
+  function bindGlobalSfx() {
+    var buttons = document.querySelectorAll("button, .choice, .npc-act, .mmap-room, .ipad-app-icon, .hud-time, .hud-energy, .hud-gold, .hud-study");
+    buttons.forEach(function(btn) {
+      if (btn._sfxBound) return;
+      btn.addEventListener("mouseenter", function() { playSfx("hover"); });
+      btn.addEventListener("click", function() { 
+        if (btn.classList.contains("ipad-app-icon") || btn.classList.contains("hud-time") || btn.classList.contains("hud-energy") || btn.classList.contains("hud-gold") || btn.classList.contains("hud-study")) {
+          applyFeedback(btn);
+        }
+
+        if (btn.classList.contains("btn--primary") || btn.id === "btn-start") {
+          playSfx("confirm");
+        } else {
+          playSfx("click");
+        }
+      });
+      btn._sfxBound = true;
+    });
+  }
+
+  // Start BGM on first interaction (Browser policy)
+  document.addEventListener("click", function() {
+    if (!audio.muted && audio.bgm.paused) {
+      audio.bgm.play().catch(function() {});
+    }
+  }, { once: true });
+
   function setBoot(pct, msg) {
     if (bootText) bootText.textContent = msg || "开门中";
     if (bootBar) bootBar.style.width = Math.max(0, Math.min(100, pct)) + "%";
@@ -163,11 +314,20 @@
       fxHeart: document.getElementById("fx-heart"),
       sheet: document.getElementById("slg-sheet"),
       sheetTitle: document.getElementById("slg-sheet-title"),
-      sheetBody: document.getElementById("slg-sheet-body")
+      sheetBody: document.getElementById("slg-sheet-body"),
+      sheetClose: document.getElementById("slg-sheet-close")
     });
     Slg.loadTables()
       .then(function () {
         if (btnContinue && Slg.hasSave()) btnContinue.disabled = false;
+        if (btnSlg) {
+          var isDone = Slg.isPrologueDone && Slg.isPrologueDone();
+          btnSlg.disabled = !isDone;
+          if (!isDone) {
+            var desc = btnSlg.querySelector(".btn-desc");
+            if (desc) desc.textContent = "🔒 需先完成一次序章解锁";
+          }
+        }
       })
       .catch(function () {});
   }
@@ -186,6 +346,14 @@
     });
   }
   if (btnContinue) btnContinue.addEventListener("click", continueGame);
+  
+  var audioToggle = document.getElementById("title-audio-toggle");
+  if (audioToggle) audioToggle.addEventListener("click", toggleAudio);
+
+  // Re-bind SFX when UI changes
+  setInterval(bindGlobalSfx, 1000);
+  bindGlobalSfx();
+
   if (btnSkipVn) {
     btnSkipVn.addEventListener("click", function () {
       chapterEnd();
@@ -278,6 +446,13 @@
   window.addEventListener("resize", updateAppScale);
   window.addEventListener("orientationchange", updateAppScale);
   updateAppScale();
+
+  // --- Game Heartbeat (Autonomous NPC Living) ---
+  setInterval(function() {
+    if (mode === "slg" && global.Slg && global.Slg.heartbeat) {
+      global.Slg.heartbeat();
+    }
+  }, 10000); // Check every 10 seconds for potential NPC movement
 
   global.openGame = openGame;
   global.chapterEnd = chapterEnd;

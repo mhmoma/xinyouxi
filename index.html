@@ -311,10 +311,10 @@
       <div class="taobao-shell">
         <div class="taobao-header">
           <div class="tb-top-bar">
-            <span class="tb-logo">淘 淘宝网购</span>
+            <span class="tb-logo">淘 <b>淘宝网购</b></span>
             <div class="tb-search-bar">
               <span class="tb-search-icon">🔍</span>
-              <span class="tb-search-placeholder">搜索微型摄像头/情趣蕾丝/柑橘香水...</span>
+              <input type="text" class="tb-search-input" placeholder="搜索微型摄像头/情趣蕾丝..." />
             </div>
             <div class="tb-gold-badge">💰 <span id="tb-gold-val">¥ 1000</span></div>
             <button type="button" id="tb-close-btn" class="tb-close-btn">✕</button>
@@ -336,152 +336,235 @@
     <div id="cctv-modal" class="modal-sheet hidden" role="dialog" aria-label="安全监控系统">
       <div class="cctv-shell">
         <div class="cctv-top-bar">
-          <span class="cctv-title">📹 SECURITY GUARD Pro v4.2 - 全天候监控终端</span>
+          <div class="cctv-status-lights">
+            <span class="cctv-dot is-red"></span>
+            <span class="cctv-dot is-green"></span>
+            <span class="cctv-dot is-yellow"></span>
+          </div>
+          <span class="cctv-title">📹 SECURITY GUARD Pro v4.2 - 全天候云端监控终端</span>
           <span id="cctv-clock" class="cctv-clock">LIVE ● 2026-10-05 23:45:12 REC</span>
           <button type="button" id="cctv-close-btn" class="cctv-close-btn">✕</button>
         </div>
         <div class="cctv-body">
-          <div class="cctv-channels">
-            <button type="button" class="cctv-ch-btn is-active" data-cam="cam01">CAM-01 浴室 Bathroom</button>
-            <button type="button" class="cctv-ch-btn" data-cam="cam02">CAM-02 客厅 Living Room</button>
-            <button type="button" class="cctv-ch-btn" data-cam="cam03">CAM-03 卧室 Bedroom</button>
+          <div class="cctv-sidebar">
+            <div class="cctv-channels-list" id="cctv-channels-list">
+              <!-- Populated dynamically to cover all LOC_CN rooms -->
+            </div>
+            
+            <div class="cctv-remote-panel">
+              <p class="remote-label">PTZ 云台控制</p>
+              <div class="remote-pad">
+                <button type="button" class="remote-btn" id="cctv-up">▲</button>
+                <div class="remote-mid">
+                  <button type="button" class="remote-btn" id="cctv-left">◀</button>
+                  <button type="button" class="remote-btn" id="cctv-reset">●</button>
+                  <button type="button" class="remote-btn" id="cctv-right">▶</button>
+                </div>
+                <button type="button" class="remote-btn" id="cctv-down">▼</button>
+              </div>
+              <div class="remote-zoom">
+                <button type="button" class="remote-btn" id="cctv-zoom-in">＋ ZOOM</button>
+                <button type="button" class="remote-btn" id="cctv-zoom-out">－ OUT</button>
+              </div>
+            </div>
+
             <div class="cctv-controls">
               <button type="button" id="btn-cctv-nv" class="cctv-ctrl-btn">🟢 夜视仪 OFF</button>
               <button type="button" id="btn-cctv-snap" class="cctv-ctrl-btn">📸 拍照快照</button>
             </div>
           </div>
+          
           <div class="cctv-monitor-screen">
-            <div id="cctv-feed-layer" class="cctv-feed-layer">
-              <!-- Live Camera Feed or Static Noise -->
+            <div id="cctv-feed-viewport" class="cctv-feed-viewport">
+              <div id="cctv-feed-layer" class="cctv-feed-layer">
+                <!-- Live Feed Content -->
+              </div>
             </div>
+            
             <div class="cctv-hud-overlay">
-              <span class="cctv-cam-tag" id="cctv-cam-tag">CAM-01 浴室</span>
-              <span class="cctv-signal-tag">SIGNAL: 100% 🟢 30FPS</span>
+              <div class="cctv-hud-left">
+                <span class="cctv-cam-tag" id="cctv-cam-tag">CAM-01 浴室</span><br/>
+                <span class="cctv-signal-tag">SIGNAL: 100% 🟢 30FPS</span>
+              </div>
+              <div class="cctv-hud-right" id="cctv-peek-zone">
+                <!-- Peek button appears here if NPC present -->
+              </div>
             </div>
             <div class="cctv-scanline"></div>
+            <div class="cctv-vignette"></div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- 7. REALISTIC APPLE IPAD PRO TABLET MODAL -->
+    <!-- 7. CLASSIC APPLE IPAD PRO TABLET MODAL -->
     <div id="ipad-modal" class="modal-sheet hidden" role="dialog" aria-label="Apple iPad Pro">
       <div class="ipad-shell">
-        <div class="ipad-notch"></div>
-        <div class="ipad-status-bar">
-          <span id="ipad-time" class="ipad-time">09:41 周一</span>
-          <div class="ipad-status-right">
-            <span>📶 5G</span>
-            <span>100% 🔋</span>
-          </div>
+        <div class="ipad-bezel-top">
+          <div class="ipad-camera"></div>
         </div>
-
-        <!-- iPad Screens Container -->
-        <div id="ipad-screen-body" class="ipad-screen-body">
-          <!-- 1) iPad OS Home Screen -->
-          <div id="ipad-home-screen" class="ipad-view">
-            <div class="ipad-apps-grid">
-              <button type="button" class="ipad-app-icon" id="ipad-app-wechat">
-                <span class="app-ico">💬</span>
-                <span class="app-name">微信</span>
-              </button>
-              <button type="button" class="ipad-app-icon" id="ipad-app-weibo">
-                <span class="app-ico">📱</span>
-                <span class="app-name">微博</span>
-              </button>
-              <button type="button" class="ipad-app-icon" id="ipad-app-tb">
-                <span class="app-ico">🛒</span>
-                <span class="app-name">淘宝</span>
-              </button>
-              <button type="button" class="ipad-app-icon" id="ipad-app-cctv">
-                <span class="app-ico">📹</span>
-                <span class="app-name">安全监控</span>
-              </button>
-              <button type="button" class="ipad-app-icon" id="ipad-app-photos">
-                <span class="app-ico">🎨</span>
-                <span class="app-name">回忆相册</span>
-              </button>
-              <button type="button" class="ipad-app-icon" id="ipad-app-notes">
-                <span class="app-ico">📝</span>
-                <span class="app-name">秘密备忘</span>
-              </button>
-              <button type="button" class="ipad-app-icon" id="ipad-app-stats">
-                <span class="app-ico">📊</span>
-                <span class="app-name">肢体数据</span>
-              </button>
+        
+        <div class="ipad-screen">
+          <div class="ipad-status-bar">
+            <span id="ipad-time" class="ipad-time">09:41 周一</span>
+            <div class="ipad-status-center">
+              <span class="ipad-status-pill">Focus: <b>Home</b></span>
+            </div>
+            <div class="ipad-status-right">
+              <span class="ipad-status-ico">📶 5G</span>
+              <span class="ipad-status-ico">📍 GPS</span>
+              <span class="ipad-status-ico">100% 🔋</span>
             </div>
           </div>
 
-          <!-- 2) iPad WeChat App View -->
-          <div id="ipad-wechat-view" class="ipad-view hidden">
-            <div class="wechat-header">
-              <button type="button" class="ipad-back-btn" id="wechat-back-btn">◀ 返回桌面</button>
-              <span class="wechat-title">微信 (WeChat)</span>
-              <div class="wechat-sub-tabs">
-                <button type="button" class="wc-sub-tab is-active" id="wc-tab-chat">💬 聊天</button>
-                <button type="button" class="wc-sub-tab" id="wc-tab-moments">🌸 朋友圈</button>
+          <!-- iPad Screens Container -->
+          <div id="ipad-screen-body" class="ipad-screen-body">
+            <!-- 1) iPad OS Home Screen -->
+            <div id="ipad-home-screen" class="ipad-view">
+              <div class="ipad-apps-grid">
+                <button type="button" class="ipad-app-icon" id="ipad-app-wechat">
+                  <span class="app-ico">💬</span>
+                  <span class="app-name">微信</span>
+                </button>
+                <button type="button" class="ipad-app-icon" id="ipad-app-weibo">
+                  <span class="app-ico">📱</span>
+                  <span class="app-name">微博</span>
+                </button>
+                <button type="button" class="ipad-app-icon" id="ipad-app-tb">
+                  <span class="app-ico">🛒</span>
+                  <span class="app-name">淘宝</span>
+                </button>
+                <button type="button" class="ipad-app-icon" id="ipad-app-cctv">
+                  <span class="app-ico">📹</span>
+                  <span class="app-name">安全监控</span>
+                </button>
+                <button type="button" class="ipad-app-icon" id="ipad-app-photos">
+                  <span class="app-ico">🎨</span>
+                  <span class="app-name">回忆相册</span>
+                </button>
+                <button type="button" class="ipad-app-icon" id="ipad-app-notes">
+                  <span class="app-ico">📝</span>
+                  <span class="app-name">秘密备忘</span>
+                </button>
+                <button type="button" class="ipad-app-icon" id="ipad-app-breakout">
+                  <span class="app-ico">🧱</span>
+                  <span class="app-name">打砖块</span>
+                </button>
+                <button type="button" class="ipad-app-icon" id="ipad-app-stats">
+                  <span class="app-ico">📊</span>
+                  <span class="app-name">数据中心</span>
+                </button>
               </div>
-            </div>
-            <div id="wc-body-chat" class="wechat-body">
-              <div class="wc-contact-bar">
-                <img src="assets/char/wanqing/s1.png" class="wc-avatar" alt="" />
-                <div>
-                  <div class="wc-contact-name">林晚晴 (房东姐姐)</div>
-                  <div class="wc-contact-sub">在线 · 刚刚更新了朋友圈</div>
+
+              <!-- iPad Dock -->
+              <div class="ipad-dock-area">
+                <div class="ipad-dock-inner">
+                  <div class="dock-app">💬</div>
+                  <div class="dock-app">🛒</div>
+                  <div class="dock-app">🎨</div>
+                  <div class="dock-app">⚙️</div>
                 </div>
               </div>
-              <div class="wc-chat-log" id="wc-chat-log">
-                <!-- Chat messages populated by JS -->
-              </div>
-              <div class="wc-chat-input-bar">
-                <input type="text" id="wc-input" class="wc-input" placeholder="发送消息给晚晴姐..." />
-                <button type="button" id="wc-send-btn" class="wc-send-btn">发送</button>
-              </div>
             </div>
-            <div id="wc-body-moments" class="wechat-body hidden">
-              <div class="wc-moments-feed" id="wc-moments-feed">
-                <!-- Moments populated by JS -->
-              </div>
-            </div>
-          </div>
 
-          <!-- 3) iPad Weibo App View -->
-          <div id="ipad-weibo-view" class="ipad-view hidden">
-            <div class="weibo-header">
-              <button type="button" class="ipad-back-btn" id="weibo-back-btn">◀ 返回桌面</button>
-              <span class="weibo-title">微博 · 热搜与关注</span>
+            <!-- 2) iPad WeChat App View -->
+            <div id="ipad-wechat-view" class="ipad-view hidden">
+              <div class="wechat-header">
+                <span class="wechat-title">微信 (WeChat)</span>
+                <div class="wechat-sub-tabs">
+                  <button type="button" class="wc-sub-tab is-active" id="wc-tab-chat">💬 聊天</button>
+                  <button type="button" class="wc-sub-tab" id="wc-tab-moments">🌸 朋友圈</button>
+                </div>
+              </div>
+              <div id="wc-body-chat" class="wechat-body">
+                <div class="wc-contact-bar">
+                  <img src="assets/char/wanqing/s1.png" class="wc-avatar" alt="" />
+                  <div>
+                    <div class="wc-contact-name">林晚晴 (房东姐姐)</div>
+                    <div class="wc-contact-sub">在线 · 刚刚更新了朋友圈</div>
+                  </div>
+                </div>
+                <div class="wc-chat-log" id="wc-chat-log">
+                  <!-- Chat messages populated by JS -->
+                </div>
+                <div class="wc-chat-input-bar">
+                  <input type="text" id="wc-input" class="wc-input" placeholder="发送消息给晚晴姐..." />
+                  <button type="button" id="wc-send-btn" class="wc-send-btn">发送</button>
+                </div>
+              </div>
+              <div id="wc-body-moments" class="wechat-body hidden">
+                <div class="wc-moments-feed" id="wc-moments-feed">
+                  <!-- Moments populated by JS -->
+                </div>
+              </div>
             </div>
-            <div class="weibo-body" id="weibo-body">
-              <!-- Weibo updates populated by JS -->
-            </div>
-          </div>
 
-          <!-- 4) iPad Notes App View -->
-          <div id="ipad-notes-view" class="ipad-view hidden">
-            <div class="notes-header">
-              <button type="button" class="ipad-back-btn" id="notes-back-btn">◀ 返回桌面</button>
-              <span class="notes-title">📝 秘密备忘录与观察日记</span>
+            <!-- 3) iPad Weibo App View -->
+            <div id="ipad-weibo-view" class="ipad-view hidden">
+              <div class="weibo-header">
+                <span class="weibo-title">微博 · 热搜与关注</span>
+              </div>
+              <div class="weibo-body" id="weibo-body">
+                <!-- Weibo updates populated by JS -->
+              </div>
             </div>
-            <div class="notes-body" id="notes-body">
-              <!-- Notes populated by JS -->
-            </div>
-          </div>
 
-          <!-- 5) iPad Stats App View -->
-          <div id="ipad-stats-view" class="ipad-view hidden">
-            <div class="stats-header">
-              <button type="button" class="ipad-back-btn" id="stats-back-btn">◀ 返回桌面</button>
-              <span class="stats-title">📊 肢体与亲密关系全维度统计</span>
+            <!-- 4) iPad Notes App View -->
+            <div id="ipad-notes-view" class="ipad-view hidden">
+              <div class="notes-header">
+                <span class="notes-title">📝 秘密备忘录</span>
+                <div class="notes-sub-tabs">
+                  <button type="button" class="nt-sub-tab is-active" id="nt-tab-notes">📂 备忘</button>
+                  <button type="button" class="nt-sub-tab" id="nt-tab-mood">💭 她的独白</button>
+                </div>
+              </div>
+              <div id="nt-body-notes" class="notes-body">
+                <!-- Notes populated by JS -->
+              </div>
+              <div id="nt-body-mood" class="notes-body hidden">
+                <div id="mood-diary-content" class="mood-diary-content">
+                  <!-- Daily mood monologue populated by JS -->
+                </div>
+              </div>
             </div>
-            <div class="stats-body" id="ipad-stats-body">
-              <!-- Detailed stats analytics populated by JS -->
+
+            <!-- 5) iPad Breakout Game View -->
+            <div id="ipad-breakout-view" class="ipad-view hidden">
+              <div class="breakout-header">
+                <span class="breakout-title">🧱 超级打砖块</span>
+                <div class="breakout-stats">Score: <b id="breakout-score">0</b></div>
+              </div>
+              <div class="breakout-game-container">
+                <canvas id="breakout-canvas"></canvas>
+                <div class="breakout-overlay id-start">
+                  <div class="breakout-start-msg">
+                    <h3>挑战地狱关卡</h3>
+                    <p>外层砖块无敌，寻找唯一的缝隙进入！</p>
+                    <button type="button" id="btn-breakout-start" class="btn btn--primary">开始挑战</button>
+                  </div>
+                </div>
+                <div class="breakout-controls">
+                  <button type="button" id="btn-breakout-left" class="btn-ctrl">◀</button>
+                  <button type="button" id="btn-breakout-right" class="btn-ctrl">▶</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 6) iPad Stats App View -->
+            <div id="ipad-stats-view" class="ipad-view hidden">
+              <div class="stats-header">
+                <span class="stats-title">📊 数据统计中心</span>
+              </div>
+              <div class="stats-body" id="ipad-stats-body">
+                <!-- Detailed stats analytics populated by JS -->
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- iPad Dock & Home Bar -->
-        <div class="ipad-dock">
-          <div class="ipad-home-indicator" id="ipad-home-bar" title="返回桌面/关闭"></div>
+        <!-- Classic iPad Home Button -->
+        <div class="ipad-bezel-bottom">
+          <button type="button" id="ipad-home-button" class="ipad-home-button"></button>
         </div>
       </div>
     </div>
@@ -489,7 +572,10 @@
     <!-- 8. SLG MODAL DIALOG SHEET (Fallback) -->
     <div id="slg-sheet" class="slg-sheet hidden" role="dialog" aria-label="二级菜单">
       <div class="slg-sheet-card">
-        <h2 id="slg-sheet-title">手机</h2>
+        <div class="slg-sheet-header">
+          <h2 id="slg-sheet-title">交互选项</h2>
+          <button type="button" id="slg-sheet-close" class="slg-sheet-close" title="关闭">×</button>
+        </div>
         <div id="slg-sheet-body" class="slg-sheet-body"></div>
       </div>
     </div>
