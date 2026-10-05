@@ -1777,7 +1777,7 @@
       el.innerHTML = "<span class=\"hot-tip\">" + (h.icon || "") + " " + h.label + "</span>";
       function goHot(ev) {
         ev.stopPropagation();
-        doAct(h.id);
+        InteractionManager.triggerInteraction(h.id);
       }
       el.addEventListener("click", goHot);
       el.addEventListener("keydown", function (ev) {
@@ -2060,6 +2060,10 @@
       }
       return;
     }
+    // CRITICAL: If choices are actively displayed in ui.choices, DO NOT close lines! Wait for user click!
+    if (ui.choices && ui.choices.children && ui.choices.children.length > 0) {
+      return;
+    }
     if (lineQueue.length) {
       showLine(lineQueue.shift());
       return;
@@ -2185,15 +2189,66 @@
     persist();
   }
 
-  function goPlace(id) {
-    if (mode !== "map") return;
-    var from = state.playerLocation;
+  var InteractionManager = {
+    triggerInteraction: function (type) {
+      if (mode !== "map") return;
 
-    // 1. Bathroom Bathing Interception
-    if (id === "Bathroom" && state.wanqing.currentState === "Bathing" && state.wanqing.currentLocation === "Bathroom") {
-      state.playerLocation = id;
+      if (type === "bathing" || (type === "Bathroom" && state.wanqing.currentState === "Bathing")) {
+        InteractionManager.handleBathingInteraction();
+        return;
+      }
+
+      if (type === "sleeping" || (type === "Bedroom_NPC" && state.wanqing.currentState === "Sleeping")) {
+        InteractionManager.handleSleepingInteraction();
+        return;
+      }
+
+      if (type === "sleep" || type === "bed" || type === "Bedroom_Player_Bed") {
+        InteractionManager.handleSleepInteraction();
+        return;
+      }
+
+      if (type === "char" || type === "npc") {
+        InteractionManager.handleCharClick();
+        return;
+      }
+
+      doAct(type);
+    },
+
+    handleCharClick: function () {
+      if (mode !== "map") return;
+
+      if (state.wanqing.currentState === "Bathing" && state.playerLocation === "Bathroom") {
+        InteractionManager.handleBathingInteraction();
+        return;
+      }
+
+      if (state.wanqing.currentState === "Sleeping" && state.playerLocation === "Bedroom_NPC") {
+        InteractionManager.handleSleepingInteraction();
+        return;
+      }
+
+      isNpcPanelRevealed = !isNpcPanelRevealed;
+      currentCategory = "";
+      renderNpcPanel();
+
+      if (npcHere(state) && ui.text) {
+        var b = bandOf(state.wanqing.trust);
+        var greet = b.id === "tenant" ? "“有什么事情吗？”" :
+                    b.id === "roommate" ? "“呀，你回房间啦。找我有事聊聊天吗？”" :
+                    b.id === "depend" ? "“你回来啦，今天也挺辛苦的吧。想跟我聊些什么呢？”" : 
+                    "“只要看着你的眼睛，我就已经心乱如麻了……”";
+        ui.text.textContent = greet;
+        if (ui.name) ui.name.textContent = "晚晴";
+        if (window.Stage) Stage.setChar(portraitFor(state));
+      }
+    },
+
+    handleBathingInteraction: function () {
       isNpcPanelRevealed = true;
       renderNpcPanel();
+
       playLines([
         { speaker: "narration", text: "（浴室里水汽缭绕，传来淅沥沥的打温水声与浓郁的柑橘沐浴露芬芳。）" },
         {
@@ -2227,7 +2282,7 @@
                 }
                 
                 state.wanqing.suspicion = clamp(state.wanqing.suspicion + 10, 0, 100);
-                state.wanqing.lust = clamp(state.wanqing.lust + 5, 0, 100);
+                state.wanqing.lust = clamp((state.wanqing.lust || 0) + 5, 0, 100);
                 playVideoEvent("S7_bathroom_full", enterMap);
               }
             },
@@ -2266,14 +2321,12 @@
           ]
         }
       ], enterMap);
-      return;
-    }
+    },
 
-    // 2. NPC Bedroom Sleeping Interception
-    if (id === "Bedroom_NPC" && state.wanqing.currentState === "Sleeping") {
-      state.playerLocation = id;
+    handleSleepingInteraction: function () {
       isNpcPanelRevealed = true;
       renderNpcPanel();
+
       playLines([
         { speaker: "narration", text: "（卧室里灯光柔和昏暗，晚晴正侧卧在被窝里甜甜熟睡，呼吸轻盈。）" },
         {
@@ -2311,6 +2364,83 @@
           ]
         }
       ], enterMap);
+    },
+
+    handleSleepInteraction: function () {
+      playLines([
+        {
+          speaker: "narration",
+          text: "（窗外微风摇曳，躺在松软温热的床上……你要选择如何度过？）",
+          choices: [
+            {
+              text: "🛌 在床上舒舒服服小憩午睡 (恢复 30 体力，跳过当前时段)",
+              action: function() {
+                triggerTimeTransition("🛌 床上小憩", "午后微风，短憩惬意", function() {
+                  state.playerEnergy = clamp(state.playerEnergy + 30, 0, 100);
+                  state._spentSlot = true;
+                  var how = advanceSlotIfNeeded();
+                  var nextSlotCn = SLOT_CN[state.currentTimeSlot];
+                  playLines([
+                    { speaker: "narration", text: "（你定了个短闹钟，在床上舒舒服服地睡了个午觉。体力恢复了！）" },
+                    { speaker: "narration", text: "（一眨眼，时间来到了 " + nextSlotCn + "。）" }
+                  ], enterMap);
+                });
+              }
+            },
+            {
+              text: "💤 闭上眼睛沉沉深睡到明天清晨 (精力恢复 100%，天数 +1)",
+              action: function() {
+                triggerTimeTransition("🌙 闭眼深睡", "夜深人静，朝阳再起", function() {
+                  state.playerEnergy = 100;
+                  nightProcess(state);
+                  playLines([
+                    { speaker: "narration", text: "（一觉醒来。阳光洒在枕畔。新的一天，第 " + state.dayCount + " 天！）" }
+                  ], enterMap);
+                });
+              }
+            },
+            {
+              text: "🔑 悄悄溜去隔壁晚晴卧室看看 (需信赖 ≥ 50)",
+              action: function() {
+                if (state.wanqing.trust < 50) {
+                  playLines([
+                    { speaker: "narration", text: "（信赖值不足 50，尚不敢深夜敲门溜进她卧室。）" }
+                  ], enterMap);
+                  return;
+                }
+                var vid = state.wanqing.trust >= 90 ? "S9_bedroom_obsession" : "S5_nap_bedroom";
+                playVideoEvent(vid, enterMap);
+              }
+            },
+            {
+              text: "💭 躺在床头静静遐想温存 (恢复 10 体力，欲望 +2)",
+              action: function() {
+                state.playerEnergy = clamp(state.playerEnergy + 10, 0, 100);
+                state.wanqing.lust = clamp((state.wanqing.lust || 0) + 2, 0, 100);
+                playLines([
+                  { speaker: "narration", text: "（你枕着手臂望着天花板，脑海里全是对走廊那头晚晴的思念与温存遐想……）" }
+                ], enterMap);
+              }
+            }
+          ]
+        }
+      ], enterMap);
+    }
+  };
+
+  function goPlace(id) {
+    if (mode !== "map") return;
+    var from = state.playerLocation;
+
+    if (id === "Bathroom" && state.wanqing.currentState === "Bathing" && state.wanqing.currentLocation === "Bathroom") {
+      state.playerLocation = id;
+      InteractionManager.handleBathingInteraction();
+      return;
+    }
+
+    if (id === "Bedroom_NPC" && state.wanqing.currentState === "Sleeping") {
+      state.playerLocation = id;
+      InteractionManager.handleSleepingInteraction();
       return;
     }
 
@@ -2348,19 +2478,27 @@
 
   function doAct(id) {
     if (mode !== "map") return;
+    if (id === "sleep") {
+      InteractionManager.handleSleepInteraction();
+      return;
+    }
     var t0 = state.wanqing.trust;
     var lines = execAction(state, id);
     if (id === "phone" || id === "gift") return;
-    var dayTurn = id === "sleep";
-    if (!dayTurn) {
-      var how = advanceSlotIfNeeded();
-      if (how === "day") {
-        lines.push({ speaker: "narration", text: "（一眨眼就到第二天早上了。）" });
-        var man = mandatoryLines(state);
-        if (man) lines = lines.concat(man);
-      }
+
+    if (state._spentSlot) {
+      triggerTimeTransition("时光更迭...", "时光划过，阶段转推...", function() {
+        var how = advanceSlotIfNeeded();
+        if (how === "day") {
+          lines.push({ speaker: "narration", text: "（一眨眼就到第二天早上了。）" });
+          var man = mandatoryLines(state);
+          if (man) lines = lines.concat(man);
+        }
+        playLines(lines, enterMap, state.wanqing.trust - t0);
+      });
+    } else {
+      playLines(lines, enterMap, state.wanqing.trust - t0);
     }
-    playLines(lines, enterMap, state.wanqing.trust - t0);
   }
 
   function bind(nodes) {
@@ -2375,10 +2513,8 @@
     if (ui.npcPanel) {
       ui.npcPanel.addEventListener("click", function (ev) {
         if (mode !== "map") return;
-        if (!npcHere(state)) return;
         ev.stopPropagation();
-        isNpcPanelRevealed = !isNpcPanelRevealed;
-        renderNpcPanel();
+        InteractionManager.handleCharClick();
       });
     }
 
@@ -2388,23 +2524,8 @@
       charLayer.addEventListener("click", function (ev) {
         if (ev.target && ev.target.classList && ev.target.classList.contains("stage-char-img")) {
           if (mode !== "map") return;
-          if (!npcHere(state)) return;
           ev.stopPropagation();
-          
-          isNpcPanelRevealed = true;
-          renderNpcPanel();
-          
-          // Show a sweet, immersive VN welcome dialogue bubble in the text box upon clicking her standing sprite
-          if (ui.text) {
-            var b = bandOf(state.wanqing.trust);
-            var greet = b.id === "tenant" ? "“有什么事情吗？”" :
-                        b.id === "roommate" ? "“呀，你回房间啦。找我有事聊聊天吗？”" :
-                        b.id === "depend" ? "“你回来啦，今天也挺辛苦的吧。想跟我聊些什么呢？”" : 
-                        "“只要看着你的眼睛，我就已经心乱如麻了……”";
-            ui.text.textContent = greet;
-            if (ui.name) ui.name.textContent = "晚晴";
-            if (window.Stage) Stage.setChar(portraitFor(state));
-          }
+          InteractionManager.handleCharClick();
         }
       });
     }
@@ -2751,12 +2872,18 @@
     if (iconEl) iconEl.textContent = nightish(state ? state.currentTimeSlot : "Evening") ? "🌙" : "☀";
 
     overlay.classList.remove("hidden");
-    
+    overlay.style.display = "flex";
+    overlay.style.opacity = "1";
+
     window.setTimeout(function () {
       if (callback) callback();
       window.setTimeout(function () {
-        overlay.classList.add("hidden");
-      }, 500);
+        overlay.style.opacity = "0";
+        window.setTimeout(function () {
+          overlay.classList.add("hidden");
+          overlay.style.display = "";
+        }, 400);
+      }, 400);
     }, 1000);
   }
 
@@ -3371,6 +3498,7 @@
     playStage: playStage,
     StoryStateManager: StoryStateManager,
     IntimacyStatsManager: IntimacyStatsManager,
+    InteractionManager: InteractionManager,
     processTimeSlot: processTimeSlot,
     openSheet: openSheet,
     openTaobaoModal: openTaobaoModal,
