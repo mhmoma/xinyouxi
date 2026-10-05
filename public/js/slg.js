@@ -1419,11 +1419,81 @@
     root.classList.toggle(name, !!on);
   }
 
-  function ensureStats(s) {
-    if (!s || !s.wanqing) return;
-    if (!s.wanqing.stats) {
-      s.wanqing.stats = { mouth: 0, hand: 0, foot: 0, vaginal: 0, anal: 0, climax: 0 };
+  var IntimacyStatsManager = {
+    getStats: function () {
+      if (!state || !state.wanqing) return { mouth: 0, hand: 0, foot: 0, vaginal: 0, anal: 0, climax: 0 };
+      if (!state.wanqing.stats) {
+        state.wanqing.stats = { mouth: 0, hand: 0, foot: 0, vaginal: 0, anal: 0, climax: 0 };
+      }
+      return state.wanqing.stats;
+    },
+
+    increment: function (category, amount) {
+      if (!category) return;
+      amount = amount || 1;
+      var st = IntimacyStatsManager.getStats();
+      st[category] = Math.max(0, (st[category] || 0) + amount);
+      persist();
+      IntimacyStatsManager.refreshUI();
+    },
+
+    recordAction: function (vidDef, actionTier) {
+      if (!vidDef) return;
+      var tier = actionTier || vidDef.tier;
+      var vidId = vidDef.id || "";
+
+      if (tier === "A") {
+        IntimacyStatsManager.increment("hand", 1);
+      } else if (tier === "B") {
+        IntimacyStatsManager.increment("mouth", 1);
+      } else if (tier === "C" || tier === "D") {
+        if (vidId.indexOf("anal") >= 0) {
+          IntimacyStatsManager.increment("anal", 1);
+        } else if (vidId.indexOf("foot") >= 0) {
+          IntimacyStatsManager.increment("foot", 1);
+        } else {
+          IntimacyStatsManager.increment("vaginal", 1);
+        }
+        IntimacyStatsManager.increment("climax", 1);
+      }
+    },
+
+    refreshUI: function () {
+      var st = IntimacyStatsManager.getStats();
+
+      // Top Right Profile Overlay Card Counters
+      var cMouth = document.getElementById("stat-count-mouth");
+      var cHand = document.getElementById("stat-count-hand");
+      var cFoot = document.getElementById("stat-count-foot");
+      var cVaginal = document.getElementById("stat-count-vaginal");
+      var cAnal = document.getElementById("stat-count-anal");
+      var cClimax = document.getElementById("stat-count-climax");
+
+      if (cMouth) cMouth.textContent = st.mouth || 0;
+      if (cHand) cHand.textContent = st.hand || 0;
+      if (cFoot) cFoot.textContent = st.foot || 0;
+      if (cVaginal) cVaginal.textContent = st.vaginal || 0;
+      if (cAnal) cAnal.textContent = st.anal || 0;
+      if (cClimax) cClimax.textContent = st.climax || 0;
+
+      // iPad Stats Panel (#ipad-stats-body)
+      var ipadBody = document.getElementById("ipad-stats-body");
+      if (ipadBody) {
+        ipadBody.innerHTML = "<div class='stats-card-box'>" +
+          "<h3>📊 肢体与亲密维度全精确统计</h3>" +
+          "<div class='stats-bar-item'><span>👄 口交/唇舌次数: <b>" + (st.mouth || 0) + "</b> 次</span></div>" +
+          "<div class='stats-bar-item'><span>✋ 亲抚/手交次数: <b>" + (st.hand || 0) + "</b> 次</span></div>" +
+          "<div class='stats-bar-item'><span>🦶 足交/踩弄次数: <b>" + (st.foot || 0) + "</b> 次</span></div>" +
+          "<div class='stats-bar-item'><span>🌸 穴交/插入次数: <b>" + (st.vaginal || 0) + "</b> 次</span></div>" +
+          "<div class='stats-bar-item'><span>🍑 肛交/后庭次数: <b>" + (st.anal || 0) + "</b> 次</span></div>" +
+          "<div class='stats-bar-item'><span>💦 潮喷/高潮次数: <b>" + (st.climax || 0) + "</b> 次</span></div>" +
+          "</div>";
+      }
     }
+  };
+
+  function ensureStats(s) {
+    IntimacyStatsManager.getStats();
   }
 
   function renderNpcPanel() {
@@ -2524,16 +2594,7 @@
           state.wanqing.trust = clamp(state.wanqing.trust + (v.tier === "A" ? 4 : v.tier === "B" ? 8 : 12), 0, 100);
           state.wanqing.lust = clamp(state.wanqing.lust + (v.tier === "A" ? 6 : v.tier === "B" ? 12 : 18), 0, 100);
 
-          ensureStats(state);
-          if (v.tier === "A") state.wanqing.stats.hand = (state.wanqing.stats.hand || 0) + 1;
-          else if (v.tier === "B") state.wanqing.stats.mouth = (state.wanqing.stats.mouth || 0) + 1;
-          else if (v.tier === "C" || v.tier === "D") {
-            if (v.id && v.id.indexOf("anal") >= 0) state.wanqing.stats.anal = (state.wanqing.stats.anal || 0) + 1;
-            else if (v.id && v.id.indexOf("foot") >= 0) state.wanqing.stats.foot = (state.wanqing.stats.foot || 0) + 1;
-            else state.wanqing.stats.vaginal = (state.wanqing.stats.vaginal || 0) + 1;
-            state.wanqing.stats.climax = (state.wanqing.stats.climax || 0) + 1;
-          }
-          persist();
+          IntimacyStatsManager.recordAction(v);
         }
 
         var lines = v.postLines || [
@@ -3263,19 +3324,7 @@
     }
 
     function renderStats() {
-      var body = document.getElementById("ipad-stats-body");
-      if (!body) return;
-      ensureStats(state);
-      var st = state.wanqing.stats;
-      body.innerHTML = "<div class='stats-card-box'>" +
-        "<h3>📊 肢体与亲密维度全全统计</h3>" +
-        "<div class='stats-bar-item'><span>👄 口交/唇舌次数: <b>" + (st.mouth || 0) + "</b> 次</span></div>" +
-        "<div class='stats-bar-item'><span>✋ 亲抚/手交次数: <b>" + (st.hand || 0) + "</b> 次</span></div>" +
-        "<div class='stats-bar-item'><span>🦶 足交/踩弄次数: <b>" + (st.foot || 0) + "</b> 次</span></div>" +
-        "<div class='stats-bar-item'><span>🌸 穴交/插入次数: <b>" + (st.vaginal || 0) + "</b> 次</span></div>" +
-        "<div class='stats-bar-item'><span>🍑 肛交/后庭次数: <b>" + (st.anal || 0) + "</b> 次</span></div>" +
-        "<div class='stats-bar-item'><span>💦 潮喷/释放次数: <b>" + (st.climax || 0) + "</b> 次</span></div>" +
-        "</div>";
+      IntimacyStatsManager.refreshUI();
     }
   }
 
@@ -3321,6 +3370,7 @@
     playVideoEvent: playVideoEvent,
     playStage: playStage,
     StoryStateManager: StoryStateManager,
+    IntimacyStatsManager: IntimacyStatsManager,
     processTimeSlot: processTimeSlot,
     openSheet: openSheet,
     openTaobaoModal: openTaobaoModal,
