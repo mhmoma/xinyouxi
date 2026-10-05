@@ -929,6 +929,19 @@
     return null;
   }
 
+  function isDailyDone(s, key) {
+    if (!s) return false;
+    if (!s.dailyDone) s.dailyDone = {};
+    return !!s.dailyDone[s.dayCount + "_" + key];
+  }
+
+  function markDailyDone(s, key) {
+    if (!s) return;
+    if (!s.dailyDone) s.dailyDone = {};
+    s.dailyDone[s.dayCount + "_" + key] = true;
+    persist();
+  }
+
   function onEnterLines(s, fromLoc) {
     if (s.playerLocation === "Bathroom" && s.wanqing.currentState === "Bathing" && s.wanqing.currentLocation === "Bathroom") {
       if (!flag(s, "Bath_WalkIn_" + s.dayCount)) {
@@ -954,6 +967,7 @@
     s.playerEnergy = 100;
     s.dayCount += 1;
     s.eveningBath = false;
+    s.dailyDone = {};
     enterSlot(s, "Morning", true);
     s.playerLocation = "Bedroom_Player";
   }
@@ -2274,6 +2288,14 @@
     },
 
     handleBathingInteraction: function () {
+      if (isDailyDone(state, "bathing")) {
+        playLines([
+          { speaker: "wanqing", char: "e1", text: "“小陈，今天已经在浴室陪我聊过天了，我马上就洗好了，你去别处转转吧。”" },
+          { speaker: "narration", text: "（今天已经在浴室与晚晴互动过了，频繁打扰她会让彼此感到尴尬的，去做点别的互动吧！）" }
+        ], enterMap);
+        return;
+      }
+
       var trust = state.wanqing.trust || 0;
       var lust = state.wanqing.lust || 0;
       var suspicion = state.wanqing.suspicion || 0;
@@ -2283,6 +2305,7 @@
           text: "🚪 隔门礼貌打个招呼",
           sub: "体力 -5，信赖 +2",
           action: function() {
+            markDailyDone(state, "bathing");
             state.playerEnergy = clamp(state.playerEnergy - 5, 0, 100);
             state.wanqing.trust = clamp(state.wanqing.trust + 2, 0, 100);
             playLines([
@@ -2303,6 +2326,7 @@
               playLines([{ speaker: "narration", text: "（体力不足，还是先休息一会儿吧。）" }], enterMap);
               return;
             }
+            markDailyDone(state, "bathing");
             state.playerEnergy = clamp(state.playerEnergy - 15, 0, 100);
             
             if (suspicion >= 80) {
@@ -2338,6 +2362,7 @@
           text: "🛁 推门送毛巾进去",
           sub: "S7·水汽浴室全裸地砖姿势链",
           action: function() {
+            markDailyDone(state, "bathing");
             TimeTransitionController.play("🛁 浴室送毛巾", "推开浴室门，水汽湿热", function() {
               playVideoEvent("S7_bathroom_full", enterMap);
             });
@@ -2362,6 +2387,7 @@
           text: "🚿 直接步入水汽蒸腾的浴室相拥",
           sub: "要求信赖 ≥ 75 且 欲望 ≥ 50",
           action: function() {
+            markDailyDone(state, "bathing");
             TimeTransitionController.play("🚿 步入相拥", "水流倾泻，相拥温存", function() {
               playVideoEvent("S7_bathroom_full", enterMap);
             });
@@ -2385,6 +2411,13 @@
     },
 
     handleSleepingInteraction: function () {
+      if (isDailyDone(state, "sleeping_room")) {
+        playLines([
+          { speaker: "narration", text: "（晚晴在被窝里甜甜睡着，今天已经进来看望过她了，别频频惊扰她的好梦，去别处转转吧。）" }
+        ], enterMap);
+        return;
+      }
+
       var trust = state.wanqing.trust || 0;
 
       var choices = [
@@ -2392,6 +2425,7 @@
           text: "🚪 轻轻敲敲门唤她一声",
           sub: "体力 -5，信赖 +1",
           action: function() {
+            markDailyDone(state, "sleeping_room");
             state.playerEnergy = clamp(state.playerEnergy - 5, 0, 100);
             state.wanqing.trust = clamp(state.wanqing.trust + 1, 0, 100);
             playLines([
@@ -2408,6 +2442,7 @@
           text: "🔑 用备用钥匙悄悄溜进床边",
           sub: "S5_nap·午睡偷香 / S9·彻底沦陷",
           action: function() {
+            markDailyDone(state, "sleeping_room");
             TimeTransitionController.play("🔑 溜进闺房", "钥匙微响，溜至床边", function() {
               var vid = state.wanqing.trust >= 90 ? "S9_bedroom_obsession" : "S5_nap_bedroom";
               playVideoEvent(vid, enterMap);
@@ -2441,6 +2476,13 @@
           text: "🛌 床上小憩午睡",
           sub: "恢复 30 体力，跳过当前时段",
           action: function() {
+            if (isDailyDone(state, "bed_nap")) {
+              playLines([
+                { speaker: "narration", text: "（今天已经午睡小憩过了，精神饱满，今天去尝试做点别的互动吧！）" }
+              ], enterMap);
+              return;
+            }
+            markDailyDone(state, "bed_nap");
             TimeTransitionController.play("🛌 床上小憩", "午后微风，短憩惬意", function() {
               state.playerEnergy = clamp(state.playerEnergy + 30, 0, 100);
               state._spentSlot = true;
@@ -2474,6 +2516,13 @@
           text: "💭 躺在床头静静遐想温存",
           sub: "恢复 10 体力，欲望 +2",
           action: function() {
+            if (isDailyDone(state, "bed_daydream")) {
+              playLines([
+                { speaker: "narration", text: "（今天已经躺在床头静静遐想思念过晚晴了，暗香与温存萦绕在心头，明天再来静静遐想吧。）" }
+              ], enterMap);
+              return;
+            }
+            markDailyDone(state, "bed_daydream");
             TimeTransitionController.play("💭 床头遐想", "温存思念，暗香浮动", function() {
               state.playerEnergy = clamp(state.playerEnergy + 10, 0, 100);
               state.wanqing.lust = clamp((state.wanqing.lust || 0) + 2, 0, 100);
@@ -2578,9 +2627,19 @@
       InteractionManager.handleSleepInteraction();
       return;
     }
+
+    if (id !== "phone" && id !== "gift" && isDailyDone(state, id)) {
+      playLines([
+        { speaker: "narration", text: "（今天已经在此时此地做过这项互动了，收获满满。今天去尝试做点别的互动吧！）" }
+      ], enterMap);
+      return;
+    }
+
     var t0 = state.wanqing.trust;
     var lines = execAction(state, id);
     if (id === "phone" || id === "gift") return;
+
+    markDailyDone(state, id);
 
     if (state._spentSlot) {
       triggerTimeTransition("时光更迭...", "时光划过，阶段转推...", function() {
