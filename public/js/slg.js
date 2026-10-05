@@ -2367,62 +2367,93 @@
     },
 
     handleSleepInteraction: function () {
+      var trust = state.wanqing.trust || 0;
+      var lust = state.wanqing.lust || 0;
+      var isDaydreamUnlocked = trust >= 30 || lust >= 15;
+      var isSneakUnlocked = trust >= 50 && lust >= 20;
+
+      var choices = [
+        {
+          text: "🛌 在床上舒舒服服小憩午睡 (恢复 30 体力，跳过当前时段)",
+          action: function() {
+            TimeTransitionController.play("🛌 床上小憩", "午后微风，短憩惬意", function() {
+              state.playerEnergy = clamp(state.playerEnergy + 30, 0, 100);
+              state._spentSlot = true;
+              var how = advanceSlotIfNeeded();
+              var nextSlotCn = SLOT_CN[state.currentTimeSlot];
+              playLines([
+                { speaker: "narration", text: "（你定了个短闹钟，在床上舒舒服服地睡了个午觉。体力恢复了！）" },
+                { speaker: "narration", text: "（一眨眼，时间来到了 " + nextSlotCn + "。）" }
+              ], enterMap);
+            });
+          }
+        },
+        {
+          text: "💤 闭上眼睛沉沉深睡到明天清晨 (精力恢复 100%，天数 +1)",
+          action: function() {
+            TimeTransitionController.play("🌙 闭眼深睡", "夜深人静，朝阳再起", function() {
+              state.playerEnergy = 100;
+              nightProcess(state);
+              playLines([
+                { speaker: "narration", text: "（一觉醒来。阳光洒在枕畔。新的一天，第 " + state.dayCount + " 天！）" }
+              ], enterMap);
+            });
+          }
+        }
+      ];
+
+      // Progressive unlock 1: Daydreaming option unlocks when trust >= 30 or lust >= 15
+      if (isDaydreamUnlocked) {
+        choices.push({
+          text: "💭 躺在床头静静遐想温存 (恢复 10 体力，欲望 +2)",
+          action: function() {
+            TimeTransitionController.play("💭 床头遐想", "温存思念，暗香浮动", function() {
+              state.playerEnergy = clamp(state.playerEnergy + 10, 0, 100);
+              state.wanqing.lust = clamp((state.wanqing.lust || 0) + 2, 0, 100);
+              playLines([
+                { speaker: "narration", text: "（你枕着手臂望着天花板，脑海里全是对走廊那头晚晴温存软语的思念遐想……欲望微动。）" }
+              ], enterMap);
+            });
+          }
+        });
+      } else {
+        choices.push({
+          text: "🔒 躺在床头静静遐想 (需与晚晴信赖 ≥ 30)",
+          action: function() {
+            playLines([
+              { speaker: "narration", text: "（和房东太太刚合租认识不久，彼此尚客套礼貌，未曾有更深的了解……脑海里还不敢有越轨遐想。先多与她交流提升信赖吧！）" }
+            ], enterMap);
+          }
+        });
+      }
+
+      // Progressive unlock 2: Sneak into bedroom option unlocks when trust >= 50 & lust >= 20
+      if (isSneakUnlocked) {
+        choices.push({
+          text: "🔑 悄悄溜去隔壁晚晴卧室看看 (S5_nap·午睡偷香 / S9·彻底沦陷)",
+          action: function() {
+            TimeTransitionController.play("🔑 夜色偷溜", "蹑手蹑脚，扣响房门", function() {
+              var vid = state.wanqing.trust >= 90 ? "S9_bedroom_obsession" : "S5_nap_bedroom";
+              playVideoEvent(vid, enterMap);
+            });
+          }
+        });
+      } else {
+        choices.push({
+          text: "🔒 悄悄溜去隔壁晚晴卧室 (需信赖 ≥ 50 & 欲望 ≥ 20)",
+          action: function() {
+            playLines([
+              { speaker: "narration", text: "（房门被她从里面插上了小栓，信赖与欲望尚不足，深夜私闯失礼冒犯，无法溜进去。）" }
+            ], enterMap);
+          }
+        });
+      }
+
       playLines([
         {
           speaker: "narration",
           text: "（窗外微风摇曳，躺在松软温热的床上……你要选择如何度过？）",
-          choices: [
-            {
-              text: "🛌 在床上舒舒服服小憩午睡 (恢复 30 体力，跳过当前时段)",
-              action: function() {
-                triggerTimeTransition("🛌 床上小憩", "午后微风，短憩惬意", function() {
-                  state.playerEnergy = clamp(state.playerEnergy + 30, 0, 100);
-                  state._spentSlot = true;
-                  var how = advanceSlotIfNeeded();
-                  var nextSlotCn = SLOT_CN[state.currentTimeSlot];
-                  playLines([
-                    { speaker: "narration", text: "（你定了个短闹钟，在床上舒舒服服地睡了个午觉。体力恢复了！）" },
-                    { speaker: "narration", text: "（一眨眼，时间来到了 " + nextSlotCn + "。）" }
-                  ], enterMap);
-                });
-              }
-            },
-            {
-              text: "💤 闭上眼睛沉沉深睡到明天清晨 (精力恢复 100%，天数 +1)",
-              action: function() {
-                triggerTimeTransition("🌙 闭眼深睡", "夜深人静，朝阳再起", function() {
-                  state.playerEnergy = 100;
-                  nightProcess(state);
-                  playLines([
-                    { speaker: "narration", text: "（一觉醒来。阳光洒在枕畔。新的一天，第 " + state.dayCount + " 天！）" }
-                  ], enterMap);
-                });
-              }
-            },
-            {
-              text: "🔑 悄悄溜去隔壁晚晴卧室看看 (需信赖 ≥ 50)",
-              action: function() {
-                if (state.wanqing.trust < 50) {
-                  playLines([
-                    { speaker: "narration", text: "（信赖值不足 50，尚不敢深夜敲门溜进她卧室。）" }
-                  ], enterMap);
-                  return;
-                }
-                var vid = state.wanqing.trust >= 90 ? "S9_bedroom_obsession" : "S5_nap_bedroom";
-                playVideoEvent(vid, enterMap);
-              }
-            },
-            {
-              text: "💭 躺在床头静静遐想温存 (恢复 10 体力，欲望 +2)",
-              action: function() {
-                state.playerEnergy = clamp(state.playerEnergy + 10, 0, 100);
-                state.wanqing.lust = clamp((state.wanqing.lust || 0) + 2, 0, 100);
-                playLines([
-                  { speaker: "narration", text: "（你枕着手臂望着天花板，脑海里全是对走廊那头晚晴的思念与温存遐想……）" }
-                ], enterMap);
-              }
-            }
-          ]
+          choices: choices
         }
       ], enterMap);
     }
@@ -2856,35 +2887,66 @@
     }
   }
 
-  function triggerTimeTransition(title, subText, callback) {
-    var overlay = document.getElementById("time-transition-overlay");
-    var titleEl = document.getElementById("time-transition-title");
-    var subEl = document.getElementById("time-transition-sub");
-    var iconEl = document.getElementById("time-transition-icon");
+  var TimeTransitionController = {
+    isTransitioning: false,
+    play: function (title, subText, callback) {
+      if (TimeTransitionController.isTransitioning) return;
+      TimeTransitionController.isTransitioning = true;
 
-    if (!overlay) {
-      if (callback) callback();
-      return;
-    }
+      var overlay = document.getElementById("time-transition-overlay");
+      var titleEl = document.getElementById("time-transition-title");
+      var subEl = document.getElementById("time-transition-sub");
+      var iconEl = document.getElementById("time-transition-icon");
 
-    if (titleEl) titleEl.textContent = title || "时光流转...";
-    if (subEl) subEl.textContent = subText || "光影轻摇，时光流逝";
-    if (iconEl) iconEl.textContent = nightish(state ? state.currentTimeSlot : "Evening") ? "🌙" : "☀";
+      if (!overlay) {
+        TimeTransitionController.isTransitioning = false;
+        if (callback) callback();
+        return;
+      }
 
-    overlay.classList.remove("hidden");
-    overlay.style.display = "flex";
-    overlay.style.opacity = "1";
+      if (titleEl) titleEl.textContent = title || "时光流转...";
+      if (subEl) subEl.textContent = subText || "光影轻摇，时光沉淀";
+      if (iconEl) iconEl.textContent = nightish(state ? state.currentTimeSlot : "Evening") ? "🌙" : "☀";
 
-    window.setTimeout(function () {
-      if (callback) callback();
+      // Lock input & make transition container visible
+      overlay.classList.remove("hidden");
+      overlay.style.display = "flex";
+      overlay.style.pointerEvents = "all";
+      overlay.style.opacity = "0";
+
+      // Force reflow for smooth opacity fade-in transition
+      void overlay.offsetHeight;
+      overlay.style.transition = "opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1)";
+      overlay.style.opacity = "1";
+
+      // Hold phase: Execute callback after fade in completes (500ms)
       window.setTimeout(function () {
-        overlay.style.opacity = "0";
+        if (callback) {
+          try {
+            callback();
+          } catch (e) {
+            console.error(e);
+          }
+        }
+
+        // Keep displayed during transition processing (600ms)
         window.setTimeout(function () {
-          overlay.classList.add("hidden");
-          overlay.style.display = "";
-        }, 400);
-      }, 400);
-    }, 1000);
+          // Fade out phase
+          overlay.style.opacity = "0";
+
+          window.setTimeout(function () {
+            overlay.classList.add("hidden");
+            overlay.style.display = "";
+            overlay.style.pointerEvents = "";
+            TimeTransitionController.isTransitioning = false;
+          }, 420);
+        }, 600);
+      }, 500);
+    }
+  };
+
+  function triggerTimeTransition(title, subText, callback) {
+    TimeTransitionController.play(title, subText, callback);
   }
 
   function openMinigameModal(onComplete) {
@@ -3499,6 +3561,7 @@
     StoryStateManager: StoryStateManager,
     IntimacyStatsManager: IntimacyStatsManager,
     InteractionManager: InteractionManager,
+    TimeTransitionController: TimeTransitionController,
     processTimeSlot: processTimeSlot,
     openSheet: openSheet,
     openTaobaoModal: openTaobaoModal,
